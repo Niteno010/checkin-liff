@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>จองคิว & เช็คสถานะ</title>
+  <title>จองคิว - 9 Auto Garage</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,7 +13,7 @@
     body { background-color: #212529; color: #fff; font-family: 'Kanit', sans-serif; padding-bottom: 40px; }
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     
-    /* Tabs สลับหน้า */
+    /* Tabs */
     .nav-tabs { border-bottom: none; background: #f1f2f6; }
     .nav-link { width: 50%; text-align: center; padding: 15px; font-weight: bold; color: #636e72; border: none; border-radius: 0; }
     .nav-link.active { background: #d63031; color: white; }
@@ -23,7 +23,7 @@
     .btn-submit:hover { background-color: #b71c1c; }
     .btn-check { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; }
     
-    /* การ์ดผลลัพธ์การเช็ค */
+    /* Result Card */
     .result-card { background: #f8f9fa; border-left: 5px solid #00b894; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; background: #f39c12; }
     
@@ -34,37 +34,22 @@
 
   <div class="main-card">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="book-tab" onclick="switchTab('book')">📅 จองคิว</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="check-tab" onclick="switchTab('check')">🔍 เช็คสถานะ</button>
-      </li>
+      <li class="nav-item"><button class="nav-link active" id="book-tab" onclick="switchTab('book')">📅 จองคิว</button></li>
+      <li class="nav-item"><button class="nav-link" id="check-tab" onclick="switchTab('check')">🔍 เช็คสถานะ</button></li>
     </ul>
 
     <div class="content-box">
       <div id="book-section">
         <div id="profile-box" class="mb-3 text-center text-muted" style="font-size:14px;"></div>
-        
         <form id="bookingForm" onsubmit="submitBooking(event)">
-          <div class="mb-3">
-            <label class="form-label">ชื่อลูกค้า</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
+          <div class="mb-3"><label class="form-label">ชื่อลูกค้า</label><input type="text" id="name" class="form-control" required></div>
           <div class="row">
-            <div class="col-6 mb-3">
-              <label class="form-label">เบอร์โทร</label>
-              <input type="tel" id="phone" class="form-control" required>
-            </div>
-            <div class="col-6 mb-3">
-              <label class="form-label">ทะเบียนรถ</label>
-              <input type="text" id="plate" class="form-control" required placeholder="กข 1234">
-            </div>
+            <div class="col-6 mb-3"><label class="form-label">เบอร์โทร</label><input type="tel" id="phone" class="form-control" required></div>
+            <div class="col-6 mb-3"><label class="form-label">ทะเบียนรถ</label><input type="text" id="plate" class="form-control" required placeholder="กข 1234"></div>
           </div>
-          <div class="mb-3">
-            <label class="form-label">บริการ</label>
+          <div class="mb-3"><label class="form-label">บริการ</label>
             <select id="service" class="form-select" required>
-              <option value="">-- เลือกรายการ --</option>
+              <option value="">-- เลือก --</option>
               <option value="ถ่ายน้ำมันเครื่อง">🛢 ถ่ายน้ำมันเครื่อง</option>
               <option value="เช็คระยะ">🔧 เช็คระยะ</option>
               <option value="ซ่อมทั่วไป">⚙️ ซ่อมทั่วไป</option>
@@ -73,20 +58,11 @@
             </select>
           </div>
           <div class="row">
-            <div class="col-6 mb-3">
-              <label class="form-label">วันที่</label>
-              <input type="date" id="date" class="form-control" required>
-            </div>
-            <div class="col-6 mb-3">
-              <label class="form-label">เวลา</label>
+            <div class="col-6 mb-3"><label class="form-label">วันที่</label><input type="date" id="date" class="form-control" required></div>
+            <div class="col-6 mb-3"><label class="form-label">เวลา</label>
               <select id="time" class="form-select" required>
-                <option value="09:00">09:00</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
+                <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option>
+                <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option>
               </select>
             </div>
           </div>
@@ -95,37 +71,25 @@
       </div>
 
       <div id="check-section" style="display:none;">
-        <div class="text-center mb-4">
-          <i class="fas fa-search fa-3x text-muted mb-3"></i>
-          <h5>ตรวจสอบสถานะคิว</h5>
-          <p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา</p>
-        </div>
-        
+        <div class="text-center mb-4"><i class="fas fa-search fa-3x text-muted mb-3"></i><h5>ตรวจสอบสถานะ</h5><p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา</p></div>
         <div class="input-group mb-3">
           <input type="text" id="checkPlate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
           <button class="btn btn-check" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
-
         <div id="resultCard" class="result-card">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <strong id="resId" style="color:#d63031;">Q-XXXX</strong>
-            <span id="resStatus" class="status-badge">รอการยืนยัน</span>
-          </div>
-          <hr>
-          <p class="mb-1">👤 <span id="resName">-</span></p>
-          <p class="mb-1">🛠 <span id="resService">-</span></p>
-          <p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
+          <div class="d-flex justify-content-between align-items-center mb-2"><strong id="resId" style="color:#d63031;">Q-XXXX</strong><span id="resStatus" class="status-badge">รอการยืนยัน</span></div><hr>
+          <p class="mb-1">👤 <span id="resName">-</span></p><p class="mb-1">🛠 <span id="resService">-</span></p><p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
         </div>
         <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลการจองครับ</div>
       </div>
-
     </div>
   </div>
 
   <script>
+    // ⚠️ LIFF ID เดิม
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    // 🔴 แก้เป็นลิงก์ Script ตัวใหม่ของคุณนะครับ
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx432l_zmLUwF47o2TEie2RgiXdGmiERpKDkcjvURfK5TIbPb42MQQLU0OWJyc4b8_D/exec";
+    // ⚠️ ลิงก์ Script อันใหม่ของระบบจองคิว
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8E4eEFy04AaSNXEOcTrR_JcKX27M1QENWdkTF2wbNw4mYjPRhxZZG2vLsS8xJSiPw/exec";
 
     window.onload = async () => { await initLiff(); };
 
@@ -134,8 +98,7 @@
       if (liff.isLoggedIn()) {
         const profile = await liff.getProfile();
         document.getElementById('name').value = profile.displayName;
-        document.getElementById('profile-box').innerHTML = 
-          `<img src="${profile.pictureUrl}" class="profile-img"> สวัสดีคุณ <b>${profile.displayName}</b>`;
+        document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> สวัสดีคุณ <b>${profile.displayName}</b>`;
       } else { liff.login(); }
     }
 
@@ -153,7 +116,6 @@
       }
     }
 
-    // ฟังก์ชันจองคิว
     function submitBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
@@ -161,13 +123,9 @@
       btn.disabled = true;
 
       const payload = {
-        action: 'booking', // บอกหลังบ้านว่านี่คือการจอง
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        plate: document.getElementById('plate').value,
-        service: document.getElementById('service').value,
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value
+        name: document.getElementById('name').value, phone: document.getElementById('phone').value,
+        plate: document.getElementById('plate').value, service: document.getElementById('service').value,
+        date: document.getElementById('date').value, time: document.getElementById('time').value
       };
 
       fetch(SCRIPT_URL, {
@@ -176,11 +134,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).then(() => {
-        // ✅ 1. ส่งข้อความเข้าห้องแชท (ใบเสร็จ)
-        sendLineMessage(payload);
-        
-        // ✅ 2. แจ้งเตือนหน้าจอ
-        alert("✅ จองคิวสำเร็จ!\nระบบได้ส่งรายละเอียดเข้าห้องแชทแล้วครับ");
+        if (liff.isInClient()) {
+           liff.sendMessages([{ type: 'text', text: `📝 บันทึกการจองคิว\n------------------\n👤 ${payload.name}\n🚗 ทะเบียน: ${payload.plate}\n🛠 บริการ: ${payload.service}\n📅 วันที่: ${payload.date}\n⏰ เวลา: ${payload.time}\n------------------\n*รอแอดมินยืนยัน` }]).catch(e=>{});
+        }
+        alert("✅ จองคิวสำเร็จ!");
         liff.closeWindow();
       }).catch(err => {
         alert("Error: " + err);
@@ -189,63 +146,33 @@
       });
     }
 
-    // ฟังก์ชันส่งข้อความเข้า LINE (ใบเสร็จ)
-    function sendLineMessage(data) {
-      if (liff.isInClient()) {
-        liff.sendMessages([{
-          type: 'text',
-          text: `📝 บันทึกการจองคิว\n------------------\n👤 ${data.name}\n🚗 ทะเบียน: ${data.plate}\n🛠 บริการ: ${data.service}\n📅 วันที่: ${data.date}\n⏰ เวลา: ${data.time}\n------------------\n*กรุณารอการยืนยันจากแอดมินครับ`
-        }]).catch(err => console.log('ส่งข้อความไม่ได้:', err));
-      }
-    }
-
-    // ฟังก์ชันเช็คสถานะ
     function checkQueue() {
       const plate = document.getElementById('checkPlate').value;
-      if(!plate) return alert("กรุณากรอกเลขทะเบียนครับ");
-
+      if(!plate) return alert("กรุณากรอกเลขทะเบียน");
       const btn = document.querySelector('.btn-check');
-      btn.innerText = '⏳ ค้นหา...';
+      btn.innerText = '⏳ กำลังค้นหา...'; btn.disabled = true;
       
-      const payload = { action: 'search', plate: plate };
-
-      // เนื่องจาก no-cors อ่านค่ากลับไม่ได้ เราต้องใช้เทคนิค redirect หรือใช้ doPost แบบ ContentService.JSON 
-      // แต่ใน GitHub Pages + GAS วิธีที่ง่ายสุดคือใช้ fetch ธรรมดาแต่ต้องแก้ GAS ให้ return JSONP หรือยอมรับว่าอ่านค่าไม่ได้
-      // ** วิธีแก้: ใน GAS เราต้องใช้ ContentService.MimeType.JSON และใน JS ใช้ fetch ปกติแต่รอ response **
-      
-      // หมายเหตุ: เพื่อความง่ายและชัวร์สำหรับมือใหม่ ผมแนะนำให้ใช้ท่า "form submit" ไปยัง iframe หรือใช้ library เสริม
-      // แต่เดี๋ยวผมเขียน fetch แบบมาตรฐานให้ก่อน ถ้าติด CORS ค่อยว่ากัน
-      
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
+      fetch(SCRIPT_URL + "?action=search&plate=" + plate)
       .then(res => res.json())
       .then(data => {
-        btn.innerText = 'ค้นหา';
+        btn.innerText = 'ค้นหา'; btn.disabled = false;
         if(data.result === 'found') {
           const info = data.data;
           document.getElementById('notFound').style.display = 'none';
           document.getElementById('resultCard').style.display = 'block';
-          
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
           document.getElementById('resDate').innerText = info.date;
           document.getElementById('resTime').innerText = info.time;
-          document.getElementById('resStatus').innerText = info.status;
+          const statusBadge = document.getElementById('resStatus');
+          statusBadge.innerText = info.status;
+          statusBadge.style.background = (info.status === 'เสร็จสิ้น') ? '#00b894' : '#f39c12';
         } else {
           document.getElementById('resultCard').style.display = 'none';
           document.getElementById('notFound').style.display = 'block';
         }
-      })
-      .catch(err => {
-        // ถ้าติด CORS จะเข้าตรงนี้
-        // วิธีแก้เฉพาะหน้า: ให้สมมติว่าหาไม่เจอ หรือแจ้งเตือน
-        console.error(err);
-        btn.innerText = 'ค้นหา';
-        // (กรณีนี้อาจต้องใช้เทคนิคพิเศษถ้าติด CORS จริงๆ เดี๋ยวผมสอนถ้า Error)
-      });
+      }).catch(err => { alert("เชื่อมต่อไม่ได้"); btn.innerText = 'ค้นหา'; btn.disabled = false; });
     }
   </script>
 </body>
