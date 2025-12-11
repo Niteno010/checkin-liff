@@ -1,80 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Check-In</title>
+  <title>ระบบลงเวลา - 9 Auto Garage</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <style>
-    body { font-family: "Kanit", sans-serif; padding: 20px; text-align: center; background: #f0f2f5; }
-    video { width: 100%; max-width: 400px; border-radius: 10px; background: #000; }
-    .btn { padding: 15px; width: 45%; border: none; border-radius: 8px; font-size: 18px; color: white; margin: 10px 1%; cursor: pointer; }
-    .in { background: #28a745; } .out { background: #ffc107; color: black; }
-    #status { margin-top: 20px; color: #666; }
+    body { 
+      margin: 0; padding: 20px; 
+      font-family: "Kanit", sans-serif; 
+      background: #212529; 
+      color: #fff;
+      display: flex; flex-direction: column; align-items: center; 
+      min-height: 100vh; 
+    }
+
+    .card { 
+      background: #fff; 
+      color: #333;
+      border-radius: 15px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      width: 100%; max-width: 380px; 
+      padding: 30px 20px; 
+      box-sizing: border-box; 
+      text-align: center; 
+      border-top: 5px solid #d63031;
+    }
+
+    /* 🟢 ปรับแต่งโลโก้ (ดึงไฟล์ชื่อ logo.png) */
+    .logo-img {
+      width: 120px; 
+      height: auto; 
+      object-fit: contain; 
+      margin-bottom: 15px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 { margin: 0; color: #2d3436; font-weight: 700; text-transform: uppercase; }
+    h4 { margin: 5px 0 20px 0; color: #636e72; font-weight: 300; font-size: 14px; }
+    
+    .camera-box { 
+      width: 100%; aspect-ratio: 3/4; 
+      background: #000; border-radius: 10px; 
+      overflow: hidden; position: relative; 
+      margin-bottom: 20px; 
+      border: 2px solid #333;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    video { width: 100%; height: 100%; object-fit: cover; }
+
+    #profile-display { 
+      margin-bottom: 15px; font-size: 14px; color: #444; 
+      background: #dfe6e9; padding: 8px; border-radius: 30px;
+      display: inline-flex; align-items: center; padding-right: 20px;
+    }
+    .profile-pic { width: 30px; height: 30px; border-radius: 50%; margin-right: 10px; }
+
+    .btn-group { display: flex; gap: 10px; width: 100%; }
+    
+    button { 
+      flex: 1; padding: 15px; border: none; border-radius: 8px; 
+      font-size: 18px; font-family: "Kanit", sans-serif; font-weight: 600;
+      cursor: not-allowed; color: #fff; 
+      background-color: #b2bec3;
+      transition: all 0.2s; 
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    
+    .btn-active { cursor: pointer !important; transform: scale(1); box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+    .btn-active:active { transform: translateY(4px); box-shadow: none; }
+    .btn-in.btn-active { background: #00b894; }
+    .btn-out.btn-active { background: #e17055; }
+
+    #status { margin-top: 15px; font-size: 14px; color: #666; min-height: 20px; }
+    .loading { color: #0984e3; font-weight: bold; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center; align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s;
+    }
+    .modal-box {
+      background: white; width: 85%; max-width: 320px;
+      padding: 30px; border-radius: 15px;
+      text-align: center; color: #333;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-icon { font-size: 60px; color: #00b894; margin-bottom: 15px; }
+    .modal-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; color: #2d3436; }
+    .modal-desc { font-size: 14px; color: #636e72; margin-bottom: 20px; }
+    .countdown { font-weight: bold; color: #d63031; font-size: 18px; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
-  <h3>ระบบลงเวลา (GitHub Ver.)</h3>
-  <div id="profile">กำลังโหลด...</div>
-  <video id="video" autoplay playsinline></video>
-  <canvas id="canvas" style="display:none;"></canvas>
-  
-  <div style="margin-top:20px;">
-    <button class="btn in" onclick="sendData('เข้างาน')">เข้างาน</button>
-    <button class="btn out" onclick="sendData('ออกงาน')">ออกงาน</button>
+
+  <div class="card">
+    <img src="logo.png" class="logo-img" alt="9 Auto Garage Logo" onerror="this.style.display='none'">
+    
+    <h2>ระบบลงเวลา</h2>
+    <h4>9 Auto Garage (อู่ช่างอาร์ม)</h4>
+    
+    <div id="profile-display">
+      <i class="fas fa-circle-notch fa-spin"></i> &nbsp; กำลังเชื่อมต่อ LINE...
+    </div>
+
+    <div class="camera-box">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+
+    <div class="btn-group">
+      <button id="btnIn" class="btn-in" onclick="sendData('เข้างาน')">
+        <i class="fas fa-sign-in-alt"></i> เข้างาน
+      </button>
+      <button id="btnOut" class="btn-out" onclick="sendData('ออกงาน')">
+        <i class="fas fa-sign-out-alt"></i> ออกงาน
+      </button>
+    </div>
+
+    <div id="status"></div>
   </div>
-  <div id="status"></div>
+
+  <div id="modalSuccess" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="modal-title">บันทึกสำเร็จ!</div>
+      <div class="modal-desc">
+        ข้อมูลถูกส่งเรียบร้อยแล้วครับ<br>
+        หน้าจอจะปิดเองใน <span id="timer" class="countdown">3</span> วินาที
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" id="userId">
+  <input type="hidden" id="userName">
 
   <script>
-    // 🔴 แก้ 2 บรรทัดนี้
+    // **********************************************
+    // ⚠️ LIFF ID เดิม
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-LuGM5O5OKoNgI4rZhATCtCf0tPCcu3J-qvMjjyO0JBGj1uu60SCCNrG03YipB98D/exec";
+    // ✅ URL สคริปต์ตัวใหม่ที่คุณส่งมา
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-LuGM5O5OKoNgI4rZhATCtCf0tPCcu3J-qvMjjyO0JBGj1uu60SCCNrG03YipB98D/exec";
+    // **********************************************
 
     const video = document.getElementById('video');
-    
-    // เริ่มทำงาน
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => video.srcObject = s);
-    
-    liff.init({ liffId: LIFF_ID }).then(() => {
-      if (!liff.isLoggedIn()) { liff.login(); return; }
-      liff.getProfile().then(p => {
-        document.getElementById('profile').innerHTML = `สวัสดี: <b>${p.displayName}</b>`;
-        document.getElementById('profile').dataset.uid = p.userId;
-        document.getElementById('profile').dataset.name = p.displayName;
-      });
-    });
+    const statusEl = document.getElementById('status');
+    const profileEl = document.getElementById('profile-display');
+    const btnIn = document.getElementById('btnIn');
+    const btnOut = document.getElementById('btnOut');
+
+    window.onload = async () => {
+      startCamera();
+      await initLiff();
+    };
+
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) { liff.login(); return; }
+
+        const profile = await liff.getProfile();
+        document.getElementById('userId').value = profile.userId;
+        document.getElementById('userName').value = profile.displayName;
+        
+        profileEl.innerHTML = `<img src="${profile.pictureUrl}" class="profile-pic"> ${profile.displayName}`;
+        unlockButtons();
+      } catch (err) {
+        profileEl.innerHTML = `<span style="color:red"><i class="fas fa-exclamation-triangle"></i> Error: ${err.message}</span>`;
+      }
+    }
+
+    function unlockButtons() {
+      btnIn.classList.add('btn-active');
+      btnOut.classList.add('btn-active');
+    }
+
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(stream => { video.srcObject = stream; })
+        .catch(err => { statusEl.innerText = "เปิดกล้องไม่ได้: " + err; });
+    }
 
     function sendData(type) {
-      const status = document.getElementById('status');
-      status.innerText = "กำลังส่งข้อมูล...";
+      btnIn.classList.remove('btn-active');
+      btnOut.classList.remove('btn-active');
       
-      if(!navigator.geolocation) return status.innerText = "ไม่พบ GPS";
+      statusEl.className = 'loading';
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่งข้อมูล...';
+      
+      if(!navigator.geolocation) { statusEl.innerText = "ไม่พบ GPS"; return; }
       
       navigator.geolocation.getCurrentPosition(pos => {
         const canvas = document.getElementById('canvas');
-        canvas.width = 600; 
-        canvas.height = video.videoHeight * (600/video.videoWidth);
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext('2d');
         
+        const MAX_WIDTH = 600; 
+        let width = video.videoWidth;
+        let height = video.videoHeight;
+        if (width > MAX_WIDTH) {
+           height = height * (MAX_WIDTH / width);
+           width = MAX_WIDTH;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(video, 0, 0, width, height);
+
         const payload = {
-          name: document.getElementById('profile').dataset.name,
-          userId: document.getElementById('profile').dataset.uid,
+          name: document.getElementById('userName').value,
+          userId: document.getElementById('userId').value,
           type: type,
           location: pos.coords.latitude + "," + pos.coords.longitude,
           image: canvas.toDataURL('image/jpeg', 0.6)
         };
 
-        fetch(GOOGLE_SCRIPT_URL, {
+        fetch(SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        }).then(() => {
-          status.innerText = "✅ บันทึกสำเร็จ!";
-          setTimeout(() => liff.closeWindow(), 2000);
-        }).catch(err => status.innerText = "Error: " + err);
+        })
+        .then(() => {
+          showSuccessModal();
+        })
+        .catch(err => {
+          statusEl.style.color = 'red';
+          statusEl.innerText = "Error: " + err;
+          unlockButtons();
+        });
       });
+    }
+
+    function showSuccessModal() {
+      const modal = document.getElementById('modalSuccess');
+      const timerSpan = document.getElementById('timer');
+      let timeLeft = 3;
+
+      statusEl.innerHTML = '';
+      modal.style.display = 'flex';
+
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerSpan.innerText = timeLeft;
+        
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          if(liff.isInClient()) liff.closeWindow();
+        }
+      }, 1000);
     }
   </script>
 </body>
