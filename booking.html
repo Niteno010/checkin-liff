@@ -13,7 +13,6 @@
     body { background-color: #212529; color: #fff; font-family: 'Kanit', sans-serif; padding-bottom: 40px; }
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     
-    /* Tabs */
     .nav-tabs { border-bottom: none; background: #f1f2f6; }
     .nav-link { width: 50%; text-align: center; padding: 15px; font-weight: bold; color: #636e72; border: none; border-radius: 0; }
     .nav-link.active { background: #d63031; color: white; }
@@ -21,9 +20,11 @@
     .content-box { padding: 25px; }
     .btn-submit { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
     .btn-submit:hover { background-color: #b71c1c; }
-    .btn-check { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; }
+
+    /* 🟢 แก้ชื่อคลาสใหม่ (ไม่ให้ชนกับ Bootstrap) */
+    .btn-search-queue { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
+    .btn-search-queue:hover { background-color: #076aad; }
     
-    /* Result Card */
     .result-card { background: #f8f9fa; border-left: 5px solid #00b894; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; background: #f39c12; }
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
@@ -77,7 +78,7 @@
         </div>
         <div class="input-group mb-3">
           <input type="text" id="checkPlate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
-          <button id="btnCheck" class="btn btn-check" type="button" onclick="checkQueue()">ค้นหา</button>
+          <button id="btnCheck" class="btn btn-search-queue" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
         
         <div id="resultCard" class="result-card">
@@ -90,7 +91,6 @@
           <p class="mb-1">🛠 <span id="resService">-</span></p>
           <p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
         </div>
-        
         <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลการจองครับ</div>
       </div>
     </div>
@@ -98,9 +98,9 @@
 
   <script>
     // **********************************************
-    // ⚠️ แก้ 2 บรรทัดนี้ (สำคัญมาก!)
+    // ⚠️ อย่าลืมเช็ค 2 บรรทัดนี้ให้ถูกต้องนะครับ
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhy1gwgkUM6nREThZ5dLZ2lNbSleCvNFY2oS4yzcgLlVC3zAoqcigcm0YUhTBC9--G/exec"; // เอาลิงก์ใหม่จากข้อ 1 มาใส่
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhy1gwgkUM6nREThZ5dLZ2lNbSleCvNFY2oS4yzcgLlVC3zAoqcigcm0YUhTBC9--G/exec"; 
     // **********************************************
 
     window.onload = async () => { await initLiff(); };
@@ -128,7 +128,6 @@
       }
     }
 
-    // ฟังก์ชันจอง (POST)
     function submitBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
@@ -154,7 +153,6 @@
       }).catch(err => { alert("Error: " + err); btn.innerText = 'ยืนยันการจอง'; btn.disabled = false; });
     }
 
-    // ฟังก์ชันค้นหา (GET)
     function checkQueue() {
       const plate = document.getElementById('checkPlate').value;
       if(!plate) return alert("กรุณากรอกเลขทะเบียน");
@@ -162,7 +160,7 @@
       const btn = document.getElementById('btnCheck');
       btn.innerText = '⏳ กำลังค้นหา...'; btn.disabled = true;
       
-      // ส่งค่าแบบ GET
+      // ส่งค่าแบบ GET ไปที่ Apps Script
       fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(plate))
       .then(res => res.json())
       .then(data => {
