@@ -26,7 +26,6 @@
     /* Result Card */
     .result-card { background: #f8f9fa; border-left: 5px solid #00b894; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; background: #f39c12; }
-    
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
   </style>
 </head>
@@ -71,25 +70,38 @@
       </div>
 
       <div id="check-section" style="display:none;">
-        <div class="text-center mb-4"><i class="fas fa-search fa-3x text-muted mb-3"></i><h5>ตรวจสอบสถานะ</h5><p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา</p></div>
+        <div class="text-center mb-4">
+          <i class="fas fa-search fa-3x text-muted mb-3"></i>
+          <h5>ตรวจสอบสถานะ</h5>
+          <p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา</p>
+        </div>
         <div class="input-group mb-3">
           <input type="text" id="checkPlate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
-          <button class="btn btn-check" type="button" onclick="checkQueue()">ค้นหา</button>
+          <button id="btnCheck" class="btn btn-check" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
+        
         <div id="resultCard" class="result-card">
-          <div class="d-flex justify-content-between align-items-center mb-2"><strong id="resId" style="color:#d63031;">Q-XXXX</strong><span id="resStatus" class="status-badge">รอการยืนยัน</span></div><hr>
-          <p class="mb-1">👤 <span id="resName">-</span></p><p class="mb-1">🛠 <span id="resService">-</span></p><p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong id="resId" style="color:#d63031;">Q-XXXX</strong>
+            <span id="resStatus" class="status-badge">รอการยืนยัน</span>
+          </div>
+          <hr>
+          <p class="mb-1">👤 <span id="resName">-</span></p>
+          <p class="mb-1">🛠 <span id="resService">-</span></p>
+          <p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
         </div>
+        
         <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลการจองครับ</div>
       </div>
     </div>
   </div>
 
   <script>
-    // ⚠️ LIFF ID เดิม
+    // **********************************************
+    // ⚠️ แก้ 2 บรรทัดนี้ (สำคัญมาก!)
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    // ⚠️ ลิงก์ Script อันใหม่ของระบบจองคิว
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8E4eEFy04AaSNXEOcTrR_JcKX27M1QENWdkTF2wbNw4mYjPRhxZZG2vLsS8xJSiPw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhy1gwgkUM6nREThZ5dLZ2lNbSleCvNFY2oS4yzcgLlVC3zAoqcigcm0YUhTBC9--G/exec"; // เอาลิงก์ใหม่จากข้อ 1 มาใส่
+    // **********************************************
 
     window.onload = async () => { await initLiff(); };
 
@@ -116,11 +128,11 @@
       }
     }
 
+    // ฟังก์ชันจอง (POST)
     function submitBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
-      btn.innerText = '⏳ กำลังบันทึก...';
-      btn.disabled = true;
+      btn.innerText = '⏳ กำลังบันทึก...'; btn.disabled = true;
 
       const payload = {
         name: document.getElementById('name').value, phone: document.getElementById('phone').value,
@@ -139,40 +151,51 @@
         }
         alert("✅ จองคิวสำเร็จ!");
         liff.closeWindow();
-      }).catch(err => {
-        alert("Error: " + err);
-        btn.innerText = 'ยืนยันการจอง';
-        btn.disabled = false;
-      });
+      }).catch(err => { alert("Error: " + err); btn.innerText = 'ยืนยันการจอง'; btn.disabled = false; });
     }
 
+    // ฟังก์ชันค้นหา (GET)
     function checkQueue() {
       const plate = document.getElementById('checkPlate').value;
       if(!plate) return alert("กรุณากรอกเลขทะเบียน");
-      const btn = document.querySelector('.btn-check');
+      
+      const btn = document.getElementById('btnCheck');
       btn.innerText = '⏳ กำลังค้นหา...'; btn.disabled = true;
       
-      fetch(SCRIPT_URL + "?action=search&plate=" + plate)
+      // ส่งค่าแบบ GET
+      fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(plate))
       .then(res => res.json())
       .then(data => {
         btn.innerText = 'ค้นหา'; btn.disabled = false;
+        
         if(data.result === 'found') {
           const info = data.data;
           document.getElementById('notFound').style.display = 'none';
           document.getElementById('resultCard').style.display = 'block';
+          
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
           document.getElementById('resDate').innerText = info.date;
           document.getElementById('resTime').innerText = info.time;
+          
           const statusBadge = document.getElementById('resStatus');
           statusBadge.innerText = info.status;
-          statusBadge.style.background = (info.status === 'เสร็จสิ้น') ? '#00b894' : '#f39c12';
+          
+          if(info.status === 'เสร็จสิ้น') statusBadge.style.background = '#00b894';
+          else if(info.status === 'ยกเลิก') statusBadge.style.background = '#d63031';
+          else statusBadge.style.background = '#f39c12';
+          
         } else {
           document.getElementById('resultCard').style.display = 'none';
           document.getElementById('notFound').style.display = 'block';
         }
-      }).catch(err => { alert("เชื่อมต่อไม่ได้"); btn.innerText = 'ค้นหา'; btn.disabled = false; });
+      })
+      .catch(err => { 
+        console.error(err);
+        alert("❌ ไม่สามารถเชื่อมต่อกับระบบได้\n(โปรดเช็คว่า Deploy New Version แล้วหรือยัง)"); 
+        btn.innerText = 'ค้นหา'; btn.disabled = false; 
+      });
     }
   </script>
 </body>
