@@ -16,17 +16,19 @@
     .content-box { padding: 25px; }
     
     /* ปุ่มต่างๆ */
-    .btn-submit { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
-    .btn-submit:hover { background-color: #b71c1c; }
+    .btn-save-booking { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
+    .btn-save-booking:hover { background-color: #b71c1c; }
 
-    .btn-search-queue { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
-    .btn-search-queue:hover { background-color: #076aad; }
+    /* ปุ่มค้นหา (ชื่อไม่ซ้ำแน่นอน) */
+    .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
+    .btn-find-q:hover { background-color: #076aad; }
 
-    /* ปุ่มเลือกประเภทงาน */
-    .btn-type { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; transition: transform 0.2s; width: 100%; text-align: left; }
-    .btn-type:hover { transform: translateY(-3px); }
-    .btn-service { background: #27ae60; color: white; border: none; }
-    .btn-claim { background: #f39c12; color: white; border: none; }
+    /* ปุ่มเลือกประตู (แก้ชื่อคลาสใหม่) */
+    .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; transition: transform 0.2s; width: 100%; text-align: left; border: none; cursor: pointer; }
+    .btn-door:hover { transform: translateY(-3px); }
+    
+    .door-repair { background: #27ae60; color: white; } /* สีเขียว */
+    .door-claim { background: #f39c12; color: white; }  /* สีส้ม */
     
     /* การ์ดผลลัพธ์ */
     .result-card { background: #f8f9fa; border-left: 5px solid #00b894; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
@@ -34,10 +36,10 @@
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
 
     /* สถานะสีใหม่ */
-    .status-WAIT { background-color: #3498db !important; } /* ฟ้า */
-    .status-IN_BAY { background-color: #e67e22 !important; } /* ส้ม */
-    .status-DONE { background-color: #2ecc71 !important; } /* เขียว */
-    .status-PICKED { background-color: #9b59b6 !important; } /* ม่วง */
+    .status-WAIT { background-color: #3498db !important; }
+    .status-IN_BAY { background-color: #e67e22 !important; }
+    .status-DONE { background-color: #2ecc71 !important; }
+    .status-PICKED { background-color: #9b59b6 !important; }
   </style>
 </head>
 <body>
@@ -45,15 +47,15 @@
   <div class="main-card">
     <div class="content-box">
 
-      <div id="check-section" class="mb-5">
+      <div id="section-check" class="mb-5">
         <div class="text-center mb-4">
           <i class="fas fa-search fa-3x text-muted mb-3"></i>
           <h5 class="text-dark">ตรวจสอบสถานะคิว</h5>
-          <p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา (ทั้งงานซ่อมและงานสี)</p>
+          <p class="text-muted small">กรอกเลขทะเบียนรถเพื่อค้นหา</p>
         </div>
         <div class="input-group mb-3">
-          <input type="text" id="checkPlate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
-          <button id="btnCheck" class="btn btn-search-queue" type="button" onclick="checkQueue()">ค้นหา</button>
+          <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
+          <button id="btnSearch" class="btn btn-find-q" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
         
         <div id="resultCard" class="result-card">
@@ -74,42 +76,64 @@
 
       <hr class="text-muted">
 
-      <div id="type-section" class="text-center mt-4">
+      <div id="section-landing" class="text-center mt-4">
         <h5 class="text-dark mb-4">เลือกประเภทงานที่ต้องการจอง</h5>
         <div class="row">
-            <div class="col-12"><button class="btn btn-type btn-service" onclick="showForm('SERVICE')"><i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง / เซอร์วิส</button></div>
-            <div class="col-12"><button class="btn btn-type btn-claim" onclick="showForm('CLAIM')"><i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี</button></div>
+            <div class="col-12">
+                <button type="button" class="btn btn-door door-repair" onclick="goToBooking('SERVICE')">
+                    <i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง / เซอร์วิส
+                </button>
+            </div>
+            <div class="col-12">
+                <button type="button" class="btn btn-door door-claim" onclick="goToBooking('CLAIM')">
+                    <i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี
+                </button>
+            </div>
         </div>
       </div>
 
-      <div id="booking-form-section" style="display:none;">
+      <div id="section-form" style="display:none;">
         <div class="d-flex justify-content-between align-items-center mb-3">
-             <button class="btn btn-sm btn-outline-secondary" onclick="backToMenu()">❮ ย้อนกลับ</button>
+             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="backToLanding()">❮ ย้อนกลับ</button>
         </div>
         <h5 class="text-dark mb-4 text-center" id="form-title"></h5>
         
         <div id="profile-box" class="mb-3 text-center text-muted" style="font-size:14px;"></div>
         
-        <form id="bookingForm" onsubmit="submitBooking(event)">
-          <input type="hidden" id="serviceTypeInput">
-          <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="name" class="form-control" required></div>
-          <div class="row">
-            <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="phone" class="form-control" required></div>
-            <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="plate" class="form-control" required placeholder="กข 1234"></div>
-          </div>
-          <div class="mb-3"><label class="form-label text-dark" id="service-label">บริการ</label>
-            <select id="service" class="form-select" required></select>
+        <form id="mainForm" onsubmit="sendBooking(event)">
+          <input type="hidden" id="q_type">
+          <div class="mb-3">
+              <label class="form-label text-dark">ชื่อลูกค้า</label>
+              <input type="text" id="q_name" class="form-control" required>
           </div>
           <div class="row">
-            <div class="col-6 mb-3"><label class="form-label text-dark">วันที่</label><input type="date" id="date" class="form-control" required></div>
-            <div class="col-6 mb-3"><label class="form-label text-dark">เวลา</label>
-              <select id="time" class="form-select" required>
-                <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option>
-                <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option>
-              </select>
+            <div class="col-6 mb-3">
+                <label class="form-label text-dark">เบอร์โทร</label>
+                <input type="tel" id="q_phone" class="form-control" required>
+            </div>
+            <div class="col-6 mb-3">
+                <label class="form-label text-dark">ทะเบียนรถ</label>
+                <input type="text" id="q_plate" class="form-control" required placeholder="กข 1234">
             </div>
           </div>
-          <button type="submit" id="btnSubmit" class="btn-submit">ยืนยันการจอง</button>
+          <div class="mb-3">
+              <label class="form-label text-dark">บริการ</label>
+              <select id="q_service_dropdown" class="form-select" required></select>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+                <label class="form-label text-dark">วันที่</label>
+                <input type="date" id="q_date" class="form-control" required>
+            </div>
+            <div class="col-6 mb-3">
+                <label class="form-label text-dark">เวลา</label>
+                <select id="q_time" class="form-select" required>
+                    <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option>
+                    <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option>
+                </select>
+            </div>
+          </div>
+          <button type="submit" id="btnConfirm" class="btn-save-booking">ยืนยันการจอง</button>
         </form>
       </div>
 
@@ -118,9 +142,8 @@
 
   <script>
     // **********************************************
-    // ⚠️ ตรวจสอบ URL อีกครั้งนะครับ
+    // ⚠️ ลิงก์ Script ล่าสุด (ไม่ต้องแก้ Code.gs แล้วครับ อันนี้แก้ที่หน้าบ้านอย่างเดียว)
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    // ผมใส่ลิงก์ล่าสุดที่คุณให้มาไว้ให้แล้วครับ
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJK22GPq-MQrrAvQsP3U5FhrCe3ixJjWQaeLdmCTU95KqckxVv5HKxvciTJjYZVU7Y/exec"; 
     // **********************************************
 
@@ -130,57 +153,51 @@
       await liff.init({ liffId: LIFF_ID });
       if (liff.isLoggedIn()) {
         const profile = await liff.getProfile();
-        document.getElementById('name').value = profile.displayName;
+        document.getElementById('q_name').value = profile.displayName;
         document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> สวัสดีคุณ <b>${profile.displayName}</b>`;
       }
     }
 
-    // ฟังก์ชัน: เลือกประเภทงานและแสดงฟอร์ม
-    function showForm(type) {
-        document.getElementById('type-section').style.display = 'none';
-        document.getElementById('booking-form-section').style.display = 'block';
-        document.getElementById('serviceTypeInput').value = type;
+    // ฟังก์ชัน: เลือกประตูเข้า (เปลี่ยนชื่อฟังก์ชันใหม่ ไม่ให้ซ้ำ)
+    function goToBooking(type) {
+        document.getElementById('section-landing').style.display = 'none';
+        document.getElementById('section-form').style.display = 'block';
+        document.getElementById('q_type').value = type;
         
-        const serviceSelect = document.getElementById('service');
-        serviceSelect.innerHTML = '<option value="">-- เลือก --</option>';
+        const dd = document.getElementById('q_service_dropdown');
+        dd.innerHTML = '<option value="">-- เลือกรายการ --</option>';
 
         if (type === 'SERVICE') {
             document.getElementById('form-title').innerText = '📅 จองคิว: ซ่อมบำรุง';
-            const serviceOptions = [
-                { text: '🛢 ถ่ายน้ำมันเครื่อง', value: 'ถ่ายน้ำมันเครื่อง' },
-                { text: '🔧 เช็คระยะ', value: 'เช็คระยะ' },
-                { text: '⚙️ ซ่อมทั่วไป', value: 'ซ่อมทั่วไป' },
-                { text: '✨ ล้างรถ', value: 'ล้างรถ' },
-                { text: '📝 อื่นๆ (ระบุในหมายเหตุ)', value: 'อื่นๆ' }
-            ];
-            serviceOptions.forEach(opt => serviceSelect.add(new Option(opt.text, opt.value)));
-        } else if (type === 'CLAIM') {
+            const opts = ['ถ่ายน้ำมันเครื่อง', 'เช็คระยะ', 'ซ่อมทั่วไป', 'ล้างรถ', 'อื่นๆ (ระบุในหมายเหตุ)'];
+            opts.forEach(x => dd.add(new Option(x, x)));
+        } else {
             document.getElementById('form-title').innerText = '📅 จองคิว: เคลมประกัน / ทำสี';
-            const claimOptions = [
-                { text: '🛡 เคลมประกัน (ซ่อมตัวถัง)', value: 'เคลมประกัน' },
-                { text: '🎨 เข้าทำสี (ส่วนบุคคล)', value: 'ทำสี' },
-                { text: '🚗 ชนเบา/ทำสีด่วน', value: 'ทำสีด่วน' },
-            ];
-            claimOptions.forEach(opt => serviceSelect.add(new Option(opt.text, opt.value)));
+            const opts = ['เคลมประกัน (ซ่อมตัวถัง)', 'เข้าทำสี (ส่วนบุคคล)', 'ชนเบา/ทำสีด่วน'];
+            opts.forEach(x => dd.add(new Option(x, x)));
         }
     }
     
-    function backToMenu() {
-        document.getElementById('booking-form-section').style.display = 'none';
-        document.getElementById('type-section').style.display = 'block';
+    function backToLanding() {
+        document.getElementById('section-form').style.display = 'none';
+        document.getElementById('section-landing').style.display = 'block';
     }
 
-    // ฟังก์ชัน: ส่งข้อมูลการจอง (POST)
-    function submitBooking(e) {
+    // ฟังก์ชัน: ส่งข้อมูล (แก้ชื่อตัวแปรให้ตรงกับ ID ใหม่)
+    function sendBooking(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
+      const btn = document.getElementById('btnConfirm');
       btn.innerText = '⏳ กำลังบันทึก...'; btn.disabled = true;
 
-      const type = document.getElementById('serviceTypeInput').value;
+      const type = document.getElementById('q_type').value;
+      
       const payload = {
-        name: document.getElementById('name').value, phone: document.getElementById('phone').value,
-        plate: document.getElementById('plate').value, service: document.getElementById('service').value,
-        date: document.getElementById('date').value, time: document.getElementById('time').value,
+        name: document.getElementById('q_name').value, 
+        phone: document.getElementById('q_phone').value,
+        plate: document.getElementById('q_plate').value, 
+        service: document.getElementById('q_service_dropdown').value,
+        date: document.getElementById('q_date').value, 
+        time: document.getElementById('q_time').value,
         type: type 
       };
 
@@ -191,20 +208,20 @@
         body: JSON.stringify(payload)
       }).then(() => {
         if (liff.isInClient()) {
-           liff.sendMessages([{ type: 'text', text: `📝 บันทึกการจองคิว (${type === 'CLAIM' ? 'เคลม/ทำสี' : 'ซ่อมบำรุง'})\n------------------\n👤 ${payload.name}\n🚗 ทะเบียน: ${payload.plate}\n🛠 บริการ: ${payload.service}\n📅 วันที่: ${payload.date}\n⏰ เวลา: ${payload.time}\n------------------\n*รอแอดมินยืนยัน` }]).catch(e=>{});
+           liff.sendMessages([{ type: 'text', text: `📝 บันทึกการจองคิว\n------------------\n👤 ${payload.name}\n🚗 ทะเบียน: ${payload.plate}\n🛠 บริการ: ${payload.service}\n📅 วันที่: ${payload.date}\n⏰ เวลา: ${payload.time}\n------------------\n*รอแอดมินยืนยัน` }]).catch(e=>{});
         }
         alert("✅ จองคิวสำเร็จ!");
         liff.closeWindow();
       }).catch(err => { alert("Error: " + err); btn.innerText = 'ยืนยันการจอง'; btn.disabled = false; });
     }
 
-    // ฟังก์ชัน: เช็คสถานะ (GET)
+    // ฟังก์ชัน: เช็คสถานะ
     function checkQueue() {
-      const plate = document.getElementById('checkPlate').value;
+      const plate = document.getElementById('q_search_plate').value;
       if(!plate) return alert("กรุณากรอกเลขทะเบียน");
       
-      const btn = document.getElementById('btnCheck');
-      btn.innerText = '⏳ กำลังค้นหา...'; btn.disabled = true;
+      const btn = document.getElementById('btnSearch');
+      btn.innerText = '⏳...'; btn.disabled = true;
       
       fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(plate))
       .then(res => res.json())
@@ -222,8 +239,12 @@
           document.getElementById('resDate').innerText = info.date;
           document.getElementById('resTime').innerText = info.time;
           
+          // แปลงสถานะ
+          const mapStatus = { 'WAIT':'รอการดำเนินการ', 'IN_BAY':'อยู่ระหว่างซ่อม/สี', 'DONE':'เสร็จสิ้น/พร้อมรับรถ', 'PICKED':'รับรถแล้ว' };
+          const statusTxt = mapStatus[info.status] || info.status;
+          
           const statusBadge = document.getElementById('resStatus');
-          statusBadge.innerText = convertStatus(info.status);
+          statusBadge.innerText = statusTxt;
           statusBadge.className = `status-badge status-${info.status}`; 
           
           const typeBadge = document.getElementById('resType');
@@ -236,19 +257,9 @@
       })
       .catch(err => { 
         console.error(err);
-        alert("❌ ไม่สามารถเชื่อมต่อกับระบบได้"); 
+        alert("❌ เชื่อมต่อไม่ได้"); 
         btn.innerText = 'ค้นหา'; btn.disabled = false; 
       });
-    }
-
-    function convertStatus(code) {
-      const map = {
-        'WAIT': 'รอการดำเนินการ',
-        'IN_BAY': 'อยู่ระหว่างซ่อม/สี',
-        'DONE': 'เสร็จสิ้น/พร้อมรับรถ',
-        'PICKED': 'รับรถแล้ว'
-      };
-      return map[code] || 'สถานะไม่ทราบ';
     }
   </script>
 </body>
