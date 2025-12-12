@@ -14,12 +14,20 @@
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .content-box { padding: 25px; }
     
+    /* ปุ่มต่างๆ */
     .btn-save-booking { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
+    .btn-save-booking:hover { background-color: #b71c1c; }
+    .btn-save-booking:disabled { background-color: #95a5a6; }
+
     .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
-    .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; width: 100%; text-align: left; border: none; cursor: pointer; }
+    .btn-find-q:hover { background-color: #076aad; }
+
+    .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; width: 100%; text-align: left; border: none; cursor: pointer; transition: transform 0.2s; }
+    .btn-door:hover { transform: translateY(-3px); }
     .door-repair { background: #27ae60; color: white; }
     .door-claim { background: #f39c12; color: white; }
     
+    /* สถานะ */
     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; }
     .status-WAIT { background-color: #3498db !important; }
     .status-IN_BAY { background-color: #e67e22 !important; }
@@ -51,13 +59,13 @@
       <div id="section-landing" class="text-center mt-4">
         <h5 class="text-dark mb-4">เลือกประเภทงาน</h5>
         <div class="row">
-          <div class="col-12"><button class="btn btn-door door-repair" onclick="goToBooking('SERVICE')"><i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง</button></div>
-          <div class="col-12"><button class="btn btn-door door-claim" onclick="goToBooking('CLAIM')"><i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี</button></div>
+          <div class="col-12"><button type="button" class="btn btn-door door-repair" onclick="goToBooking('SERVICE')"><i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง</button></div>
+          <div class="col-12"><button type="button" class="btn btn-door door-claim" onclick="goToBooking('CLAIM')"><i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี</button></div>
         </div>
       </div>
 
       <div id="section-form" style="display:none;">
-        <button class="btn btn-sm btn-outline-secondary mb-3" onclick="backToLanding()">❮ ย้อนกลับ</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="backToLanding()">❮ ย้อนกลับ</button>
         <h5 class="text-dark mb-4 text-center" id="form-title"></h5>
         
         <div id="profile-box" class="mb-3 text-center text-muted" style="font-size:14px;"></div>
@@ -65,11 +73,8 @@
         <form onsubmit="sendBooking(event)">
           <input type="hidden" id="q_type">
           
-          <div class="mb-3">
-             <label class="form-label text-muted" style="font-size:12px;">System User ID (ตรวจสอบ):</label>
-             <input type="text" id="q_userId" class="form-control form-control-sm" readonly style="background-color: #e9ecef; color: #555;">
-          </div>
-
+          <input type="hidden" id="q_userId">
+          
           <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="q_name" class="form-control" required></div>
           <div class="row">
             <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="q_phone" class="form-control" required></div>
@@ -93,7 +98,6 @@
 
   <script>
     // **********************************************
-    // ⚠️ ลิงก์เดิมของคุณ
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypfHl5Kg5FJFu18PikE82qZpQO4eesoShol8g2XxEzRk-eUs0JY2rn083y7EV1qM7-/exec"; 
     const LIFF_ID = "2008660878-lDaGV0kK"; 
     // **********************************************
@@ -103,25 +107,21 @@
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
+        // บังคับ Login ทันทีเพื่อให้ได้ UserID ชัวร์ๆ
+        if (!liff.isLoggedIn()) { liff.login(); return; }
         
-        // 🟢 บังคับ Login ถ้ายังไม่เข้า
-        if (!liff.isLoggedIn()) {
-           liff.login();
-           return;
-        }
-
-        // ดึงข้อมูล
         const profile = await liff.getProfile();
         
-        document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> จองในนาม: <b>${profile.displayName}</b>`;
+        // 1. เก็บ UserID ลงในช่องลับ (hidden input)
+        document.getElementById('q_userId').value = profile.userId;
         
-        // ใส่ข้อมูลลงช่อง
+        // 2. แสดงผลหน้าเว็บ
+        document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> จองในนาม: <b>${profile.displayName}</b>`;
         document.getElementById('q_name').value = profile.displayName;
-        document.getElementById('q_userId').value = profile.userId; // 🟢 ค่าต้องโผล่ตรงนี้!
         
       } catch (err) {
-        // ถ้า LIFF พัง จะฟ้องตรงช่อง UserID เลย
-        document.getElementById('q_userId').value = "Error: " + err.message;
+        // กรณี Error (เผื่อไว้)
+        console.error("LIFF Error", err);
       }
     }
 
@@ -141,26 +141,44 @@
     function sendBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnConfirm');
-      btn.innerText = '⏳...'; btn.disabled = true;
-
-      // เช็คก่อนส่งว่ามี UserID ไหม
+      
+      // ✅ ระบบป้องกัน: เช็คว่า UserID มาหรือยัง
       const uid = document.getElementById('q_userId').value;
-      if (!uid || uid.startsWith("Error")) {
-          alert("❌ ไม่พบ User ID ของ LINE ไม่สามารถจองได้\nกรุณาลองปิดแล้วเข้าใหม่");
-          btn.innerText = 'ยืนยันการจอง'; btn.disabled = false;
-          return;
+      if (!uid) {
+          alert("⚠️ กำลังโหลดข้อมูล LINE ของคุณ...\nกรุณารอสักครู่แล้วกดปุ่มยืนยันใหม่อีกครั้งครับ");
+          // พยายามดึงใหม่อีกรอบกันเหนียว
+          if(liff.isLoggedIn()) { liff.getProfile().then(p => document.getElementById('q_userId').value = p.userId); }
+          return; // หยุดการทำงาน ไม่ส่งข้อมูลไป
       }
+
+      // ถ้ามี ID แล้ว ลุยเลย
+      btn.innerText = '⏳ กำลังบันทึก...'; 
+      btn.disabled = true;
 
       fetch(SCRIPT_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: document.getElementById('q_name').value, phone: document.getElementById('q_phone').value,
-          plate: document.getElementById('q_plate').value, service: document.getElementById('q_service_dropdown').value,
-          date: document.getElementById('q_date').value, time: document.getElementById('q_time').value,
+          name: document.getElementById('q_name').value, 
+          phone: document.getElementById('q_phone').value,
+          plate: document.getElementById('q_plate').value, 
+          service: document.getElementById('q_service_dropdown').value,
+          date: document.getElementById('q_date').value, 
+          time: document.getElementById('q_time').value,
           type: document.getElementById('q_type').value,
-          userId: uid
+          userId: uid // ส่งค่า UserID ที่แอบซ่อนไว้
         })
-      }).then(() => { alert("✅ จองคิวสำเร็จ!"); liff.closeWindow(); }).catch(err => { alert("Error"); btn.disabled = false; });
+      }).then(() => { 
+          // แจ้งเตือนใน LINE Chat (ถ้าทำได้)
+          if (liff.isInClient()) {
+             liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${document.getElementById('q_plate').value}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
+          }
+          alert("✅ จองคิวสำเร็จ!"); 
+          liff.closeWindow(); 
+      }).catch(err => { 
+          alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); 
+          btn.innerText = 'ยืนยันการจอง';
+          btn.disabled = false; 
+      });
     }
 
     function checkQueue() {
