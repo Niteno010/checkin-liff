@@ -13,16 +13,19 @@
     body { background-color: #212529; color: #fff; font-family: 'Kanit', sans-serif; padding-bottom: 40px; }
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .content-box { padding: 25px; }
-    .btn-save-booking { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; }
-    .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; }
-    .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; width: 100%; text-align: left; border: none; }
+    
+    .btn-save-booking { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
+    .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
+    .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; width: 100%; text-align: left; border: none; cursor: pointer; }
     .door-repair { background: #27ae60; color: white; }
     .door-claim { background: #f39c12; color: white; }
+    
     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; }
     .status-WAIT { background-color: #3498db !important; }
     .status-IN_BAY { background-color: #e67e22 !important; }
     .status-DONE { background-color: #2ecc71 !important; }
     .status-PICKED { background-color: #9b59b6 !important; }
+    
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
   </style>
 </head>
@@ -56,11 +59,18 @@
       <div id="section-form" style="display:none;">
         <button class="btn btn-sm btn-outline-secondary mb-3" onclick="backToLanding()">❮ ย้อนกลับ</button>
         <h5 class="text-dark mb-4 text-center" id="form-title"></h5>
+        
         <div id="profile-box" class="mb-3 text-center text-muted" style="font-size:14px;"></div>
 
         <form onsubmit="sendBooking(event)">
           <input type="hidden" id="q_type">
-          <input type="hidden" id="q_userId"> <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="q_name" class="form-control" required></div>
+          
+          <div class="mb-3">
+             <label class="form-label text-muted" style="font-size:12px;">System User ID (ตรวจสอบ):</label>
+             <input type="text" id="q_userId" class="form-control form-control-sm" readonly style="background-color: #e9ecef; color: #555;">
+          </div>
+
+          <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="q_name" class="form-control" required></div>
           <div class="row">
             <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="q_phone" class="form-control" required></div>
             <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="q_plate" class="form-control" required placeholder="กข 1234"></div>
@@ -82,20 +92,36 @@
   </div>
 
   <script>
-    // ⚠️ ใส่ลิงก์ Web App URL ของคุณที่นี่
+    // **********************************************
+    // ⚠️ ลิงก์เดิมของคุณ
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypfHl5Kg5FJFu18PikE82qZpQO4eesoShol8g2XxEzRk-eUs0JY2rn083y7EV1qM7-/exec"; 
     const LIFF_ID = "2008660878-lDaGV0kK"; 
+    // **********************************************
 
     window.onload = async () => { await initLiff(); };
 
     async function initLiff() {
-      await liff.init({ liffId: LIFF_ID });
-      if (liff.isLoggedIn()) {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        
+        // 🟢 บังคับ Login ถ้ายังไม่เข้า
+        if (!liff.isLoggedIn()) {
+           liff.login();
+           return;
+        }
+
+        // ดึงข้อมูล
         const profile = await liff.getProfile();
-        // แสดงรูปหน้าเว็บได้ปกติ (เพราะดึงสดจาก LINE ไม่ได้บันทึกลง Sheet)
+        
         document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> จองในนาม: <b>${profile.displayName}</b>`;
+        
+        // ใส่ข้อมูลลงช่อง
         document.getElementById('q_name').value = profile.displayName;
-        document.getElementById('q_userId').value = profile.userId;
+        document.getElementById('q_userId').value = profile.userId; // 🟢 ค่าต้องโผล่ตรงนี้!
+        
+      } catch (err) {
+        // ถ้า LIFF พัง จะฟ้องตรงช่อง UserID เลย
+        document.getElementById('q_userId').value = "Error: " + err.message;
       }
     }
 
@@ -117,6 +143,14 @@
       const btn = document.getElementById('btnConfirm');
       btn.innerText = '⏳...'; btn.disabled = true;
 
+      // เช็คก่อนส่งว่ามี UserID ไหม
+      const uid = document.getElementById('q_userId').value;
+      if (!uid || uid.startsWith("Error")) {
+          alert("❌ ไม่พบ User ID ของ LINE ไม่สามารถจองได้\nกรุณาลองปิดแล้วเข้าใหม่");
+          btn.innerText = 'ยืนยันการจอง'; btn.disabled = false;
+          return;
+      }
+
       fetch(SCRIPT_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,7 +158,7 @@
           plate: document.getElementById('q_plate').value, service: document.getElementById('q_service_dropdown').value,
           date: document.getElementById('q_date').value, time: document.getElementById('q_time').value,
           type: document.getElementById('q_type').value,
-          userId: document.getElementById('q_userId').value // ส่งแค่ UserID
+          userId: uid
         })
       }).then(() => { alert("✅ จองคิวสำเร็จ!"); liff.closeWindow(); }).catch(err => { alert("Error"); btn.disabled = false; });
     }
