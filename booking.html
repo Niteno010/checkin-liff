@@ -12,41 +12,34 @@
   <style>
     body { background-color: #212529; color: #fff; font-family: 'Kanit', sans-serif; padding-bottom: 40px; }
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    
     .content-box { padding: 25px; }
     
-    /* ปุ่มต่างๆ */
+    /* ปุ่ม */
     .btn-save-booking { background-color: #d63031; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; transition: 0.2s; }
     .btn-save-booking:hover { background-color: #b71c1c; }
-
-    /* ปุ่มค้นหา (ชื่อไม่ซ้ำแน่นอน) */
+    
     .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
     .btn-find-q:hover { background-color: #076aad; }
 
-    /* ปุ่มเลือกประตู (แก้ชื่อคลาสใหม่) */
     .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; transition: transform 0.2s; width: 100%; text-align: left; border: none; cursor: pointer; }
     .btn-door:hover { transform: translateY(-3px); }
-    
-    .door-repair { background: #27ae60; color: white; } /* สีเขียว */
-    .door-claim { background: #f39c12; color: white; }  /* สีส้ม */
-    
-    /* การ์ดผลลัพธ์ */
-    .result-card { background: #f8f9fa; border-left: 5px solid #00b894; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
-    .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; }
-    .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+    .door-repair { background: #27ae60; color: white; }
+    .door-claim { background: #f39c12; color: white; }
 
-    /* สถานะสีใหม่ */
+    /* สถานะ */
+    .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; color: white; }
     .status-WAIT { background-color: #3498db !important; }
     .status-IN_BAY { background-color: #e67e22 !important; }
     .status-DONE { background-color: #2ecc71 !important; }
     .status-PICKED { background-color: #9b59b6 !important; }
+    
+    .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
   </style>
 </head>
 <body>
 
   <div class="main-card">
     <div class="content-box">
-
       <div id="section-check" class="mb-5">
         <div class="text-center mb-4">
           <i class="fas fa-search fa-3x text-muted mb-3"></i>
@@ -57,80 +50,60 @@
           <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
           <button id="btnSearch" class="btn btn-find-q" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
-        
-        <div id="resultCard" class="result-card">
+        <div id="resultCard" style="display:none; background:#f8f9fa; padding:15px; border-radius:8px; border-left:5px solid #00b894; margin-top:20px;">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <strong id="resId" style="color:#d63031;">Q-XXXX</strong>
             <span id="resType" class="badge bg-secondary">ประเภทงาน</span>
           </div>
-          <div class="mb-2">
-            <span id="resStatus" class="status-badge bg-secondary">สถานะ</span>
-          </div>
+          <div class="mb-2"><span id="resStatus" class="status-badge bg-secondary">สถานะ</span></div>
           <hr>
           <p class="mb-1">👤 <span id="resName">-</span></p>
           <p class="mb-1">🛠 <span id="resService">-</span></p>
           <p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
         </div>
-        <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลการจองครับ</div>
+        <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลครับ</div>
       </div>
 
       <hr class="text-muted">
 
       <div id="section-landing" class="text-center mt-4">
-        <h5 class="text-dark mb-4">เลือกประเภทงานที่ต้องการจอง</h5>
+        <h5 class="text-dark mb-4">เลือกประเภทงาน</h5>
         <div class="row">
-            <div class="col-12">
-                <button type="button" class="btn btn-door door-repair" onclick="goToBooking('SERVICE')">
-                    <i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง / เซอร์วิส
-                </button>
-            </div>
-            <div class="col-12">
-                <button type="button" class="btn btn-door door-claim" onclick="goToBooking('CLAIM')">
-                    <i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี
-                </button>
-            </div>
+          <div class="col-12"><button class="btn btn-door door-repair" onclick="goToBooking('SERVICE')"><i class="fas fa-wrench me-2"></i> จองซ่อมบำรุง</button></div>
+          <div class="col-12"><button class="btn btn-door door-claim" onclick="goToBooking('CLAIM')"><i class="fas fa-paint-roller me-2"></i> จองเคลมประกัน / ทำสี</button></div>
         </div>
       </div>
 
       <div id="section-form" style="display:none;">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="backToLanding()">❮ ย้อนกลับ</button>
-        </div>
+        <button class="btn btn-sm btn-outline-secondary mb-3" onclick="backToLanding()">❮ ย้อนกลับ</button>
         <h5 class="text-dark mb-4 text-center" id="form-title"></h5>
         
         <div id="profile-box" class="mb-3 text-center text-muted" style="font-size:14px;"></div>
-        
-        <form id="mainForm" onsubmit="sendBooking(event)">
+
+        <form onsubmit="sendBooking(event)">
           <input type="hidden" id="q_type">
+          <input type="hidden" id="q_userId">
+          <input type="hidden" id="q_picture">
+
           <div class="mb-3">
               <label class="form-label text-dark">ชื่อลูกค้า</label>
-              <input type="text" id="q_name" class="form-control" required>
+              <input type="text" id="q_name" class="form-control" required placeholder="ชื่อสำหรับติดต่อ...">
           </div>
           <div class="row">
-            <div class="col-6 mb-3">
-                <label class="form-label text-dark">เบอร์โทร</label>
-                <input type="tel" id="q_phone" class="form-control" required>
-            </div>
-            <div class="col-6 mb-3">
-                <label class="form-label text-dark">ทะเบียนรถ</label>
-                <input type="text" id="q_plate" class="form-control" required placeholder="กข 1234">
-            </div>
+            <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="q_phone" class="form-control" required></div>
+            <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="q_plate" class="form-control" required placeholder="กข 1234"></div>
           </div>
           <div class="mb-3">
               <label class="form-label text-dark">บริการ</label>
               <select id="q_service_dropdown" class="form-select" required></select>
           </div>
           <div class="row">
-            <div class="col-6 mb-3">
-                <label class="form-label text-dark">วันที่</label>
-                <input type="date" id="q_date" class="form-control" required>
-            </div>
-            <div class="col-6 mb-3">
-                <label class="form-label text-dark">เวลา</label>
-                <select id="q_time" class="form-select" required>
-                    <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option>
-                    <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option>
-                </select>
+            <div class="col-6 mb-3"><label class="form-label text-dark">วันที่</label><input type="date" id="q_date" class="form-control" required></div>
+            <div class="col-6 mb-3"><label class="form-label text-dark">เวลา</label>
+              <select id="q_time" class="form-select" required>
+                 <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option>
+                 <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option>
+              </select>
             </div>
           </div>
           <button type="submit" id="btnConfirm" class="btn-save-booking">ยืนยันการจอง</button>
@@ -142,9 +115,9 @@
 
   <script>
     // **********************************************
-    // ⚠️ ลิงก์ Script ล่าสุด (ไม่ต้องแก้ Code.gs แล้วครับ อันนี้แก้ที่หน้าบ้านอย่างเดียว)
+    // ⚠️ ใส่ลิงก์ Web App URL ของคุณที่นี่
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrhIG89vtDVhN64-fxgS_VGjPBFJYUX_nY0Qlff-NWlewIvpOPQkDqknsKiykZOxH0/exec"; 
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJK22GPq-MQrrAvQsP3U5FhrCe3ixJjWQaeLdmCTU95KqckxVv5HKxvciTJjYZVU7Y/exec"; 
     // **********************************************
 
     window.onload = async () => { await initLiff(); };
@@ -153,12 +126,19 @@
       await liff.init({ liffId: LIFF_ID });
       if (liff.isLoggedIn()) {
         const profile = await liff.getProfile();
+        
+        // 1. โชว์รูปสวยๆ
+        document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> จองในนาม: <b>${profile.displayName}</b>`;
+        
+        // 2. กรอกชื่อลงช่องให้ (แต่ลูกค้าแก้ได้)
         document.getElementById('q_name').value = profile.displayName;
-        document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> สวัสดีคุณ <b>${profile.displayName}</b>`;
+        
+        // 3. แอบเก็บหลักฐานลงช่องลับ
+        document.getElementById('q_userId').value = profile.userId;
+        document.getElementById('q_picture').value = profile.pictureUrl;
       }
     }
 
-    // ฟังก์ชัน: เลือกประตูเข้า (เปลี่ยนชื่อฟังก์ชันใหม่ ไม่ให้ซ้ำ)
     function goToBooking(type) {
         document.getElementById('section-landing').style.display = 'none';
         document.getElementById('section-form').style.display = 'block';
@@ -166,16 +146,11 @@
         
         const dd = document.getElementById('q_service_dropdown');
         dd.innerHTML = '<option value="">-- เลือกรายการ --</option>';
-
-        if (type === 'SERVICE') {
-            document.getElementById('form-title').innerText = '📅 จองคิว: ซ่อมบำรุง';
-            const opts = ['ถ่ายน้ำมันเครื่อง', 'เช็คระยะ', 'ซ่อมทั่วไป', 'ล้างรถ', 'อื่นๆ (ระบุในหมายเหตุ)'];
-            opts.forEach(x => dd.add(new Option(x, x)));
-        } else {
-            document.getElementById('form-title').innerText = '📅 จองคิว: เคลมประกัน / ทำสี';
-            const opts = ['เคลมประกัน (ซ่อมตัวถัง)', 'เข้าทำสี (ส่วนบุคคล)', 'ชนเบา/ทำสีด่วน'];
-            opts.forEach(x => dd.add(new Option(x, x)));
-        }
+        const opts = (type === 'SERVICE') 
+            ? ['ถ่ายน้ำมันเครื่อง', 'เช็คระยะ', 'ซ่อมทั่วไป', 'ล้างรถ', 'อื่นๆ'] 
+            : ['เคลมประกัน (ซ่อมตัวถัง)', 'เข้าทำสี (ส่วนบุคคล)', 'ชนเบา/ทำสีด่วน'];
+        opts.forEach(x => dd.add(new Option(x, x)));
+        document.getElementById('form-title').innerText = (type === 'SERVICE') ? '📅 จองคิว: ซ่อมบำรุง' : '📅 จองคิว: เคลมประกัน / ทำสี';
     }
     
     function backToLanding() {
@@ -183,43 +158,35 @@
         document.getElementById('section-landing').style.display = 'block';
     }
 
-    // ฟังก์ชัน: ส่งข้อมูล (แก้ชื่อตัวแปรให้ตรงกับ ID ใหม่)
     function sendBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnConfirm');
-      btn.innerText = '⏳ กำลังบันทึก...'; btn.disabled = true;
-
-      const type = document.getElementById('q_type').value;
-      
-      const payload = {
-        name: document.getElementById('q_name').value, 
-        phone: document.getElementById('q_phone').value,
-        plate: document.getElementById('q_plate').value, 
-        service: document.getElementById('q_service_dropdown').value,
-        date: document.getElementById('q_date').value, 
-        time: document.getElementById('q_time').value,
-        type: type 
-      };
+      btn.innerText = '⏳...'; btn.disabled = true;
 
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          name: document.getElementById('q_name').value, 
+          phone: document.getElementById('q_phone').value,
+          plate: document.getElementById('q_plate').value, 
+          service: document.getElementById('q_service_dropdown').value,
+          date: document.getElementById('q_date').value, 
+          time: document.getElementById('q_time').value,
+          type: document.getElementById('q_type').value,
+          userId: document.getElementById('q_userId').value,   // ส่งไปเงียบๆ
+          picture: document.getElementById('q_picture').value  // ส่งไปเงียบๆ
+        })
       }).then(() => {
-        if (liff.isInClient()) {
-           liff.sendMessages([{ type: 'text', text: `📝 บันทึกการจองคิว\n------------------\n👤 ${payload.name}\n🚗 ทะเบียน: ${payload.plate}\n🛠 บริการ: ${payload.service}\n📅 วันที่: ${payload.date}\n⏰ เวลา: ${payload.time}\n------------------\n*รอแอดมินยืนยัน` }]).catch(e=>{});
-        }
         alert("✅ จองคิวสำเร็จ!");
         liff.closeWindow();
-      }).catch(err => { alert("Error: " + err); btn.innerText = 'ยืนยันการจอง'; btn.disabled = false; });
+      }).catch(err => { alert("Error"); btn.disabled = false; });
     }
 
-    // ฟังก์ชัน: เช็คสถานะ
     function checkQueue() {
       const plate = document.getElementById('q_search_plate').value;
-      if(!plate) return alert("กรุณากรอกเลขทะเบียน");
-      
+      if(!plate) return alert("ระบุทะเบียนรถ");
       const btn = document.getElementById('btnSearch');
       btn.innerText = '⏳...'; btn.disabled = true;
       
@@ -228,38 +195,24 @@
       .then(data => {
         btn.innerText = 'ค้นหา'; btn.disabled = false;
         document.getElementById('notFound').style.display = 'none';
-
         if(data.result === 'found') {
           const info = data.data;
           document.getElementById('resultCard').style.display = 'block';
-          
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
           document.getElementById('resDate').innerText = info.date;
           document.getElementById('resTime').innerText = info.time;
           
-          // แปลงสถานะ
-          const mapStatus = { 'WAIT':'รอการดำเนินการ', 'IN_BAY':'อยู่ระหว่างซ่อม/สี', 'DONE':'เสร็จสิ้น/พร้อมรับรถ', 'PICKED':'รับรถแล้ว' };
-          const statusTxt = mapStatus[info.status] || info.status;
-          
-          const statusBadge = document.getElementById('resStatus');
-          statusBadge.innerText = statusTxt;
-          statusBadge.className = `status-badge status-${info.status}`; 
-          
-          const typeBadge = document.getElementById('resType');
-          typeBadge.innerText = info.type === 'CLAIM' ? 'เคลม/ทำสี' : 'ซ่อมบำรุง';
-
+          const map = {'WAIT':'รอการดำเนินการ','IN_BAY':'อยู่ระหว่างซ่อม/สี','DONE':'เสร็จสิ้น/พร้อมรับรถ','PICKED':'รับรถแล้ว'};
+          document.getElementById('resStatus').innerText = map[info.status] || info.status;
+          document.getElementById('resStatus').className = `status-badge status-${info.status}`;
+          document.getElementById('resType').innerText = info.type === 'CLAIM' ? 'เคลม/ทำสี' : 'ซ่อมบำรุง';
         } else {
           document.getElementById('resultCard').style.display = 'none';
           document.getElementById('notFound').style.display = 'block';
         }
-      })
-      .catch(err => { 
-        console.error(err);
-        alert("❌ เชื่อมต่อไม่ได้"); 
-        btn.innerText = 'ค้นหา'; btn.disabled = false; 
-      });
+      }).catch(err => { alert("เชื่อมต่อไม่ได้"); btn.disabled = false; });
     }
   </script>
 </body>
