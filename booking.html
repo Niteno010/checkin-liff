@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
-  
+   
   <style>
     body { background-color: #212529; color: #fff; font-family: 'Kanit', sans-serif; padding-bottom: 40px; }
     .main-card { max-width: 500px; margin: 20px auto; background: #fff; color: #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -19,8 +19,11 @@
     .btn-save-booking:hover { background-color: #b71c1c; }
     .btn-save-booking:disabled { background-color: #95a5a6; }
 
-    .btn-find-q { background-color: #0984e3; color: white; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
+    .btn-find-q { background-color: #0984e3; color: white; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; width: 80px; }
     .btn-find-q:hover { background-color: #076aad; }
+
+    .btn-clear-q { background-color: #f1c40f; color: #333; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; width: 50px; }
+    .btn-clear-q:hover { background-color: #f39c12; }
 
     .btn-door { padding: 20px 15px; border-radius: 12px; font-size: 18px; font-weight: 600; margin-bottom: 15px; width: 100%; text-align: left; border: none; cursor: pointer; transition: transform 0.2s; }
     .btn-door:hover { transform: translateY(-3px); }
@@ -35,18 +38,43 @@
     .status-PICKED { background-color: #9b59b6 !important; }
     
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+
+    /* Overlay Success (Pop-up แจ้งเตือนปิดเอง) */
+    #success-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); z-index: 9999;
+        display: none; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .success-box {
+        background: white; padding: 30px; border-radius: 20px; text-align: center; color: #333; width: 80%; max-width: 300px;
+        animation: popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popup { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
+
+  <div id="success-overlay">
+      <div class="success-box">
+          <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+          <h3>จองสำเร็จ!</h3>
+          <p class="text-muted">ระบบบันทึกข้อมูลแล้ว</p>
+          <hr>
+          <p class="mb-0 text-danger" style="font-weight:bold;">ปิดอัตโนมัติใน <span id="countdown">3</span> วินาที</p>
+      </div>
+  </div>
 
   <div class="main-card">
     <div class="content-box">
       <div id="section-check" class="mb-5">
         <div class="text-center mb-4"><i class="fas fa-search fa-3x text-muted mb-3"></i><h5 class="text-dark">ตรวจสอบสถานะคิว</h5></div>
+        
         <div class="input-group mb-3">
-          <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="เช่น กข 1234">
+          <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="ทะเบียน เช่น กข 1234">
+          <button class="btn btn-clear-q" type="button" onclick="clearSearch()"><i class="fas fa-times"></i></button>
           <button id="btnSearch" class="btn btn-find-q" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
+
         <div id="resultCard" style="display:none; background:#f8f9fa; padding:15px; border-radius:8px; border-left:5px solid #00b894; margin-top:20px;">
           <div class="d-flex justify-content-between align-items-center mb-2"><strong id="resId" style="color:#d63031;">Q-XXXX</strong><span id="resType" class="badge bg-secondary">ประเภทงาน</span></div>
           <div class="mb-2"><span id="resStatus" class="status-badge bg-secondary">สถานะ</span></div><hr>
@@ -72,7 +100,6 @@
 
         <form onsubmit="sendBooking(event)">
           <input type="hidden" id="q_type">
-          
           <input type="hidden" id="q_userId">
           
           <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="q_name" class="form-control" required></div>
@@ -98,7 +125,8 @@
 
   <script>
     // **********************************************
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8-RMq01AZx637Xg8bRcynqonHeNxs_zjZFDHRzaWi7kiwIEZZrGXo9SWwObD493ix/exec"; 
+    // ⚠️ SCRIPT_URL อัปเดตล่าสุด
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1DMwCiQfeUeMeicZv8ZpIGVu7AbBVDY6YIt-Cc2MkDvc5DkIt5vDDvO7S7gKTfqxS/exec"; 
     const LIFF_ID = "2008660878-lDaGV0kK"; 
     // **********************************************
 
@@ -107,22 +135,12 @@
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
-        // บังคับ Login ทันทีเพื่อให้ได้ UserID ชัวร์ๆ
         if (!liff.isLoggedIn()) { liff.login(); return; }
-        
         const profile = await liff.getProfile();
-        
-        // 1. เก็บ UserID ลงในช่องลับ (hidden input)
         document.getElementById('q_userId').value = profile.userId;
-        
-        // 2. แสดงผลหน้าเว็บ
         document.getElementById('profile-box').innerHTML = `<img src="${profile.pictureUrl}" class="profile-img"> จองในนาม: <b>${profile.displayName}</b>`;
         document.getElementById('q_name').value = profile.displayName;
-        
-      } catch (err) {
-        // กรณี Error (เผื่อไว้)
-        console.error("LIFF Error", err);
-      }
+      } catch (err) { console.error("LIFF Error", err); }
     }
 
     function goToBooking(type) {
@@ -138,20 +156,23 @@
     
     function backToLanding() { document.getElementById('section-form').style.display = 'none'; document.getElementById('section-landing').style.display = 'block'; }
 
+    // ✅ ฟังก์ชันล้างข้อมูลค้นหา
+    function clearSearch() {
+        document.getElementById('q_search_plate').value = '';
+        document.getElementById('resultCard').style.display = 'none';
+        document.getElementById('notFound').style.display = 'none';
+    }
+
     function sendBooking(e) {
       e.preventDefault();
       const btn = document.getElementById('btnConfirm');
-      
-      // ✅ ระบบป้องกัน: เช็คว่า UserID มาหรือยัง
       const uid = document.getElementById('q_userId').value;
       if (!uid) {
-          alert("⚠️ กำลังโหลดข้อมูล LINE ของคุณ...\nกรุณารอสักครู่แล้วกดปุ่มยืนยันใหม่อีกครั้งครับ");
-          // พยายามดึงใหม่อีกรอบกันเหนียว
+          alert("⚠️ กำลังโหลดข้อมูล LINE...\nกรุณารอสักครู่แล้วกดใหม่ครับ");
           if(liff.isLoggedIn()) { liff.getProfile().then(p => document.getElementById('q_userId').value = p.userId); }
-          return; // หยุดการทำงาน ไม่ส่งข้อมูลไป
+          return;
       }
 
-      // ถ้ามี ID แล้ว ลุยเลย
       btn.innerText = '⏳ กำลังบันทึก...'; 
       btn.disabled = true;
 
@@ -165,20 +186,40 @@
           date: document.getElementById('q_date').value, 
           time: document.getElementById('q_time').value,
           type: document.getElementById('q_type').value,
-          userId: uid // ส่งค่า UserID ที่แอบซ่อนไว้
+          userId: uid
         })
       }).then(() => { 
-          // แจ้งเตือนใน LINE Chat (ถ้าทำได้)
+          // แจ้งเตือนใน LINE Chat
           if (liff.isInClient()) {
              liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${document.getElementById('q_plate').value}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
           }
-          alert("✅ จองคิวสำเร็จ!"); 
-          liff.closeWindow(); 
+          
+          // ✅ เรียกใช้ Popup Auto Close (แทน Alert)
+          showSuccessAndClose();
+
       }).catch(err => { 
           alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); 
           btn.innerText = 'ยืนยันการจอง';
           btn.disabled = false; 
       });
+    }
+
+    // ✅ ฟังก์ชัน Popup นับถอยหลังปิดเอง
+    function showSuccessAndClose() {
+        const overlay = document.getElementById('success-overlay');
+        const countSpan = document.getElementById('countdown');
+        let seconds = 3;
+
+        overlay.style.display = 'flex'; // โชว์
+
+        const timer = setInterval(() => {
+            seconds--;
+            countSpan.innerText = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                liff.closeWindow(); // ปิด LIFF ทันที
+            }
+        }, 1000);
     }
 
     function checkQueue() {
@@ -196,7 +237,15 @@
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
-          document.getElementById('resDate').innerText = info.date;
+          
+          // แปลงวันที่ (ถ้ามาเป็น 2025-12-14 ให้แสดง 14/12/2025)
+          let showDate = info.date;
+          if(showDate.includes('-')) {
+             const p = showDate.split('-');
+             if(p.length===3) showDate = `${p[2]}/${p[1]}/${p[0]}`;
+          }
+          document.getElementById('resDate').innerText = showDate;
+
           document.getElementById('resTime').innerText = info.time;
           const map = {'WAIT':'รอการดำเนินการ','IN_BAY':'อยู่ระหว่างซ่อม/สี','DONE':'เสร็จสิ้น/พร้อมรับรถ','PICKED':'รับรถแล้ว'};
           document.getElementById('resStatus').innerText = map[info.status] || info.status;
