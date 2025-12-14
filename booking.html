@@ -39,7 +39,7 @@
     
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
 
-    /* Overlay Success (Pop-up แจ้งเตือนปิดเอง) */
+    /* Overlay Success */
     #success-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.85); z-index: 9999;
@@ -60,7 +60,7 @@
           <h3>จองสำเร็จ!</h3>
           <p class="text-muted">ระบบบันทึกข้อมูลแล้ว</p>
           <hr>
-          <p class="mb-0 text-danger" style="font-weight:bold;">ปิดอัตโนมัติใน <span id="countdown">3</span> วินาที</p>
+          <p class="mb-0 text-primary" style="font-weight:bold;">กลับหน้าหลักใน <span id="countdown">3</span> วินาที</p>
       </div>
   </div>
 
@@ -124,11 +124,8 @@
   </div>
 
   <script>
-    // **********************************************
-    // ⚠️ SCRIPT_URL อัปเดตล่าสุด
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1DMwCiQfeUeMeicZv8ZpIGVu7AbBVDY6YIt-Cc2MkDvc5DkIt5vDDvO7S7gKTfqxS/exec"; 
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    // **********************************************
 
     window.onload = async () => { await initLiff(); };
 
@@ -156,7 +153,6 @@
     
     function backToLanding() { document.getElementById('section-form').style.display = 'none'; document.getElementById('section-landing').style.display = 'block'; }
 
-    // ✅ ฟังก์ชันล้างข้อมูลค้นหา
     function clearSearch() {
         document.getElementById('q_search_plate').value = '';
         document.getElementById('resultCard').style.display = 'none';
@@ -189,13 +185,11 @@
           userId: uid
         })
       }).then(() => { 
-          // แจ้งเตือนใน LINE Chat
           if (liff.isInClient()) {
              liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${document.getElementById('q_plate').value}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
           }
-          
-          // ✅ เรียกใช้ Popup Auto Close (แทน Alert)
-          showSuccessAndClose();
+          // ✅ เรียกใช้ฟังก์ชัน "เคลียร์แล้วกลับหน้าหลัก"
+          showSuccessAndClear();
 
       }).catch(err => { 
           alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); 
@@ -204,8 +198,8 @@
       });
     }
 
-    // ✅ ฟังก์ชัน Popup นับถอยหลังปิดเอง
-    function showSuccessAndClose() {
+    // ✅ ฟังก์ชันใหม่: จองเสร็จ -> นับถอยหลัง -> เคลียร์ฟอร์ม -> กลับหน้าแรก (ไม่ปิดหน้าต่าง)
+    function showSuccessAndClear() {
         const overlay = document.getElementById('success-overlay');
         const countSpan = document.getElementById('countdown');
         let seconds = 3;
@@ -215,9 +209,23 @@
         const timer = setInterval(() => {
             seconds--;
             countSpan.innerText = seconds;
+            
             if (seconds <= 0) {
                 clearInterval(timer);
-                liff.closeWindow(); // ปิด LIFF ทันที
+                
+                // 1. ซ่อน Popup
+                overlay.style.display = 'none';
+
+                // 2. ล้างข้อมูลในฟอร์ม
+                document.querySelector('form').reset(); 
+                document.getElementById('btnConfirm').innerText = 'ยืนยันการจอง';
+                document.getElementById('btnConfirm').disabled = false;
+
+                // 3. เด้งกลับหน้า Landing (เมนูเลือกงาน)
+                backToLanding();
+
+                // 4. เลื่อนจอขึ้นบนสุด (เพื่อให้เห็นช่องค้นหา)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }, 1000);
     }
@@ -238,7 +246,6 @@
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
           
-          // แปลงวันที่ (ถ้ามาเป็น 2025-12-14 ให้แสดง 14/12/2025)
           let showDate = info.date;
           if(showDate.includes('-')) {
              const p = showDate.split('-');
