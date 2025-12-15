@@ -124,7 +124,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxPhUubjP4g8DB0TJvvlck0H_mdA2WZxforZVvqhMeseKp5C37GfkAVcfhNvgHlLXS/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1DMwCiQfeUeMeicZv8ZpIGVu7AbBVDY6YIt-Cc2MkDvc5DkIt5vDDvO7S7gKTfqxS/exec"; 
     const LIFF_ID = "2008660878-su2I4DUz"; 
 
     window.onload = async () => { await initLiff(); };
@@ -188,9 +188,7 @@
           if (liff.isInClient()) {
              liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${document.getElementById('q_plate').value}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
           }
-          // ✅ เรียกใช้ฟังก์ชัน "เคลียร์แล้วกลับหน้าหลัก"
           showSuccessAndClear();
-
       }).catch(err => { 
           alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); 
           btn.innerText = 'ยืนยันการจอง';
@@ -198,33 +196,21 @@
       });
     }
 
-    // ✅ ฟังก์ชันใหม่: จองเสร็จ -> นับถอยหลัง -> เคลียร์ฟอร์ม -> กลับหน้าแรก (ไม่ปิดหน้าต่าง)
     function showSuccessAndClear() {
         const overlay = document.getElementById('success-overlay');
         const countSpan = document.getElementById('countdown');
         let seconds = 3;
-
-        overlay.style.display = 'flex'; // โชว์
-
+        overlay.style.display = 'flex';
         const timer = setInterval(() => {
             seconds--;
             countSpan.innerText = seconds;
-            
             if (seconds <= 0) {
                 clearInterval(timer);
-                
-                // 1. ซ่อน Popup
                 overlay.style.display = 'none';
-
-                // 2. ล้างข้อมูลในฟอร์ม
                 document.querySelector('form').reset(); 
                 document.getElementById('btnConfirm').innerText = 'ยืนยันการจอง';
                 document.getElementById('btnConfirm').disabled = false;
-
-                // 3. เด้งกลับหน้า Landing (เมนูเลือกงาน)
                 backToLanding();
-
-                // 4. เลื่อนจอขึ้นบนสุด (เพื่อให้เห็นช่องค้นหา)
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }, 1000);
