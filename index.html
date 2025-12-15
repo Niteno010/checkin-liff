@@ -7,7 +7,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  
+   
   <style>
     body { 
       margin: 0; padding: 20px; 
@@ -19,8 +19,7 @@
     }
 
     .card { 
-      background: #fff; 
-      color: #333;
+      background: #fff; color: #333;
       border-radius: 15px; 
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       width: 100%; max-width: 380px; 
@@ -30,17 +29,7 @@
       border-top: 5px solid #d63031;
     }
 
-    /* 🟢 ปรับแต่งโลโก้ (ดึงไฟล์ชื่อ logo.png) */
-    .logo-img {
-      width: 120px; 
-      height: auto; 
-      object-fit: contain; 
-      margin-bottom: 15px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
+    .logo-img { width: 120px; height: auto; object-fit: contain; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto; }
     h2 { margin: 0; color: #2d3436; font-weight: 700; text-transform: uppercase; }
     h4 { margin: 5px 0 20px 0; color: #636e72; font-weight: 300; font-size: 14px; }
     
@@ -52,7 +41,7 @@
       border: 2px solid #333;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
-    video { width: 100%; height: 100%; object-fit: cover; }
+    video, canvas { width: 100%; height: 100%; object-fit: cover; }
 
     #profile-display { 
       margin-bottom: 15px; font-size: 14px; color: #444; 
@@ -80,41 +69,32 @@
     #status { margin-top: 15px; font-size: 14px; color: #666; min-height: 20px; }
     .loading { color: #0984e3; font-weight: bold; }
 
+    /* Success Modal */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      justify-content: center; align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s;
+      background: rgba(0,0,0,0.8); display: none;
+      justify-content: center; align-items: center; z-index: 1000;
     }
     .modal-box {
-      background: white; width: 85%; max-width: 320px;
-      padding: 30px; border-radius: 15px;
-      text-align: center; color: #333;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: white; width: 85%; max-width: 320px; padding: 30px; border-radius: 15px;
+      text-align: center; color: #333; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      animation: popUp 0.3s;
     }
     .modal-icon { font-size: 60px; color: #00b894; margin-bottom: 15px; }
-    .modal-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; color: #2d3436; }
-    .modal-desc { font-size: 14px; color: #636e72; margin-bottom: 20px; }
+    .modal-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
     .countdown { font-weight: bold; color: #d63031; font-size: 18px; }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <img src="logo.png" class="logo-img" alt="9 Auto Garage Logo" onerror="this.style.display='none'">
-    
+    <img src="logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     <h2>ระบบลงเวลา</h2>
-    <h4>9 Auto Garage (อู่ช่างอาร์ม)</h4>
+    <h4>9 Auto Garage</h4>
     
-    <div id="profile-display">
-      <i class="fas fa-circle-notch fa-spin"></i> &nbsp; กำลังเชื่อมต่อ LINE...
-    </div>
+    <div id="profile-display"><i class="fas fa-circle-notch fa-spin"></i> กำลังเชื่อมต่อ LINE...</div>
 
     <div class="camera-box">
       <video id="video" autoplay playsinline></video>
@@ -122,10 +102,10 @@
     </div>
 
     <div class="btn-group">
-      <button id="btnIn" class="btn-in" onclick="sendData('เข้างาน')">
+      <button id="btnIn" class="btn-in" onclick="startProcess('เข้างาน')">
         <i class="fas fa-sign-in-alt"></i> เข้างาน
       </button>
-      <button id="btnOut" class="btn-out" onclick="sendData('ออกงาน')">
+      <button id="btnOut" class="btn-out" onclick="startProcess('ออกงาน')">
         <i class="fas fa-sign-out-alt"></i> ออกงาน
       </button>
     </div>
@@ -137,27 +117,23 @@
     <div class="modal-box">
       <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
       <div class="modal-title">บันทึกสำเร็จ!</div>
-      <div class="modal-desc">
-        ข้อมูลถูกส่งเรียบร้อยแล้วครับ<br>
-        หน้าจอจะปิดเองใน <span id="timer" class="countdown">3</span> วินาที
-      </div>
+      <div>ปิดใน <span id="timer" class="countdown">3</span> วินาที</div>
     </div>
   </div>
 
-  <input type="hidden" id="userId">
-  <input type="hidden" id="userName">
+  <input type="hidden" id="userId"><input type="hidden" id="userName">
 
   <script>
     // **********************************************
     // ⚠️ LIFF ID เดิม
     const LIFF_ID = "2008660878-lDaGV0kK"; 
-    // ✅ URL สคริปต์ตัวใหม่ที่คุณส่งมา
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG-HZy5Th_WfbrfSRyzljmpgHbzhw5hklo_UEZ9mF8R304XfSZg0ftRazTQcgn9WIM/exec";
+    // ✅ URL สคริปต์ (เช็คให้ตรงกับ Deploy ล่าสุด)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFlkL7tlZBvHxXH0dJq2fJboacSXCpBgOoC2_rP2BtxqvplKdz4T2C9gLnSOqtAiJN/exec";
     // **********************************************
 
     const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
     const statusEl = document.getElementById('status');
-    const profileEl = document.getElementById('profile-display');
     const btnIn = document.getElementById('btnIn');
     const btnOut = document.getElementById('btnOut');
 
@@ -170,21 +146,16 @@
       try {
         await liff.init({ liffId: LIFF_ID });
         if (!liff.isLoggedIn()) { liff.login(); return; }
-
         const profile = await liff.getProfile();
         document.getElementById('userId').value = profile.userId;
         document.getElementById('userName').value = profile.displayName;
-        
-        profileEl.innerHTML = `<img src="${profile.pictureUrl}" class="profile-pic"> ${profile.displayName}`;
+        document.getElementById('profile-display').innerHTML = `<img src="${profile.pictureUrl}" class="profile-pic"> ${profile.displayName}`;
         unlockButtons();
-      } catch (err) {
-        profileEl.innerHTML = `<span style="color:red"><i class="fas fa-exclamation-triangle"></i> Error: ${err.message}</span>`;
-      }
+      } catch (err) { statusEl.innerText = "Error LIFF: " + err.message; }
     }
 
     function unlockButtons() {
-      btnIn.classList.add('btn-active');
-      btnOut.classList.add('btn-active');
+      btnIn.classList.add('btn-active'); btnOut.classList.add('btn-active');
     }
 
     function startCamera() {
@@ -193,70 +164,89 @@
         .catch(err => { statusEl.innerText = "เปิดกล้องไม่ได้: " + err; });
     }
 
-    function sendData(type) {
+    // 🎯 ฟังก์ชันหลัก: Snap -> Freeze -> Send
+    function startProcess(type) {
+      if(!btnIn.classList.contains('btn-active')) return;
+
+      // 1. 📸 SNAP & FREEZE ทันที!
+      captureImage(); 
+      video.style.display = 'none'; // ซ่อนวิดีโอ
+      canvas.style.display = 'block'; // โชว์ภาพนิ่งแทน
+      
+      // ล็อคปุ่ม
       btnIn.classList.remove('btn-active');
       btnOut.classList.remove('btn-active');
-      
       statusEl.className = 'loading';
-      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่งข้อมูล...';
-      
-      if(!navigator.geolocation) { statusEl.innerText = "ไม่พบ GPS"; return; }
-      
-      navigator.geolocation.getCurrentPosition(pos => {
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        const MAX_WIDTH = 600; 
-        let width = video.videoWidth;
-        let height = video.videoHeight;
-        if (width > MAX_WIDTH) {
-           height = height * (MAX_WIDTH / width);
-           width = MAX_WIDTH;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(video, 0, 0, width, height);
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังระบุพิกัดและส่งข้อมูล...';
 
-        const payload = {
-          name: document.getElementById('userName').value,
-          userId: document.getElementById('userId').value,
-          type: type,
-          location: pos.coords.latitude + "," + pos.coords.longitude,
-          image: canvas.toDataURL('image/jpeg', 0.6)
-        };
+      // 2. 📍 หา GPS
+      if(!navigator.geolocation) { handleError("เครื่องนี้ไม่รองรับ GPS"); return; }
+      
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+           // 3. 🚀 ส่งข้อมูล
+           sendDataToScript(type, pos);
+        },
+        (err) => {
+           handleError("เปิด GPS ไม่สำเร็จ: " + err.message);
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    }
 
-        fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(() => {
-          showSuccessModal();
-        })
-        .catch(err => {
-          statusEl.style.color = 'red';
-          statusEl.innerText = "Error: " + err;
-          unlockButtons();
-        });
-      });
+    function captureImage() {
+      const ctx = canvas.getContext('2d');
+      const MAX_WIDTH = 600; 
+      let width = video.videoWidth;
+      let height = video.videoHeight;
+      if (width > MAX_WIDTH) {
+         height = height * (MAX_WIDTH / width);
+         width = MAX_WIDTH;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(video, 0, 0, width, height);
+    }
+
+    function sendDataToScript(type, pos) {
+      const payload = {
+         name: document.getElementById('userName').value,
+         userId: document.getElementById('userId').value,
+         type: type,
+         location: pos.coords.latitude + "," + pos.coords.longitude,
+         image: canvas.toDataURL('image/jpeg', 0.6) // รูปที่ Snap ไว้แล้ว
+      };
+
+      fetch(SCRIPT_URL, {
+         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(payload)
+      })
+      .then(() => showSuccessModal())
+      .catch(err => handleError("ส่งข้อมูลไม่ผ่าน: " + err));
+    }
+
+    function handleError(msg) {
+       statusEl.style.color = 'red';
+       statusEl.innerText = msg;
+       // ถ้าพัง ให้กลับมาเปิดกล้องใหม่
+       video.style.display = 'block';
+       canvas.style.display = 'none';
+       unlockButtons();
     }
 
     function showSuccessModal() {
       const modal = document.getElementById('modalSuccess');
       const timerSpan = document.getElementById('timer');
       let timeLeft = 3;
-
       statusEl.innerHTML = '';
       modal.style.display = 'flex';
-
       const interval = setInterval(() => {
         timeLeft--;
         timerSpan.innerText = timeLeft;
-        
         if (timeLeft <= 0) {
-          clearInterval(interval);
-          if(liff.isInClient()) liff.closeWindow();
+           clearInterval(interval);
+           if(liff.isInClient()) liff.closeWindow();
+           else window.location.reload();
         }
       }, 1000);
     }
