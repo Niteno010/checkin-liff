@@ -107,7 +107,19 @@
             <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="q_phone" class="form-control" required></div>
             <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="q_plate" class="form-control" required placeholder="กข 1234"></div>
           </div>
+
+          <div class="mb-3">
+             <label class="form-label text-dark">รุ่นรถ (ยี่ห้อ/รุ่น/ปี) <span class="text-danger">*</span></label>
+             <input type="text" id="q_carModel" class="form-control" required placeholder="เช่น Honda Civic 2018">
+          </div>
+
           <div class="mb-3"><label class="form-label text-dark">บริการ</label><select id="q_service_dropdown" class="form-select" required></select></div>
+          
+          <div class="mb-3">
+             <label class="form-label text-dark">อาการเบื้องต้น (ถ้ามี)</label>
+             <textarea id="q_symptom" class="form-control" rows="2" placeholder="เช่น มีเสียงดังเวลาเลี้ยว, แอร์ไม่เย็น"></textarea>
+          </div>
+
           <div class="row">
             <div class="col-6 mb-3"><label class="form-label text-dark">วันที่</label><input type="date" id="q_date" class="form-control" required></div>
             <div class="col-6 mb-3"><label class="form-label text-dark">เวลา</label>
@@ -124,7 +136,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFE4wwuhW-e6r1yOQnT-_pvBYx0HXskVdGo5KIN17V0rQHWQ1Xpc_Cx2g8z8hrSA0e/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaXR4ffo7H931iYX1JyUMrIaWVJ7PYur9UwJsWFeACeBmFA-YdYefBIuVTlPOx5bnt/exec"; 
     const LIFF_ID = "2008660878-su2I4DUz"; 
 
     window.onload = async () => { await initLiff(); };
@@ -178,7 +190,10 @@
           name: document.getElementById('q_name').value, 
           phone: document.getElementById('q_phone').value,
           plate: document.getElementById('q_plate').value, 
+          // ✅ เพิ่มการส่งค่า รุ่นรถ และ อาการ
+          carModel: document.getElementById('q_carModel').value,
           service: document.getElementById('q_service_dropdown').value,
+          symptom: document.getElementById('q_symptom').value, 
           date: document.getElementById('q_date').value, 
           time: document.getElementById('q_time').value,
           type: document.getElementById('q_type').value,
