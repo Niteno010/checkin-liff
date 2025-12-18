@@ -70,16 +70,23 @@
         <div class="text-center mb-4"><i class="fas fa-search fa-3x text-muted mb-3"></i><h5 class="text-dark">ตรวจสอบสถานะคิว</h5></div>
         
         <div class="input-group mb-3">
-          <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="ทะเบียน เช่น กข 1234">
+          <input type="text" id="q_search_plate" class="form-control form-control-lg" placeholder="ทะเบียน (ไม่ต้องเว้นวรรค)">
           <button class="btn btn-clear-q" type="button" onclick="clearSearch()"><i class="fas fa-times"></i></button>
           <button id="btnSearch" class="btn btn-find-q" type="button" onclick="checkQueue()">ค้นหา</button>
         </div>
 
         <div id="resultCard" style="display:none; background:#f8f9fa; padding:15px; border-radius:8px; border-left:5px solid #00b894; margin-top:20px;">
-          <div class="d-flex justify-content-between align-items-center mb-2"><strong id="resId" style="color:#d63031;">Q-XXXX</strong><span id="resType" class="badge bg-secondary">ประเภทงาน</span></div>
-          <div class="mb-2"><span id="resStatus" class="status-badge bg-secondary">สถานะ</span></div><hr>
-          <p class="mb-1">👤 <span id="resName">-</span></p><p class="mb-1">🛠 <span id="resService">-</span></p><p class="mb-1">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong id="resId" style="color:#d63031;">Q-XXXX</strong>
+            <span id="resType" class="badge bg-secondary">ประเภทงาน</span>
+          </div>
+          <div class="mb-2"><span id="resStatus" class="status-badge bg-secondary">สถานะ</span></div>
+          <hr>
+          <p class="mb-1">👤 <span id="resName">-</span></p>
+          <p class="mb-1">🚙 <span id="resModel" style="font-weight:bold; color:#0984e3;">-</span></p> <p class="mb-1">🛠 <span id="resService">-</span></p>
+          <p class="mb-1 text-muted small">📝 <span id="resSymptom">-</span></p> <p class="mb-1 mt-2">📅 <span id="resDate">-</span> เวลา <span id="resTime">-</span></p>
         </div>
+        
         <div id="notFound" class="text-center text-danger mt-3" style="display:none;">❌ ไม่พบข้อมูลครับ</div>
       </div>
       <hr class="text-muted">
@@ -105,7 +112,7 @@
           <div class="mb-3"><label class="form-label text-dark">ชื่อลูกค้า</label><input type="text" id="q_name" class="form-control" required></div>
           <div class="row">
             <div class="col-6 mb-3"><label class="form-label text-dark">เบอร์โทร</label><input type="tel" id="q_phone" class="form-control" required></div>
-            <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="q_plate" class="form-control" required placeholder="กข 1234"></div>
+            <div class="col-6 mb-3"><label class="form-label text-dark">ทะเบียนรถ</label><input type="text" id="q_plate" class="form-control" required placeholder="เช่น กข 1234"></div>
           </div>
 
           <div class="mb-3">
@@ -136,7 +143,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBq88aZVC2OWBoXYxESBZLqdCCzWFbiBfbtIQQYth9dVYkr2KYBT_6SbKiF2x4z_jk/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuW7sk_W_2o3aEezgqZ58984V_z6rQ8BlVt_Dw7ezFneoICP2wbzcGun9o0sxmjS7P/exec"; 
     const LIFF_ID = "2008660878-su2I4DUz"; 
 
     window.onload = async () => { await initLiff(); };
@@ -183,14 +190,17 @@
 
       btn.innerText = '⏳ กำลังบันทึก...'; 
       btn.disabled = true;
+      
+      // ดึงค่าและตัดช่องว่างทะเบียน (Client Side Trim)
+      let rawPlate = document.getElementById('q_plate').value;
+      let cleanPlate = rawPlate.replace(/\s+/g, '');
 
       fetch(SCRIPT_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: document.getElementById('q_name').value, 
           phone: document.getElementById('q_phone').value,
-          plate: document.getElementById('q_plate').value, 
-          // ✅ เพิ่มการส่งค่า รุ่นรถ และ อาการ
+          plate: cleanPlate, // ส่งแบบไม่มีช่องว่างไปเลย
           carModel: document.getElementById('q_carModel').value,
           service: document.getElementById('q_service_dropdown').value,
           symptom: document.getElementById('q_symptom').value, 
@@ -201,7 +211,7 @@
         })
       }).then(() => { 
           if (liff.isInClient()) {
-             liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${document.getElementById('q_plate').value}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
+             liff.sendMessages([{ type: 'text', text: `📝 จองคิวสำเร็จ!\nทะเบียน: ${rawPlate}\nวันที่: ${document.getElementById('q_date').value} เวลา ${document.getElementById('q_time').value}\n*รอแอดมินยืนยัน` }]).catch(e=>{});
           }
           showSuccessAndClear();
       }).catch(err => { 
@@ -235,17 +245,27 @@
       const plate = document.getElementById('q_search_plate').value;
       if(!plate) return alert("ระบุทะเบียนรถ");
       const btn = document.getElementById('btnSearch');
+      
+      // ✅ ตัดช่องว่างก่อนส่งไปค้นหา (เพิ่มความชัวร์)
+      const cleanPlate = plate.replace(/\s+/g, '');
+      
       btn.innerText = '⏳...'; btn.disabled = true;
-      fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(plate))
+      
+      fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(cleanPlate))
       .then(res => res.json()).then(data => {
         btn.innerText = 'ค้นหา'; btn.disabled = false;
         document.getElementById('notFound').style.display = 'none';
+        
         if(data.result === 'found') {
           const info = data.data;
           document.getElementById('resultCard').style.display = 'block';
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
+          
+          // ✅ แสดงข้อมูลรุ่นรถและอาการ
+          document.getElementById('resModel').innerText = info.carModel || '-';
+          document.getElementById('resSymptom').innerText = info.symptom || '-';
           
           let showDate = info.date;
           if(showDate.includes('-')) {
@@ -259,7 +279,10 @@
           document.getElementById('resStatus').innerText = map[info.status] || info.status;
           document.getElementById('resStatus').className = `status-badge status-${info.status}`;
           document.getElementById('resType').innerText = info.type === 'CLAIM' ? 'เคลม/ทำสี' : 'ซ่อมบำรุง';
-        } else { document.getElementById('resultCard').style.display = 'none'; document.getElementById('notFound').style.display = 'block'; }
+        } else { 
+            document.getElementById('resultCard').style.display = 'none'; 
+            document.getElementById('notFound').style.display = 'block'; 
+        }
       }).catch(err => { alert("เชื่อมต่อไม่ได้"); btn.disabled = false; });
     }
   </script>
