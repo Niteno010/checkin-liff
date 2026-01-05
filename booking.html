@@ -39,6 +39,9 @@
     
     .profile-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
 
+    /* Helper CSS */
+    .w-25px { width: 25px; text-align: center; }
+
     /* Overlay Success */
     #success-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -142,6 +145,40 @@
     </div>
   </div>
 
+  <div class="modal fade" id="claimDocModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px; border: none; overflow: hidden; color: #333;">
+            <div class="modal-header bg-warning text-dark border-0">
+                <h5 class="modal-title fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i> เอกสารงานเคลม (อู่นอกเครือ)</h5>
+            </div>
+            <div class="modal-body p-4 bg-light">
+                <p class="mb-3">รบกวนเตรียมเอกสารในวันนัดหมายดังนี้ครับ:</p>
+                <div class="card border-0 shadow-sm mb-3">
+                    <ul class="list-group list-group-flush rounded">
+                        <li class="list-group-item"><i class="fas fa-file-alt text-primary me-2 w-25px"></i> 1. ใบเคลมตัวจริง</li>
+                        <li class="list-group-item"><i class="fas fa-book text-danger me-2 w-25px"></i> 2. สำเนาเล่มรถ</li>
+                        <li class="list-group-item"><i class="fas fa-shield-alt text-success me-2 w-25px"></i> 3. สำเนากรมธรรม์ปัจจุบัน</li>
+                        <li class="list-group-item"><i class="fas fa-id-card text-info me-2 w-25px"></i> 4. สำเนาบัตรประชาชน (เจ้าของรถ)</li>
+                        <li class="list-group-item"><i class="fas fa-car-side text-secondary me-2 w-25px"></i> 5. สำเนาใบขับขี่ (ผู้ขับขี่)</li>
+                        <li class="list-group-item"><i class="fas fa-university text-warning me-2 w-25px"></i> 6. สำเนาหน้าสมุดบัญชี (เจ้าของรถ)</li>
+                        <li class="list-group-item">
+                            <i class="fas fa-credit-card text-dark me-2 w-25px"></i> <strong>7. บัตร ATM เจ้าของรถ + รหัส</strong><br>
+                            <small class="text-muted ms-4">* เฉพาะกรณีไม่ต้องสำรองจ่ายเงินสด</small>
+                        </li>
+                    </ul>
+                </div>
+                <div class="alert alert-danger border-0 small mb-0">
+                    <strong>⚠️ หมายเหตุ:</strong> กรณีอนุมัติราคาแล้วลูกค้ายกเลิกขอใบเคลมคืน ทางอู่ขอคิดค่าดำเนินการ 7% ครับ
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">รับทราบและจองคิวต่อ</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuW7sk_W_2o3aEezgqZ58984V_z6rQ8BlVt_Dw7ezFneoICP2wbzcGun9o0sxmjS7P/exec"; 
     const LIFF_ID = "2008660878-su2I4DUz"; 
@@ -160,6 +197,12 @@
     }
 
     function goToBooking(type) {
+        // ✅ ถ้าเลือกงาน CLAIM ให้โชว์ป๊อปอัปเอกสาร
+        if (type === 'CLAIM') {
+            const claimModal = new bootstrap.Modal(document.getElementById('claimDocModal'));
+            claimModal.show();
+        }
+
         document.getElementById('section-landing').style.display = 'none';
         document.getElementById('section-form').style.display = 'block';
         document.getElementById('q_type').value = type;
@@ -191,7 +234,6 @@
       btn.innerText = '⏳ กำลังบันทึก...'; 
       btn.disabled = true;
       
-      // ดึงค่าและตัดช่องว่างทะเบียน (Client Side Trim)
       let rawPlate = document.getElementById('q_plate').value;
       let cleanPlate = rawPlate.replace(/\s+/g, '');
 
@@ -200,7 +242,7 @@
         body: JSON.stringify({
           name: document.getElementById('q_name').value, 
           phone: document.getElementById('q_phone').value,
-          plate: cleanPlate, // ส่งแบบไม่มีช่องว่างไปเลย
+          plate: cleanPlate,
           carModel: document.getElementById('q_carModel').value,
           service: document.getElementById('q_service_dropdown').value,
           symptom: document.getElementById('q_symptom').value, 
@@ -245,10 +287,7 @@
       const plate = document.getElementById('q_search_plate').value;
       if(!plate) return alert("ระบุทะเบียนรถ");
       const btn = document.getElementById('btnSearch');
-      
-      // ✅ ตัดช่องว่างก่อนส่งไปค้นหา (เพิ่มความชัวร์)
       const cleanPlate = plate.replace(/\s+/g, '');
-      
       btn.innerText = '⏳...'; btn.disabled = true;
       
       fetch(SCRIPT_URL + "?action=search&plate=" + encodeURIComponent(cleanPlate))
@@ -262,8 +301,6 @@
           document.getElementById('resId').innerText = info.id;
           document.getElementById('resName').innerText = info.name;
           document.getElementById('resService').innerText = info.service;
-          
-          // ✅ แสดงข้อมูลรุ่นรถและอาการ
           document.getElementById('resModel').innerText = info.carModel || '-';
           document.getElementById('resSymptom').innerText = info.symptom || '-';
           
@@ -273,7 +310,6 @@
              if(p.length===3) showDate = `${p[2]}/${p[1]}/${p[0]}`;
           }
           document.getElementById('resDate').innerText = showDate;
-
           document.getElementById('resTime').innerText = info.time;
           const map = {'WAIT':'รอการดำเนินการ','IN_BAY':'อยู่ระหว่างซ่อม/สี','DONE':'เสร็จสิ้น/พร้อมรับรถ','PICKED':'รับรถแล้ว'};
           document.getElementById('resStatus').innerText = map[info.status] || info.status;
