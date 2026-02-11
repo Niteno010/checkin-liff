@@ -41,7 +41,12 @@
       border: 2px solid #333;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
-    video, canvas { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* ✨ จุดที่แก้ไข: เพิ่ม transform เพื่อกลับซ้ายขวาให้เป็นกระจกเงา */
+    video, canvas { 
+      width: 100%; height: 100%; object-fit: cover; 
+      transform: scaleX(-1); 
+    }
 
     #profile-display { 
       margin-bottom: 15px; font-size: 14px; color: #444; 
