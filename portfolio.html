@@ -9,118 +9,76 @@
     
     <style>
         :root {
-            --bg-color: #000000; /* ดำสนิท */
+            --bg-color: #000000;
             --text-primary: #ffffff;
-            --text-secondary: #a1a1a6; /* สีเทาแบบ Apple */
-            --accent-color: #ff3b30; /* สีแดง Apple */
+            --text-secondary: #a1a1a6;
+            --accent-color: #ff3b30;
         }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: "Kanit", -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* --- Typography แบบ Apple --- */
+        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-primary); font-family: "Kanit", sans-serif; overflow-x: hidden; }
         h1, h2, h3 { font-weight: 500; letter-spacing: -0.5px; margin: 0; }
         p { font-weight: 300; color: var(--text-secondary); line-height: 1.6; }
-        .section-title {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 20px;
-            background: linear-gradient(180deg, #fff, #a1a1a6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .section-subtitle {
-            text-align: center; font-size: 20px; max-width: 600px; margin: 0 auto 60px auto;
-        }
-
-        /* --- Components --- */
-        .container { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
-        .full-bleed { width: 100%; }
-
-        /* Hero Section */
+        .container { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+        
         .hero {
-            height: 85vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center;
-            background: url('https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
-            position: relative;
+            height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), #000), url('https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1920&q=80') center/cover;
         }
-        .hero::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
-        }
-        .hero-content { position: relative; z-index: 10; padding: 20px; }
-        .hero h1 { font-size: 64px; font-weight: 600; }
-        .hero p { font-size: 24px; color: #f5f5f7; margin-top: 10px; }
+        .hero h1 { font-size: 48px; font-weight: 600; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .hero p { font-size: 20px; color: #f5f5f7; margin-top: 10px; }
 
-        /* Story Section */
-        .story-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;
-        }
-        .story-text h2 { font-size: 40px; margin-bottom: 20px; }
-        .story-text p { font-size: 18px; margin-bottom: 20px; }
+        .section-title { font-size: 32px; text-align: center; margin-bottom: 40px; color: var(--text-primary); }
+        .section-subtitle { text-align: center; font-size: 20px; max-width: 600px; margin: 0 auto 60px auto; }
         .highlight { color: var(--text-primary); font-weight: 400; }
+
+        .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px; }
         .story-image img { width: 100%; border-radius: 20px; }
+        .story-text h2 { font-size: 32px; margin-bottom: 20px; }
 
-        /* Selling Points (Warranty) */
-        .selling-points {
-            display: flex; justify-content: space-around; text-align: center;
-            padding: 60px 0; border-top: 1px solid #333; border-bottom: 1px solid #333;
-        }
-        .point-item i { font-size: 48px; color: var(--accent-color); margin-bottom: 20px; }
-        .point-item h3 { font-size: 24px; margin-bottom: 10px; }
-        .point-item p { font-size: 16px; }
-
-        /* Slider สไตล์ Apple (Horizontal Scroll Snap) */
+        /* Apple Slider (Dynamic) */
         .apple-slider {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            gap: 20px;
-            padding: 20px 0 60px 20px; /* Padding ขวาเผื่อให้เห็นรูปถัดไปนิดนึง */
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; 
+            -webkit-overflow-scrolling: touch; gap: 20px; padding: 20px 20px 60px 20px;
         }
-        .apple-slider::-webkit-scrollbar { display: none; } /* ซ่อน Scrollbar */
-
+        .apple-slider::-webkit-scrollbar { display: none; }
+        
         .slide-item {
-            flex: 0 0 80%; /* ให้รูปกว้าง 80% ของจอ จะได้เห็นขอบรูปถัดไป */
-            scroll-snap-align: center;
-            position: relative;
-            border-radius: 16px; overflow: hidden;
-            transition: transform 0.3s;
+            flex: 0 0 85%; /* กว้าง 85% ของจอ */
+            scroll-snap-align: center; position: relative;
+            border-radius: 16px; overflow: hidden; background: #1c1c1e;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5); aspect-ratio: 4/3;
         }
-        .slide-item img { width: 100%; height: auto; display: block; }
+        .slide-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .slide-caption {
-            position: absolute; bottom: 20px; left: 20px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
         }
-        .slide-caption h4 { font-size: 28px; margin: 0; color: #fff; }
-        .slide-caption p { font-size: 16px; color: #ddd; margin: 5px 0 0 0; }
+        .slide-caption h4 { font-size: 22px; margin: 0; color: #fff; }
+        .slide-caption p { font-size: 14px; color: #ddd; margin: 5px 0 0 0; }
 
-        /* Footer CTA */
-        .footer-cta { text-align: center; padding: 100px 20px; background: #111; }
+        /* Loading State */
+        .loading-box { text-align: center; padding: 50px; color: var(--text-secondary); width: 100%; }
+        .fa-spinner { font-size: 40px; margin-bottom: 20px; color: var(--accent-color); }
+
+        /* Selling Points */
+        .selling-points { display: flex; justify-content: space-around; text-align: center; padding: 40px 0; border-top: 1px solid #333; margin-bottom: 40px; }
+        .point-item i { font-size: 36px; color: var(--accent-color); margin-bottom: 15px; }
+
         .cta-btn {
-            display: inline-block; padding: 15px 40px;
-            background: var(--accent-color); color: white;
-            text-decoration: none; border-radius: 30px;
-            font-size: 20px; font-weight: 500; transition: all 0.3s;
+            display: inline-block; padding: 12px 30px; background: var(--accent-color); color: white;
+            text-decoration: none; border-radius: 30px; font-size: 18px; margin-top: 30px; transition: all 0.3s;
         }
-        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 59, 48, 0.5); }
+        .cta-btn:hover { transform: scale(1.05); }
 
-        /* Responsive มือถือ */
+        .footer-cta { text-align: center; padding: 80px 20px; background: #111; }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 42px; }
-            .hero p { font-size: 18px; }
-            .section-title { font-size: 36px; }
             .story-grid { grid-template-columns: 1fr; text-align: center; }
             .selling-points { flex-direction: column; gap: 40px; }
-            .slide-item { flex: 0 0 90%; } /* มือถือให้รูปกว้างขึ้น */
+            .slide-item { flex: 0 0 90%; }
+        }
+        @media (min-width: 769px) {
+            .slide-item { flex: 0 0 400px; }
         }
     </style>
 </head>
@@ -135,7 +93,7 @@
 
     <div class="container">
         <h2 class="section-title">วิสัยทัศน์ของเรา</h2>
-        <p class="section-subtitle">เราไม่ได้แค่ทำสี แต่เราใส่ใจในทุกรายละเอียด เพื่อให้รถของคุณกลับมาเงางามเหมือนวันแรกที่ออกจากโชว์รูม</p>
+        <p class="section-subtitle">เราไม่ได้แค่ทำสี แต่เราใส่ใจในทุกรายละเอียด เพื่อให้รถของคุณกลับมาเงางามเหมือนวันแรก</p>
         
         <div class="story-grid">
             <div class="story-image">
@@ -143,50 +101,32 @@
             </div>
             <div class="story-text">
                 <h2>มาตรฐานที่เหนือกว่า <br>ในราคาที่จับต้องได้</h2>
-                <p>ที่ ๙ ออโต้ เราเชื่อว่าคุณภาพงานซ่อมสีระดับพรีเมียม ไม่จำเป็นต้องจ่ายแพงเสมอไป</p>
-                <p>เราใช้วัสดุและเทคโนโลยีการพ่นสี<span class="highlight">มาตรฐานเดียวกับศูนย์บริการชั้นนำ</span> ผสานกับฝีมือช่างผู้ชำนาญการ เพื่อให้ได้ผลลัพธ์ที่สมบูรณ์แบบที่สุด</p>
+                <p>ที่ ๙ ออโต้ เราใช้วัสดุและเทคโนโลยีการพ่นสี<span class="highlight">มาตรฐานเดียวกับศูนย์บริการชั้นนำ</span> ผสานกับฝีมือช่างผู้ชำนาญการ</p>
             </div>
         </div>
     </div>
 
-    <div class="full-bleed selling-points">
+    <div class="selling-points">
         <div class="point-item">
             <i class="fas fa-file-shield"></i>
             <h3>รับทุกประกันภัย</h3>
-            <p>อู่นอกเครือมาตรฐานสูง<br>เรารับเคลมประกันทุกบริษัท</p>
+            <p>อู่นอกเครือมาตรฐานสูง</p>
         </div>
         <div class="point-item">
             <i class="fas fa-award"></i>
             <h3>รับประกันงานสี 1 ปี</h3>
-            <p>มั่นใจในคุณภาพ<br>สีลอก สีร่อน เราเคลมให้ฟรี</p>
+            <p>สีลอก สีร่อน เคลมฟรี</p>
         </div>
     </div>
 
-    <div class="container" style="padding-bottom: 0;">
-        <h2 class="section-title">ผลงานล่าสุด</h2>
-        <p class="section-subtitle">เลื่อนเพื่อชมความเงางามที่เราภาคภูมิใจ</p>
-    </div>
-
-    <div class="apple-slider">
-        <div class="slide-item">
-            <img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1000&q=80" alt="BMW Project">
-            <div class="slide-caption">
-                <h4>BMW Series 5</h4>
-                <p>อาบน้ำคืนชีพ เก็บงานสีรอบคัน</p>
-            </div>
-        </div>
-        <div class="slide-item">
-            <img src="https://images.unsplash.com/photo-1600706432490-93d99375c5a6?auto=format&fit=crop&w=1000&q=80" alt="Audi Project">
-            <div class="slide-caption">
-                <h4>Audi TT</h4>
-                <p>ซ่อมกันชนหน้า พร้อมขัดเคลือบเงา</p>
-            </div>
-        </div>
-        <div class="slide-item">
-            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80" alt="Supercar Project">
-            <div class="slide-caption">
-                <h4>งานซ่อมสีเฉพาะจุด</h4>
-                <p>เนียนกริบ ไร้รอยต่อ สีตรงสเปค</p>
+    <div class="container" id="gallery">
+        <h2 class="section-title">ผลงานล่าสุด (จาก Google Drive)</h2>
+        <p class="section-subtitle">ภาพจริงจากอู่ อัปเดตผ่านระบบ Cloud</p>
+        
+        <div class="apple-slider" id="slider-container">
+            <div class="loading-box">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>กำลังเชื่อมต่อคลังรูปภาพ...</p>
             </div>
         </div>
     </div>
@@ -198,6 +138,56 @@
             <i class="fab fa-line"></i> สอบถาม / จองคิว
         </a>
     </div>
+
+    <script>
+        // ==========================================
+        // 🔴🔴🔴 แก้ลิงก์ Web App URL ตรงนี้ครับ 🔴🔴🔴
+        // ==========================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-e1y4CnCwCU0u_Aqq_U1epr_xM6A3dQd__AiaFaWhoVr8k1_5bfa9RI7AMJn13UXc/exec
+"; 
+        // ==========================================
+
+        async function loadPortfolio() {
+            const container = document.getElementById('slider-container');
+            
+            try {
+                // เรียกข้อมูลจาก GAS
+                const response = await fetch(`${SCRIPT_URL}?type=portfolio`);
+                const images = await response.json();
+
+                // ถ้าไม่มีรูป หรือโหลดไม่สำเร็จ
+                if (!images || images.length === 0) {
+                    container.innerHTML = '<div class="loading-box"><p>ยังไม่มีรูปผลงานในขณะนี้</p></div>';
+                    return;
+                }
+
+                // เคลียร์ตัว Loading ออก
+                container.innerHTML = '';
+
+                // วนลูปสร้างการ์ดรูปภาพ
+                images.forEach(img => {
+                    // สร้าง HTML ของแต่ละการ์ด
+                    const slide = document.createElement('div');
+                    slide.className = 'slide-item';
+                    slide.innerHTML = `
+                        <img src="${img.url}" loading="lazy" alt="${img.name}">
+                        <div class="slide-caption">
+                            <h4>${img.name}</h4>
+                            <p>9 Auto Garage Portfolio</p>
+                        </div>
+                    `;
+                    container.appendChild(slide);
+                });
+
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = '<div class="loading-box"><p>โหลดข้อมูลไม่สำเร็จ (ตรวจสอบลิงก์ Script)</p></div>';
+            }
+        }
+
+        // เริ่มทำงานเมื่อเปิดเว็บ
+        window.onload = loadPortfolio;
+    </script>
 
 </body>
 </html>
