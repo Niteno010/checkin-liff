@@ -32,7 +32,9 @@
         .cost-price { font-weight: 500; color: #ff9800; font-size: 16px; } /* สีส้ม ทุน */
         .sell-price { font-weight: 600; color: #28a745; font-size: 18px; } /* สีเขียว ขาย */
         
-        .item-footer { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 10px; }
+        .item-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #888; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+        .btn-edit { background: #ffc107; color: #000; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-edit:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -51,7 +53,7 @@
 </div>
 
 <script>
-    // 🔴🔴🔴 เอาลิงก์ Web App URL เดิมมาวางตรงนี้ครับ 🔴🔴🔴
+    // 🔴ลิงก์ API เดิมของคุณอาร์ม 🔴
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSJ9-iegRL5qN2uXBiC1Fa1kVQ_mmD9zUbJyg6yrwOGpfPnIy48eMsxhIH5foP7_RI5w/exec"; 
     
     let allItems = []; // เก็บข้อมูลทั้งหมด
@@ -109,7 +111,7 @@
                 <div class="price-grid">
                     <div class="price-box">
                         <span class="price-label">ทุนดิบ (ห้ามบอกลูกค้า)</span>
-                        <span class="cost-price">${costText}</span>
+                        <span class="cost-price" id="cost-show-${item.id}">${costText}</span>
                     </div>
                     <div class="price-box" style="background: #e8f5e9;">
                         <span class="price-label">ราคาประเมิน (บอกลูกค้า)</span>
@@ -118,12 +120,54 @@
                 </div>
 
                 <div class="item-footer">
-                    <span><i class="fas fa-box"></i> สถานะ: ${item.status || '-'}</span>
-                    <span>รหัส: ${item.id}</span>
+                    <div>
+                        <span style="display:block; margin-bottom:3px;"><i class="fas fa-box"></i> สถานะ: ${item.status || '-'}</span>
+                        <span style="font-size:11px; color:#aaa;">รหัส: ${item.id}</span>
+                    </div>
+                    <button class="btn-edit" onclick="updateCostPrompt('${item.id}', '${item.name}', '${item.cost}')">
+                        <i class="fas fa-edit"></i> แก้ไขราคา
+                    </button>
                 </div>
             `;
             list.appendChild(card);
         });
+    }
+
+    // ฟังก์ชันอัปเดตราคา (เมื่อกดปุ่ม)
+    function updateCostPrompt(id, name, oldCost) {
+        let newCost = prompt(`แก้ไขราคาต้นทุนดิบของ:\n${name}\n\n*ใส่เฉพาะตัวเลขเท่านั้น*`, oldCost);
+        
+        // ถ้าผู้ใช้กรอกข้อมูล และไม่ใช่ค่าว่าง และเป็นตัวเลข
+        if (newCost !== null && newCost.trim() !== "" && !isNaN(newCost)) {
+            // โชว์ว่ากำลังอัปเดต
+            document.getElementById(`cost-show-${id}`).innerText = "กำลังอัปเดต...";
+            
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: "update",
+                    id: id,
+                    cost: newCost
+                }),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert("✅ อัปเดตราคาเรียบร้อย! ระบบจะโหลดข้อมูลใหม่");
+                    location.reload(); // โหลดหน้าเว็บใหม่เพื่อให้เห็นราคาขายที่คำนวณใหม่
+                } else {
+                    alert("❌ เกิดข้อผิดพลาด: " + data.message);
+                    document.getElementById(`cost-show-${id}`).innerText = oldCost + ' ฿';
+                }
+            })
+            .catch(error => {
+                alert("❌ การเชื่อมต่อขัดข้อง");
+                document.getElementById(`cost-show-${id}`).innerText = oldCost + ' ฿';
+            });
+        } else if (newCost !== null) {
+            alert("⚠️ กรุณาใส่เฉพาะตัวเลขเท่านั้นครับ");
+        }
     }
 </script>
 
