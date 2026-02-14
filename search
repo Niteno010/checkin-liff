@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เช็คราคาอะไหล่ - ๙ ออโต้ การาจ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg: #f0f2f5; --primary: #1a1a1a; --accent: #ff3b30; --text: #333; --card-bg: #fff; }
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        /* กล่องค้นหา */
+        .search-box { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 10px; z-index: 100; margin-bottom: 20px; }
+        .search-box h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 18px; }
+        .search-input-wrapper { position: relative; }
+        .search-input-wrapper i { position: absolute; left: 15px; top: 14px; color: #888; }
+        input[type="text"] { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
+        input[type="text"]:focus { outline: none; border-color: var(--accent); background: #fff; }
+        
+        /* กล่องโชว์สินค้า */
+        #loading { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+        .item-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 12px; border-left: 4px solid var(--accent); }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .item-title { font-weight: 600; font-size: 16px; color: var(--primary); margin: 0; }
+        .item-model { font-size: 13px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
+        
+        .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; }
+        .price-box { background: #f8f9fa; padding: 8px; border-radius: 8px; text-align: center; }
+        .price-label { font-size: 12px; color: #888; display: block; margin-bottom: 2px; }
+        .cost-price { font-weight: 500; color: #ff9800; font-size: 16px; } /* สีส้ม ทุน */
+        .sell-price { font-weight: 600; color: #28a745; font-size: 18px; } /* สีเขียว ขาย */
+        
+        .item-footer { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="search-box">
+        <h3><i class="fas fa-search"></i> ค้นหาราคาอะไหล่</h3>
+        <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="พิมพ์ชื่ออะไหล่ หรือ รุ่นรถ..." onkeyup="filterItems()">
+        </div>
+    </div>
+
+    <div id="loading"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูลจากฐาน...</div>
+    <div id="resultsList"></div>
+</div>
+
+<script>
+    // 🔴🔴🔴 เอาลิงก์ Web App URL เดิมมาวางตรงนี้ครับ 🔴🔴🔴
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4LVtHCofPno8AsfY9jSPjvh1tsn2T0fNBLfl6_ZH5-f5OVK6zF7es4GgVuyvEAlDyvQ/exec"; 
+    
+    let allItems = []; // เก็บข้อมูลทั้งหมด
+
+    // ดึงข้อมูลตอนเปิดหน้าเว็บ
+    fetch(GOOGLE_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                allItems = data.data;
+                document.getElementById('loading').style.display = 'none';
+                renderItems(allItems); // โชว์ทั้งหมดตอนแรก
+            }
+        })
+        .catch(error => {
+            document.getElementById('loading').innerHTML = "❌ โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช";
+        });
+
+    // ฟังก์ชันค้นหาและกรองข้อมูล
+    function filterItems() {
+        const searchText = document.getElementById('searchInput').value.toLowerCase();
+        
+        const filtered = allItems.filter(item => {
+            return item.name.toLowerCase().includes(searchText) || 
+                   item.model.toLowerCase().includes(searchText) || 
+                   item.category.toLowerCase().includes(searchText);
+        });
+        
+        renderItems(filtered);
+    }
+
+    // ฟังก์ชันวาดกล่องสินค้า
+    function renderItems(items) {
+        const list = document.getElementById('resultsList');
+        list.innerHTML = '';
+        
+        if(items.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">ไม่พบข้อมูลที่ค้นหา</div>';
+            return;
+        }
+
+        items.forEach(item => {
+            // เช็คว่ามีราคาไหม ถ้าไม่มีให้โชว์เป็น -
+            const costText = item.cost ? item.cost.toLocaleString() + ' ฿' : '-';
+            const sellText = item.sellPrice ? item.sellPrice.toLocaleString() + ' ฿' : '-';
+
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <div class="item-header">
+                    <h4 class="item-title">${item.name}</h4>
+                    <span class="item-model">${item.model}</span>
+                </div>
+                
+                <div class="price-grid">
+                    <div class="price-box">
+                        <span class="price-label">ทุนดิบ (ห้ามบอกลูกค้า)</span>
+                        <span class="cost-price">${costText}</span>
+                    </div>
+                    <div class="price-box" style="background: #e8f5e9;">
+                        <span class="price-label">ราคาประเมิน (บอกลูกค้า)</span>
+                        <span class="sell-price">${sellText}</span>
+                    </div>
+                </div>
+
+                <div class="item-footer">
+                    <span><i class="fas fa-box"></i> สถานะ: ${item.status || '-'}</span>
+                    <span>รหัส: ${item.id}</span>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+</script>
+
+</body>
+</html>
