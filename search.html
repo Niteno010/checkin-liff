@@ -15,26 +15,16 @@
         .search-box { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 10px; z-index: 100; margin-bottom: 20px; }
         .search-input-wrapper { position: relative; }
         .search-input-wrapper i { position: absolute; left: 15px; top: 14px; color: #888; }
-        input[type="text"] { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
-        input[type="text"]:focus { outline: none; border-color: var(--accent); background: #fff; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
+        .search-input-wrapper input { padding-left: 40px; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
         
         /* กล่องโชว์สินค้า */
         #loading { text-align: center; padding: 20px; color: #666; font-size: 14px; }
         .item-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 15px; border-top: 4px solid var(--accent); }
-        
-        /* ส่วนหัวชื่อสินค้าและรุ่น */
         .item-title { font-weight: 600; font-size: 17px; color: var(--primary); margin: 0 0 8px 0; line-height: 1.3; }
-        /* 🔴 ปรับปรุงใหม่: แท็กรุ่นรถให้เด่นขึ้น 🔴 */
-        .item-model { 
-            font-size: 13px; 
-            color: #c62828; /* ตัวหนังสือสีแดงเข้ม */
-            background: #ffebee; /* พื้นหลังสีแดงอ่อนจางๆ */
-            border: 1px solid #ffcdd2; /* มีขอบสีแดงอ่อน */
-            padding: 4px 10px; 
-            border-radius: 20px; /* ขอบมนแบบแคปซูล */
-            font-weight: 500;
-            display: inline-block;
-        }
+        .item-model { font-size: 13px; color: #c62828; background: #ffebee; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 20px; font-weight: 500; display: inline-block; margin-bottom: 5px;}
+        .item-category { font-size: 12px; color: #666; background: #eee; padding: 3px 8px; border-radius: 5px; margin-left: 5px; }
         
         .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; }
         .price-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; }
@@ -43,9 +33,25 @@
         .sell-price { font-weight: 700; color: #28a745; font-size: 20px; }
         
         .item-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #888; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
-        .btn-edit { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .btn-edit:active { transform: scale(0.95); background: #ffe8a1; }
+        .btn-edit { background: #1a1a1a; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .btn-edit:active { transform: scale(0.95); background: #333; }
         .btn-edit i { margin-right: 4px; }
+
+        /* ================= ป๊อปอัปแก้ไขข้อมูล (Modal) ================= */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .modal-content { background-color: #fff; margin: 10vh auto; padding: 20px; border-radius: 16px; width: 90%; max-width: 450px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-header h3 { margin: 0; color: var(--primary); font-size: 18px; }
+        .close-btn { color: #aaa; font-size: 24px; font-weight: bold; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: #000; }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 4px; }
+        
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-save { flex: 2; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: 600; font-size: 15px; cursor: pointer; }
+        .btn-cancel { flex: 1; background: #ddd; color: #333; border: none; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; font-size: 15px; cursor: pointer; }
+        .btn-delete { flex: 1; background: #fff; color: #dc3545; border: 1px solid #dc3545; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; font-size: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -62,12 +68,61 @@
     <div id="resultsList"></div>
 </div>
 
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit"></i> แก้ไขข้อมูลสินค้า</h3>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+        
+        <input type="hidden" id="edit-id">
+        
+        <div class="form-group">
+            <label>หมวดหมู่</label>
+            <input type="text" id="edit-category">
+        </div>
+        <div class="form-group">
+            <label>ชื่อรายการ / อะไหล่</label>
+            <input type="text" id="edit-name">
+        </div>
+        <div class="form-group">
+            <label>รุ่นรถ</label>
+            <input type="text" id="edit-model">
+        </div>
+        <div class="form-group">
+            <label>ต้นทุนดิบ (บาท)</label>
+            <input type="number" id="edit-cost">
+        </div>
+        <div class="form-group">
+            <label>ประเภทราคา</label>
+            <select id="edit-priceType">
+                <option value="ต้องบวกสูตรอู่">ต้องบวกสูตรอู่</option>
+                <option value="ราคาเน็ตแล้ว">ราคาเน็ตแล้ว</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>สถานะ</label>
+            <select id="edit-status">
+                <option value="มีของพร้อมทำ">มีของพร้อมทำ / เบิกได้เลย</option>
+                <option value="สั่งศูนย์ (รอของ)">สั่งศูนย์ (รอของ)</option>
+                <option value="เช็คสต๊อกก่อน">ต้องเช็คสต๊อกก่อน</option>
+            </select>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-save" id="btnSave" onclick="saveEdit()"><i class="fas fa-save"></i> บันทึก</button>
+            <button class="btn-delete" id="btnDelete" onclick="deleteItem()"><i class="fas fa-trash"></i> ลบ</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // 🔴ลิงก์ API เดิมของคุณอาร์ม 🔴
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSJ9-iegRL5qN2uXBiC1Fa1kVQ_mmD9zUbJyg6yrwOGpfPnIy48eMsxhIH5foP7_RI5w/exec"; 
+    // 🔴 API ตัวใหม่ที่อัปเดตระบบแล้ว 🔴
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyufJqFMSR44T80FbChVOJofZ7KYbvq1f5LHz-u_0HNPFtU8GTK78hcyTmG513TqJGg1Q/exec"; 
     
     let allItems = []; 
 
+    // ดึงข้อมูลตอนเปิดหน้า
     fetch(GOOGLE_SCRIPT_URL)
         .then(response => response.json())
         .then(data => {
@@ -91,6 +146,7 @@
         renderItems(filtered);
     }
 
+    // วาดกล่องสินค้า
     function renderItems(items) {
         const list = document.getElementById('resultsList');
         list.innerHTML = '';
@@ -106,31 +162,33 @@
 
             const card = document.createElement('div');
             card.className = 'item-card';
-            // 🔴 จัดโครงสร้างใหม่ เอาชื่อไว้บน รุ่นรถไว้ล่าง 🔴
             card.innerHTML = `
                 <div style="margin-bottom: 10px;">
                     <h4 class="item-title">${item.name}</h4>
-                    <span class="item-model"><i class="fas fa-car"></i> ${item.model}</span>
+                    <div>
+                        <span class="item-model"><i class="fas fa-car"></i> ${item.model}</span>
+                        <span class="item-category">${item.category || ''}</span>
+                    </div>
                 </div>
                 
                 <div class="price-grid">
                     <div class="price-box">
-                        <span class="price-label"><i class="fas fa-coins"></i> ทุนดิบ (ห้ามบอกลูกค้า)</span>
-                        <span class="cost-price" id="cost-show-${item.id}">${costText}</span>
+                        <span class="price-label"><i class="fas fa-coins"></i> ทุนดิบ (ห้ามบอก)</span>
+                        <span class="cost-price">${costText}</span>
                     </div>
                     <div class="price-box" style="background: #e8f5e9; border:1px solid #c3e6cb;">
-                        <span class="price-label"><i class="fas fa-tag"></i> ราคาประเมิน (บอกลูกค้า)</span>
+                        <span class="price-label"><i class="fas fa-tag"></i> ราคา (บอกลูกค้า)</span>
                         <span class="sell-price">${sellText}</span>
                     </div>
                 </div>
 
                 <div class="item-footer">
                     <div>
-                        <span style="display:block; margin-bottom:3px; font-weight:500;"><i class="fas fa-info-circle"></i> สถานะ: ${item.status || '-'}</span>
+                        <span style="display:block; margin-bottom:3px; font-weight:500; color:#444;"><i class="fas fa-info-circle"></i> สถานะ: ${item.status || '-'}</span>
                         <span style="font-size:11px; color:#aaa;">รหัส: ${item.id}</span>
                     </div>
-                    <button class="btn-edit" onclick="updateCostPrompt('${item.id}', '${item.name}', '${item.cost}')">
-                        <i class="fas fa-edit"></i> แก้ไขราคา
+                    <button class="btn-edit" onclick="openEditModal('${item.id}')">
+                        <i class="fas fa-edit"></i> จัดการ
                     </button>
                 </div>
             `;
@@ -138,38 +196,121 @@
         });
     }
 
-    function updateCostPrompt(id, name, oldCost) {
-        let newCost = prompt(`แก้ไขราคาต้นทุนดิบของ:\n${name}\n\n*ใส่เฉพาะตัวเลขเท่านั้น*`, oldCost);
+    // ================== ฟังก์ชันจัดการป๊อปอัป ==================
+
+    function openEditModal(id) {
+        // หาข้อมูลสินค้าจาก ID
+        const item = allItems.find(i => i.id === id);
+        if(!item) return;
+
+        // ดึงข้อมูลมาหยอดใส่ฟอร์ม
+        document.getElementById('edit-id').value = item.id;
+        document.getElementById('edit-category').value = item.category || '';
+        document.getElementById('edit-name').value = item.name || '';
+        document.getElementById('edit-model').value = item.model || '';
+        document.getElementById('edit-cost').value = item.cost || '';
+        document.getElementById('edit-priceType').value = item.priceType || 'ต้องบวกสูตรอู่';
         
-        if (newCost !== null && newCost.trim() !== "" && !isNaN(newCost)) {
-            document.getElementById(`cost-show-${id}`).innerText = "กำลังอัปเดต...";
-            
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: "update",
-                    id: id,
-                    cost: newCost
-                }),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    alert("✅ อัปเดตราคาเรียบร้อย! ระบบจะโหลดข้อมูลใหม่");
-                    location.reload(); 
-                } else {
-                    alert("❌ เกิดข้อผิดพลาด: " + data.message);
-                    document.getElementById(`cost-show-${id}`).innerText = oldCost + ' ฿';
-                }
-            })
-            .catch(error => {
-                alert("❌ การเชื่อมต่อขัดข้อง");
-                document.getElementById(`cost-show-${id}`).innerText = oldCost + ' ฿';
-            });
-        } else if (newCost !== null) {
-            alert("⚠️ กรุณาใส่เฉพาะตัวเลขเท่านั้นครับ");
+        // จัดการเรื่องสถานะ (ถ้ามีสถานะแปลกๆ ให้เซ็ตเป็น default ไว้ก่อน)
+        const statusSelect = document.getElementById('edit-status');
+        const options = Array.from(statusSelect.options).map(opt => opt.value);
+        if(options.includes(item.status)) {
+            statusSelect.value = item.status;
+        } else {
+            statusSelect.value = 'มีของพร้อมทำ'; // ค่าเริ่มต้นถ้าไม่ตรง
         }
+
+        // โชว์ป๊อปอัป
+        document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // ปิดป๊อปอัปเวลาจิ้มพื้นหลังสีดำ
+    window.onclick = function(event) {
+        const modal = document.getElementById('editModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // ================== ฟังก์ชันบันทึก & ลบข้อมูล ==================
+
+    function saveEdit() {
+        const btnSave = document.getElementById('btnSave');
+        btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> บันทึก...';
+        btnSave.disabled = true;
+
+        const payload = {
+            action: "update",
+            id: document.getElementById('edit-id').value,
+            category: document.getElementById('edit-category').value,
+            name: document.getElementById('edit-name').value,
+            model: document.getElementById('edit-model').value,
+            cost: document.getElementById('edit-cost').value,
+            priceType: document.getElementById('edit-priceType').value,
+            status: document.getElementById('edit-status').value
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert("✅ อัปเดตข้อมูลเรียบร้อยแล้ว!");
+                location.reload(); 
+            } else {
+                alert("❌ เกิดข้อผิดพลาด: " + data.message);
+                btnSave.innerHTML = '<i class="fas fa-save"></i> บันทึก';
+                btnSave.disabled = false;
+            }
+        })
+        .catch(error => {
+            alert("❌ การเชื่อมต่อขัดข้อง");
+            btnSave.innerHTML = '<i class="fas fa-save"></i> บันทึก';
+            btnSave.disabled = false;
+        });
+    }
+
+    function deleteItem() {
+        const id = document.getElementById('edit-id').value;
+        const name = document.getElementById('edit-name').value;
+        
+        // ถามเพื่อความชัวร์ก่อนลบ
+        if(!confirm(`⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้ทิ้งถาวร?\n\n"${name}"\n\n(ลบแล้วกู้คืนไม่ได้นะครับ)`)) {
+            return;
+        }
+
+        const btnDelete = document.getElementById('btnDelete');
+        btnDelete.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ลบ...';
+        btnDelete.disabled = true;
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "delete", id: id }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert("🗑️ ลบข้อมูลเรียบร้อยแล้ว!");
+                location.reload(); 
+            } else {
+                alert("❌ เกิดข้อผิดพลาด: " + data.message);
+                btnDelete.innerHTML = '<i class="fas fa-trash"></i> ลบ';
+                btnDelete.disabled = false;
+            }
+        })
+        .catch(error => {
+            alert("❌ การเชื่อมต่อขัดข้อง");
+            btnDelete.innerHTML = '<i class="fas fa-trash"></i> ลบ';
+            btnDelete.disabled = false;
+        });
     }
 </script>
 
