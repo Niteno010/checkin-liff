@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>ระบบเปิดจ๊อบ - ๙ ออโต้ การาจ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --bg: #f0f2f5; --primary: #1a1a1a; --accent: #ff3b30; --success: #28a745; --text: #333; --card-bg: #fff; }
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        
+        /* เมนูล่าง */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #888; font-size: 13px; cursor: pointer; transition: 0.3s; position: relative; }
+        .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); font-weight: 500; }
+        .nav-item.active i { color: var(--accent); }
+        .badge { position: absolute; top: 5px; right: 20vw; background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; }
+
+        /* สวิตช์สลับโหมดเปิดจ๊อบ */
+        .segment-control { display: flex; background: #e0e0e0; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+        .seg-btn { flex: 1; text-align: center; padding: 12px 5px; border-radius: 8px; border: none; background: transparent; color: #666; font-size: 15px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; transition: 0.3s; }
+        .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 600; }
+
+        /* Tabs ทั่วไป */
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ฟอร์ม */
+        .search-box { background: var(--card-bg); padding: 15px; border-radius: 12px; position: sticky; top: 10px; z-index: 100; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
+        textarea { min-height: 80px; resize: vertical; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 5px; color: #555; }
+        .section-title { font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; color: var(--primary); margin-top: 15px; }
+
+        /* การ์ดสินค้า */
+        .item-card { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sell-price { color: var(--success); font-weight: bold; font-size: 18px; }
+        .btn-add { width: 100%; margin-top: 10px; background: #e8f5e9; color: var(--success); border: 1px solid var(--success); padding: 10px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; }
+
+        /* ตะกร้า UI */
+        .cart-item { background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee; }
+        .cart-item-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 500; }
+        .cart-item-price-row { display: flex; align-items: center; justify-content: space-between; }
+        .price-input { width: 100px !important; padding: 8px !important; text-align: right; color: var(--success); font-weight: bold; border: 1px solid #ccc !important; }
+        .btn-remove { color: #dc3545; background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px; }
+        .btn-custom { background: #fff; border: 1px dashed #aaa; color: #555; padding: 12px; width: 100%; border-radius: 8px; font-family: 'Kanit'; cursor: pointer; margin-bottom: 15px; }
+
+        .total-box { background: var(--primary); color: #fff; padding: 15px; border-radius: 12px; text-align: right; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 12px; font-family: 'Kanit'; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .btn-submit.close-job { background: var(--success); box-shadow: 0 4px 10px rgba(40,167,69,0.2); }
+    </style>
+</head>
+<body>
+
+<div id="tab-search" class="tab-content container">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 พิมพ์ชื่ออะไหล่ หรือ รุ่นรถ..." onkeyup="filterItems()">
+    </div>
+    <div id="loading" style="text-align: center; color: #888; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดฐานข้อมูล...</div>
+    <div id="resultsList"></div>
+</div>
+
+<div id="tab-job" class="tab-content active container">
+    
+    <div class="segment-control">
+        <button class="seg-btn active" id="btn-mode-new" onclick="setJobMode('new')">🆕 รับรถเข้าใหม่</button>
+        <button class="seg-btn" id="btn-mode-update" onclick="setJobMode('update')">🛠️ รถที่กำลังซ่อม</button>
+    </div>
+
+    <div id="mode-new">
+        <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px;">
+            <i class="fas fa-info-circle"></i> โหมดนี้สำหรับจดรับรถเบื้องต้น (สถานะจะตั้งเป็น "รอดำเนินการ")
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+                <label>ทะเบียนรถ <span style="color:red;">*</span></label>
+                <input type="text" id="new-plate" placeholder="กข 1234">
+            </div>
+            <div class="form-group">
+                <label>เลขไมล์ <span style="color:red;">*</span></label>
+                <input type="number" id="new-mileage" placeholder="120500">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>รุ่นรถ / เบอร์โทร (ถ้ามี)</label>
+            <input type="text" id="new-model" placeholder="Almera / 08X-XXX-XXXX">
+        </div>
+        
+        <div class="form-group">
+            <label>อาการที่ลูกค้าแจ้ง <span style="color:red;">*</span></label>
+            <textarea id="new-symptoms" placeholder="เช่น มีเสียงดังล้อหน้าขวา, แอร์ไม่เย็น..."></textarea>
+        </div>
+
+        <button class="btn-submit" onclick="saveNewJob()"><i class="fas fa-save"></i> บันทึกรับรถ (เปิดจ๊อบใหม่)</button>
+    </div>
+
+    <div id="mode-update" style="display: none;">
+        
+        <div class="form-group">
+            <label><i class="fas fa-car-side"></i> เลือกรถที่กำลังซ่อม (รอดำเนินการ)</label>
+            <select id="active-jobs-select" onchange="loadActiveJobData()">
+                <option value="">-- กำลังโหลดข้อมูลรถ... --</option>
+            </select>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-wrench"></i> รายการซ่อม / อะไหล่บิลนี้</h3>
+        <div id="cartList" style="margin-bottom: 10px; font-size: 14px; color: #888; text-align: center; padding: 10px; background: #eee; border-radius: 8px;">
+            ยังไม่มีรายการ (สลับไปหน้าค้นหาเพื่อหยิบของ)
+        </div>
+        
+        <button class="btn-custom" onclick="addCustomItem()">
+            <i class="fas fa-plus"></i> พิมพ์รายการเอง (ค่าแรง / ค่าเช็ครถ / อื่นๆ)
+        </button>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>ประวัติ/อาการ/หมายเหตุ (ระบบดึงของเดิมมาให้ แก้ไขได้)</label>
+            <textarea id="update-details" placeholder="ระบบจะดึงอาการเดิมตอนรับรถมาโชว์ตรงนี้..."></textarea>
+        </div>
+
+        <div class="total-box">
+            ยอดรวมสุทธิ: <span id="grandTotal">0</span> ฿
+        </div>
+
+        <div class="form-group" style="background: #e8f4f8; padding: 15px; border-radius: 12px; border: 1px solid #b8daff;">
+            <label style="color: #0056b3;"><i class="fas fa-flag-checkered"></i> เลือกสถานะบิล</label>
+            <select id="update-status" style="font-weight: bold; color: #333;">
+                <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (รับเงินตามยอดข้างบน)</option>
+                <option value="แค่เสนอราคา">📝 แค่เสนอราคา / ลูกค้าขอเลื่อน</option>
+                <option value="รอดำเนินการ">⏳ รอดำเนินการ (ดองบิลไว้ทำต่อวันอื่น)</option>
+            </select>
+        </div>
+
+        <button class="btn-submit close-job" id="btnUpdateJob" onclick="updateJob()"><i class="fas fa-save"></i> บันทึกข้อมูลรถคันนี้</button>
+    </div>
+
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item" id="nav-search" onclick="switchTab('search')">
+        <i class="fas fa-search"></i> ค้นหาอะไหล่
+    </div>
+    <div class="nav-item active" id="nav-job" onclick="switchTab('job')">
+        <i class="fas fa-clipboard-list"></i> จัดการจ๊อบ
+        <span class="badge" id="cartBadge">0</span>
+    </div>
+</nav>
+
+<script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgVz1m_VdZOyiLZjkbXaITInll47yRp1QmFDc6OCbdyedJLlcI-WXlNA1WBsWsEGwMJg/exec";
+    
+    let allItems = []; 
+    let activeJobs = []; // เก็บรายชื่อรถที่ยังไม่ปิดจ๊อบ
+    let cart = []; 
+
+    // โหลดฐานข้อมูลทันทีที่เปิดแอป
+    fetch(GOOGLE_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                allItems = data.data;
+                document.getElementById('loading').style.display = 'none';
+                renderItems(allItems); 
+            }
+        });
+
+    // โหลดรายชื่อรถที่สถานะ "รอดำเนินการ"
+    function fetchActiveJobs() {
+        fetch(GOOGLE_SCRIPT_URL + "?action=get_active_jobs")
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    activeJobs = data.data;
+                    const select = document.getElementById('active-jobs-select');
+                    select.innerHTML = '<option value="">-- กรุณาเลือกรถ --</option>';
+                    if(activeJobs.length === 0) {
+                        select.innerHTML = '<option value="">ไม่มีรถค้างซ่อม (ว่าง)</option>';
+                    } else {
+                        activeJobs.forEach(job => {
+                            select.innerHTML += `<option value="${job.plate}">${job.plate} (ไมล์: ${job.mileage})</option>`;
+                        });
+                    }
+                }
+            });
+    }
+
+    // เรียกดึงข้อมูลรถทันที
+    fetchActiveJobs();
+
+    // ==========================================
+    // UI ควบคุมการสลับหน้า/สลับโหมด
+    // ==========================================
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        document.getElementById('nav-' + tabName).classList.add('active');
+        window.scrollTo(0, 0); 
+    }
+
+    function setJobMode(mode) {
+        document.getElementById('btn-mode-new').classList.remove('active');
+        document.getElementById('btn-mode-update').classList.remove('active');
+        document.getElementById('mode-new').style.display = 'none';
+        document.getElementById('mode-update').style.display = 'none';
+
+        document.getElementById('btn-mode-' + mode).classList.add('active');
+        document.getElementById('mode-' + mode).style.display = 'block';
+
+        if(mode === 'update') fetchActiveJobs(); // รีเฟรชรายชื่อรถใหม่เสมอ
+    }
+
+    // ==========================================
+    // ระบบค้นหาและตะกร้า (เหมือนเดิม แต่อัปเกรด)
+    // ==========================================
+    function filterItems() {
+        const text = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allItems.filter(item => 
+            item.name.toLowerCase().includes(text) || item.model.toLowerCase().includes(text)
+        );
+        renderItems(filtered);
+    }
+
+    function renderItems(items) {
+        const list = document.getElementById('resultsList');
+        list.innerHTML = '';
+        items.forEach(item => {
+            const price = item.sellPrice ? item.sellPrice : 0;
+            list.innerHTML += `
+                <div class="item-card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div>
+                            <div style="font-weight:600; font-size:15px;">${item.name}</div>
+                            <div style="font-size:12px; color:#666;">รุ่น: ${item.model}</div>
+                        </div>
+                        <div class="sell-price">${price.toLocaleString()} ฿</div>
+                    </div>
+                    <button class="btn-add" onclick="addToCart('${item.name}', ${price})">
+                        <i class="fas fa-plus-circle"></i> หยิบใส่บิล
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    function addToCart(name, price) {
+        cart.push({ name: name, price: price });
+        updateCartUI();
+        alert(`✅ หยิบ "${name}" ใส่บิลแล้ว`);
+    }
+
+    function addCustomItem() {
+        const name = prompt("พิมพ์ชื่อรายการ (เช่น ล้างห้องเครื่อง, ค่าแรงเช็คโค้ด):");
+        if(name) {
+            let price = prompt("ใส่ราคา (ถ้าฟรี/ประเมินไม่คิดเงิน ให้ใส่ 0):", "0");
+            cart.push({ name: name, price: parseInt(price) || 0 });
+            updateCartUI();
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function changeItemPrice(index, newPrice) {
+        cart[index].price = parseInt(newPrice) || 0;
+        updateTotal(); 
+    }
+
+    function updateCartUI() {
+        const list = document.getElementById('cartList');
+        const badge = document.getElementById('cartBadge');
+        
+        if(cart.length > 0) {
+            badge.style.display = 'block'; badge.innerText = cart.length; list.style.background = 'transparent';
+        } else {
+            badge.style.display = 'none';
+        }
+
+        list.innerHTML = '';
+        if(cart.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:10px; background:#eee; border-radius:8px;">ยังไม่มีรายการประเมินราคา</div>';
+        } else {
+            cart.forEach((item, index) => {
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-header">
+                            <span><b>${index+1}.</b> ${item.name}</span>
+                            <button class="btn-remove" onclick="removeFromCart(${index})"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="cart-item-price-row">
+                            <span style="font-size:12px; color:#888;">ปรับราคา ➔</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <input type="number" class="price-input" value="${item.price}" onkeyup="changeItemPrice(${index}, this.value)" onchange="changeItemPrice(${index}, this.value)">
+                                <span style="font-weight:bold;">฿</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        updateTotal();
+    }
+
+    function updateTotal() {
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('grandTotal').innerText = total.toLocaleString();
+    }
+
+    // ==========================================
+    // 🔴 ฟังก์ชันส่งข้อมูลเข้า Google Sheets
+    // ==========================================
+
+    // 1. โหมดรับรถเข้าใหม่
+    function saveNewJob() {
+        const plate = document.getElementById('new-plate').value;
+        const mileage = document.getElementById('new-mileage').value;
+        const symptoms = document.getElementById('new-symptoms').value;
+
+        if (!plate || !mileage || !symptoms) {
+            alert("⚠️ กรุณากรอก ทะเบียน, ไมล์ และ อาการเบื้องต้น ครับ"); return;
+        }
+
+        const payload = {
+            action: "add_job",
+            plate: plate,
+            model: document.getElementById('new-model').value,
+            mileage: mileage,
+            details: "[อาการรับรถ]:\n" + symptoms,
+            total: 0, // รับรถใหม่ ยอดเป็น 0
+            phone: "" 
+        };
+
+        submitData(payload, "เปิดจ๊อบใหม่เรียบร้อย!");
+    }
+
+    // 2. ดึงข้อมูลรถเก่ามาโชว์ตอนเลือกรถ
+    function loadActiveJobData() {
+        const plate = document.getElementById('active-jobs-select').value;
+        const job = activeJobs.find(j => j.plate === plate);
+        if(job) {
+            // ดึงประวัติเดิมมาแปะให้แอดมินดูและพิมพ์ต่อได้
+            document.getElementById('update-details').value = job.details + "\n\n[อัปเดต]:\n";
+        } else {
+            document.getElementById('update-details').value = "";
+        }
+    }
+
+    // 3. โหมดอัปเดต/ตีราคา/ปิดจ๊อบ
+    function updateJob() {
+        const plate = document.getElementById('active-jobs-select').value;
+        if (!plate) { alert("⚠️ กรุณาเลือกรถที่ต้องการอัปเดตครับ"); return; }
+
+        let currentDetails = document.getElementById('update-details').value;
+        let finalStatus = document.getElementById('update-status').value;
+        
+        // ถ้ามีการเลือกอะไหล่ในตะกร้า ให้เอาไปต่อท้ายข้อความ
+        if(cart.length > 0) {
+            currentDetails += `\n\n[ประเมินรายการ]:\n`;
+            cart.forEach(item => {
+                let priceText = item.price > 0 ? `${item.price} บ.` : `ฟรี`;
+                currentDetails += `- ${item.name} (${priceText})\n`;
+            });
+        }
+
+        const grandTotal = document.getElementById('grandTotal').innerText.replace(/,/g, '');
+
+        const payload = {
+            action: "update_job",
+            plate: plate,
+            details: currentDetails.trim(),
+            total: grandTotal,
+            status: finalStatus
+        };
+
+        submitData(payload, "บันทึกอัปเดตข้อมูลรถเรียบร้อย!");
+    }
+
+    // ตัวยิง API กลาง
+    function submitData(payload, successMsg) {
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert("✅ " + successMsg);
+                location.reload(); 
+            } else {
+                alert("❌ พลาดแล้ว: " + data.message);
+            }
+        });
+    }
+</script>
+</body>
+</html>
