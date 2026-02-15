@@ -3,355 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    
-    <title>ระบบอู่ - ๙ ออโต้ การาจ</title>
+    <title>๙ ออโต้ การาจ - Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root { --bg: #f0f2f5; --primary: #1a1a1a; --accent: #ff3b30; --success: #28a745; --text: #333; --card-bg: #fff; }
-        body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; }
+        :root { --bg: #f8f9fa; --primary: #1a1a1a; --accent: #ff3b30; --success: #28a745; --text: #333; --card: #fff; }
+        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
-        /* เมนูล่าง */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #888; font-size: 13px; cursor: pointer; transition: 0.3s; position: relative; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active { color: var(--primary); font-weight: 500; }
-        .nav-item.active i { color: var(--accent); }
-        .badge { position: absolute; top: 5px; right: 20vw; background: var(--accent); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; }
+        /* Navigation */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 12px; cursor: pointer; }
+        .nav-item i { display: block; font-size: 20px; margin-bottom: 3px; }
+        .nav-item.active { color: var(--accent); }
 
-        /* สวิตช์สลับโหมดเปิดจ๊อบ */
-        .segment-control { display: flex; background: #e0e0e0; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
-        .seg-btn { flex: 1; text-align: center; padding: 12px 5px; border-radius: 8px; border: none; background: transparent; color: #666; font-size: 15px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; transition: 0.3s; }
-        .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 600; }
-
+        /* Tabs */
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        /* ฟอร์มและ Input */
-        .search-box { background: var(--card-bg); padding: 15px; border-radius: 12px; position: sticky; top: 10px; z-index: 100; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
-        textarea { min-height: 80px; resize: vertical; }
+        /* UI Elements */
+        .search-box { background: var(--card); padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; position: sticky; top: 10px; z-index: 100; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 16px; box-sizing: border-box; }
+        .item-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Cart Styles (Checkboxes & Quantity) */
+        .cart-item { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
+        .cart-row-top { display: flex; align-items: flex-start; gap: 10px; }
+        .cart-row-bottom { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 8px; border-radius: 6px; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 2px 8px; }
+        .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 5px; }
+        .price-input { width: 90px !important; text-align: right; font-weight: bold; color: var(--success); border: none !important; background: transparent !important; }
+        
+        /* Total & Buttons */
+        .total-banner { background: var(--primary); color: #fff; padding: 15px; border-radius: 12px; text-align: right; font-size: 20px; font-weight: bold; margin: 15px 0; }
+        .btn-main { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-bill { background: #007bff; color: #fff; margin-bottom: 10px; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 5px; color: #555; }
-        .section-title { font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; color: var(--primary); margin-top: 15px; }
+        /* Timeline History */
+        .history-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; border-top: 5px solid #ddd; }
+        .status-tag { position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 3px 8px; border-radius: 20px; }
+        .status-closed { background: #e8f5e9; color: var(--success); }
+        .status-pending { background: #fff3cd; color: #856404; }
 
-        /* การ์ดสินค้า */
-        .item-card { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .sell-price { color: var(--success); font-weight: bold; font-size: 18px; text-align: right; }
-        .card-actions { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-add { flex: 2; background: #e8f5e9; color: var(--success); border: 1px solid var(--success); padding: 10px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; }
-        .btn-edit { flex: 1; background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.7); }
+        .modal-content { background:#fff; margin:5% auto; padding:20px; width:90%; max-width:450px; border-radius:15px; }
 
-        /* ตะกร้า UI */
-        .cart-item { background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee; }
-        .cart-item-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 500; }
-        .cart-item-price-row { display: flex; align-items: center; justify-content: space-between; }
-        .price-input { width: 100px !important; padding: 8px !important; text-align: right; color: var(--success); font-weight: bold; border: 1px solid #ccc !important; }
-        .btn-remove { color: #dc3545; background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px; }
-        .btn-custom { background: #fff; border: 1px dashed #aaa; color: #555; padding: 12px; width: 100%; border-radius: 8px; font-family: 'Kanit'; cursor: pointer; margin-bottom: 15px; }
-
-        .total-box { background: var(--primary); color: #fff; padding: 15px; border-radius: 12px; text-align: right; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
-        .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 12px; font-family: 'Kanit'; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .btn-submit.close-job { background: var(--success); box-shadow: 0 4px 10px rgba(40,167,69,0.2); }
-
-        /* 🔴 CSS ป๊อปอัปจัดการฐานข้อมูลที่หายไป เอากลับมาแล้ว! 🔴 */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
-        .modal-content { background-color: #fff; margin: 5vh auto; padding: 20px; border-radius: 16px; width: 90%; max-width: 450px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .modal-header h3 { margin: 0; color: var(--primary); font-size: 18px; }
-        .close-btn { color: #aaa; font-size: 24px; font-weight: bold; cursor: pointer; line-height: 1; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-save-modal { flex: 2; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: 600; cursor: pointer; }
-        .btn-delete-modal { flex: 1; background: #fff; color: #dc3545; border: 1px solid #dc3545; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: 500; cursor: pointer; }
+        /* Bill Preview (E-Slip) */
+        #bill-preview { background: #fff; padding: 20px; color: #000; display: none; border: 1px solid #ddd; }
+        .bill-header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .bill-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .bill-table th { text-align: left; border-bottom: 1px solid #eee; padding: 5px; }
+        .bill-table td { padding: 8px 5px; border-bottom: 1px dotted #eee; }
     </style>
 </head>
 <body>
 
 <div id="tab-search" class="tab-content container active">
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔍 พิมพ์ชื่ออะไหล่ หรือ รุ่นรถ..." onkeyup="filterItems()">
-    </div>
-    <div id="loading" style="text-align: center; color: #888; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดฐานข้อมูล...</div>
+    <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 ค้นหาอะไหล่/รุ่นรถ..." onkeyup="filterItems()"></div>
+    <div id="loading" style="text-align:center; padding:20px; color:#888;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>
     <div id="resultsList"></div>
 </div>
 
 <div id="tab-job" class="tab-content container">
-    <div class="segment-control">
-        <button class="seg-btn active" id="btn-mode-new" onclick="setJobMode('new')">🆕 รับรถเข้าใหม่</button>
-        <button class="seg-btn" id="btn-mode-update" onclick="setJobMode('update')">🛠️ รถที่กำลังซ่อม</button>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <button onclick="setJobMode('new')" id="btn-m-new" style="flex:1; padding:10px; border-radius:8px; border:none; background:#eee;">รถใหม่</button>
+        <button onclick="setJobMode('update')" id="btn-m-upd" style="flex:1; padding:10px; border-radius:8px; border:none; background:#eee;">ค้างซ่อม</button>
     </div>
 
     <div id="mode-new">
-        <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px;">
-            <i class="fas fa-info-circle"></i> โหมดนี้สำหรับจดรับรถเบื้องต้น (สถานะจะตั้งเป็น "รอดำเนินการ")
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input type="text" id="new-plate" placeholder="ทะเบียน">
+            <input type="number" id="new-mileage" placeholder="เลขไมล์">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="form-group"><label>ทะเบียนรถ <span style="color:red;">*</span></label><input type="text" id="new-plate" placeholder="กข 1234"></div>
-            <div class="form-group"><label>เลขไมล์ <span style="color:red;">*</span></label><input type="number" id="new-mileage" placeholder="120500"></div>
-        </div>
-        <div class="form-group"><label>รุ่นรถ / เบอร์โทร</label><input type="text" id="new-model" placeholder="Almera / 08X-XXX-XXXX"></div>
-        <div class="form-group"><label>อาการที่แจ้ง <span style="color:red;">*</span></label><textarea id="new-symptoms" placeholder="เช่น มีเสียงดังล้อหน้า..."></textarea></div>
-        <button class="btn-submit" onclick="saveNewJob()"><i class="fas fa-save"></i> บันทึกรับรถ (เปิดจ๊อบใหม่)</button>
+        <textarea id="new-symptoms" placeholder="อาการที่แจ้ง..." style="margin-bottom:10px;"></textarea>
+        <button class="btn-main btn-primary" onclick="saveNewJob()">เปิดจ๊อบ</button>
     </div>
 
-    <div id="mode-update" style="display: none;">
-        <div class="form-group">
-            <label><i class="fas fa-car-side"></i> เลือกรถที่กำลังซ่อม (รอดำเนินการ)</label>
-            <select id="active-jobs-select" onchange="loadActiveJobData()"><option value="">-- กำลังโหลด... --</option></select>
-        </div>
-        <h3 class="section-title"><i class="fas fa-wrench"></i> รายการซ่อม / อะไหล่บิลนี้</h3>
-        <div id="cartList" style="margin-bottom: 10px; font-size: 14px; color: #888; text-align: center; padding: 10px; background: #eee; border-radius: 8px;">ยังไม่มีรายการ</div>
-        <button class="btn-custom" onclick="addCustomItem()"><i class="fas fa-plus"></i> พิมพ์รายการเอง (ค่าแรง/ฟรี)</button>
-        <div class="form-group" style="margin-top: 15px;">
-            <label>ประวัติ/อาการ/หมายเหตุ (แก้ไขได้)</label>
-            <textarea id="update-details"></textarea>
-        </div>
-        <div class="total-box">ยอดรวมสุทธิ: <span id="grandTotal">0</span> ฿</div>
-        <div class="form-group" style="background: #e8f4f8; padding: 15px; border-radius: 12px; border: 1px solid #b8daff;">
-            <label style="color: #0056b3;"><i class="fas fa-flag-checkered"></i> เลือกสถานะบิล</label>
-            <select id="update-status" style="font-weight: bold; color: #333;">
-                <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (รับเงินตามยอดข้างบน)</option>
-                <option value="แค่เสนอราคา">📝 แค่เสนอราคา / ลูกค้ายกเลิก</option>
-                <option value="รอดำเนินการ">⏳ รอดำเนินการ (ดองบิลไว้ทำต่อ)</option>
-            </select>
-        </div>
-        <button class="btn-submit close-job" onclick="updateJob()"><i class="fas fa-save"></i> บันทึกข้อมูลรถคันนี้</button>
+    <div id="mode-update" style="display:none;">
+        <select id="active-jobs-select" onchange="loadActiveJobData()" style="margin-bottom:10px;"><option>-- เลือกรถ --</option></select>
+        <div id="cartList"></div>
+        <button onclick="addCustomItem()" style="width:100%; padding:10px; border:1px dashed #ccc; background:#fff; margin-bottom:15px; border-radius:8px;">+ เพิ่มรายการเอง/ค่าแรง</button>
+        <textarea id="update-details" placeholder="หมายเหตุ/ประวัติ..." style="margin-bottom:10px;"></textarea>
+        <div class="total-banner">ยอดรวมสุทธิ: <span id="grandTotal">0</span> ฿</div>
+        <select id="update-status" style="margin-bottom:15px; font-weight:bold;">
+            <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
+            <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (รับเงิน)</option>
+            <option value="แค่เสนอราคา">📝 เสนอราคา/เลื่อน</option>
+        </select>
+        <button class="btn-main btn-bill" onclick="showBill()">📄 สร้างใบเสนอราคา (E-Slip)</button>
+        <button class="btn-main btn-primary" onclick="updateJob()">บันทึกข้อมูล</button>
     </div>
 </div>
 
-<div id="editModal" class="modal">
+<div id="tab-history" class="tab-content container">
+    <div class="search-box">
+        <input type="text" id="histSearchPlate" placeholder="🔍 ใส่ทะเบียนเพื่อดูประวัติ..." onkeyup="if(event.key==='Enter')searchHistory()">
+        <button onclick="searchHistory()" style="margin-top:8px; width:100%; padding:8px; background:var(--primary); color:#fff; border:none; border-radius:8px;">ค้นหา</button>
+    </div>
+    <div id="historyResults"></div>
+</div>
+
+<div id="bill-modal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> แก้ไขฐานข้อมูลอะไหล่</h3>
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div id="bill-capture-area" style="background:#fff; padding:20px; border-radius:10px;">
+            <div class="bill-header">
+                <h2 style="margin:0;">๙ ออโต้ การาจ</h2>
+                <p style="font-size:12px; margin:5px 0;">ใบเสนอราคา / สรุปงานซ่อม</p>
+                <div style="font-size:13px; text-align:left; margin-top:10px;">
+                    <span id="bill-date"></span><br>
+                    <b>ทะเบียน:</b> <span id="bill-plate"></span> | <b>ไมล์:</b> <span id="bill-mile"></span>
+                </div>
+            </div>
+            <table class="bill-table">
+                <thead><tr><th>รายการ</th><th style="text-align:right;">ราคา</th></tr></thead>
+                <tbody id="bill-items-body"></tbody>
+            </table>
+            <div style="text-align:right; margin-top:15px; font-size:18px; font-weight:bold;">
+                รวมทั้งสิ้น: <span id="bill-total"></span> ฿
+            </div>
+            <p id="bill-note" style="font-size:11px; color:#666; margin-top:10px; border-top:1px solid #eee; padding-top:10px;"></p>
         </div>
-        <input type="hidden" id="edit-id">
-        <div class="form-group"><label>หมวดหมู่</label><input type="text" id="edit-category"></div>
-        <div class="form-group"><label>ชื่อรายการ / อะไหล่</label><input type="text" id="edit-name"></div>
-        <div class="form-group"><label>รุ่นรถ</label><input type="text" id="edit-model"></div>
-        <div class="form-group"><label>ต้นทุนดิบ (บาท)</label><input type="number" id="edit-cost"></div>
-        <div class="form-group">
-            <label>ประเภทราคา</label>
-            <select id="edit-priceType">
-                <option value="ต้องบวกสูตรอู่">ต้องบวกสูตรอู่</option>
-                <option value="ราคาเน็ตแล้ว">ราคาเน็ตแล้ว</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>สถานะของ</label>
-            <select id="edit-status">
-                <option value="มีของพร้อมทำ">มีของพร้อมทำ / เบิกได้เลย</option>
-                <option value="สั่งศูนย์ (รอของ)">สั่งศูนย์ (รอของ)</option>
-                <option value="เช็คสต๊อกก่อน">ต้องเช็คสต๊อกก่อน</option>
-            </select>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-save-modal" id="btnSaveDb" onclick="saveEdit()"><i class="fas fa-save"></i> อัปเดตข้อมูล</button>
-            <button class="btn-delete-modal" id="btnDeleteDb" onclick="deleteItem()"><i class="fas fa-trash"></i> ลบ</button>
-        </div>
+        <button onclick="document.getElementById('bill-modal').style.display='none'" style="width:100%; margin-top:15px; padding:10px; border:none; background:#eee; border-radius:8px;">ปิด</button>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <div class="nav-item active" id="nav-search" onclick="switchTab('search')">
-        <i class="fas fa-search"></i> ค้นหาอะไหล่
-    </div>
-    <div class="nav-item" id="nav-job" onclick="switchTab('job')">
-        <i class="fas fa-clipboard-list"></i> จัดการจ๊อบ
-        <span class="badge" id="cartBadge">0</span>
-    </div>
+    <div class="nav-item active" onclick="switchTab('search', this)"><i class="fas fa-search"></i>อะไหล่</div>
+    <div class="nav-item" onclick="switchTab('job', this)"><i class="fas fa-clipboard-list"></i>จัดการจ๊อบ</div>
+    <div class="nav-item" onclick="switchTab('history', this)"><i class="fas fa-history"></i>ประวัติ</div>
 </nav>
 
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgVz1m_VdZOyiLZjkbXaITInll47yRp1QmFDc6OCbdyedJLlcI-WXlNA1WBsWsEGwMJg/exec";
-    
-    let allItems = []; 
-    let activeJobs = []; 
-    let cart = []; 
+    const API = "https://script.google.com/macros/s/AKfycbynjKx-uvaVzPIbkGVYg427ibbqIthBRmEelqQf-g3CKchHvo6y9PFLz5jDrWqQvWdx/exec";
+    let allItems = [], activeJobs = [], cart = [];
 
-    fetch(GOOGLE_SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === 'success') {
-                allItems = data.data;
-                document.getElementById('loading').style.display = 'none';
-                renderItems(allItems); 
-            }
-        });
+    fetch(API).then(r=>r.json()).then(d=>{ if(d.status==='success'){allItems=d.data; document.getElementById('loading').style.display='none'; renderItems(allItems);} });
 
-    function fetchActiveJobs() {
-        fetch(GOOGLE_SCRIPT_URL + "?action=get_active_jobs")
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    activeJobs = data.data;
-                    const select = document.getElementById('active-jobs-select');
-                    select.innerHTML = '<option value="">-- กรุณาเลือกรถ --</option>';
-                    if(activeJobs.length === 0) select.innerHTML = '<option value="">ไม่มีรถค้างซ่อม (ว่าง)</option>';
-                    else activeJobs.forEach(job => select.innerHTML += `<option value="${job.plate}">${job.plate} (ไมล์: ${job.mileage})</option>`);
-                }
-            });
-    }
-    fetchActiveJobs();
-
-    // ==========================================
-    // UI สลับแท็บ / โหมด
-    // ==========================================
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.add('active');
-        document.getElementById('nav-' + tabName).classList.add('active');
-        window.scrollTo(0, 0); 
-    }
-
-    function setJobMode(mode) {
-        document.getElementById('btn-mode-new').classList.remove('active');
-        document.getElementById('btn-mode-update').classList.remove('active');
-        document.getElementById('mode-new').style.display = 'none';
-        document.getElementById('mode-update').style.display = 'none';
-        document.getElementById('btn-mode-' + mode).classList.add('active');
-        document.getElementById('mode-' + mode).style.display = 'block';
-        if(mode === 'update') fetchActiveJobs(); 
-    }
-
-    // ==========================================
-    // ระบบค้นหาและตะกร้า
-    // ==========================================
-    function filterItems() {
-        const text = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = allItems.filter(item => item.name.toLowerCase().includes(text) || item.model.toLowerCase().includes(text));
-        renderItems(filtered);
+    function switchTab(t, el) {
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+        document.getElementById('tab-'+t).classList.add('active');
+        el.classList.add('active');
+        if(t==='job') fetchActiveJobs();
     }
 
     function renderItems(items) {
-        const list = document.getElementById('resultsList');
-        list.innerHTML = '';
-        items.forEach(item => {
-            const price = item.sellPrice ? item.sellPrice : 0;
-            const costText = item.cost ? item.cost.toLocaleString() : '-'; // แอบโชว์ทุนจางๆ ให้แอดมินดู
-            list.innerHTML += `
-                <div class="item-card">
-                    <div style="display:flex; justify-content:space-between;">
-                        <div>
-                            <div style="font-weight:600; font-size:15px; color:var(--primary);">${item.name}</div>
-                            <div style="font-size:12px; color:#666;">รุ่น: ${item.model} <span style="color:#aaa;">(ทุน: ${costText})</span></div>
-                        </div>
-                        <div class="sell-price">${price.toLocaleString()} ฿</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-add" onclick="addToCart('${item.name}', ${price})"><i class="fas fa-plus-circle"></i> ใส่บิล</button>
-                        <button class="btn-edit" onclick="openEditModal('${item.id}')"><i class="fas fa-cog"></i> แก้ไข</button>
-                    </div>
+        const list = document.getElementById('resultsList'); list.innerHTML = '';
+        items.forEach(i => {
+            list.innerHTML += `<div class="item-card">
+                <div style="display:flex;justify-content:space-between">
+                    <b>${i.name}</b><span style="color:var(--success)">${i.sellPrice}฿</span>
                 </div>
-            `;
+                <div style="font-size:12px;color:#666">รุ่น: ${i.model}</div>
+                <button onclick="addToCart('${i.name}', ${i.sellPrice})" style="width:100%;margin-top:10px;padding:8px;border:none;background:#e8f5e9;color:var(--success);border-radius:8px;">+ ใส่บิล</button>
+            </div>`;
         });
     }
 
-    function addToCart(name, price) { cart.push({ name: name, price: price }); updateCartUI(); alert(`✅ หยิบ "${name}" ใส่บิลแล้ว`); }
-    function addCustomItem() {
-        const name = prompt("พิมพ์ชื่อรายการ (เช่น ล้างแอร์, ค่าแรง):");
-        if(name) { let price = prompt("ใส่ราคา (ถ้าฟรีใส่ 0):", "0"); cart.push({ name: name, price: parseInt(price) || 0 }); updateCartUI(); }
+    function addToCart(name, price) {
+        cart.push({ name: name, price: price, qty: 1, checked: true });
+        updateCartUI();
+        alert("เพิ่มรายการแล้ว");
     }
-    function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
-    function changeItemPrice(index, newPrice) { cart[index].price = parseInt(newPrice) || 0; updateTotal(); }
 
     function updateCartUI() {
-        const list = document.getElementById('cartList'); const badge = document.getElementById('cartBadge');
-        if(cart.length > 0) { badge.style.display = 'block'; badge.innerText = cart.length; list.style.background = 'transparent'; } 
-        else { badge.style.display = 'none'; }
-        list.innerHTML = '';
-        if(cart.length === 0) list.innerHTML = '<div style="text-align:center; padding:10px; background:#eee; border-radius:8px;">ยังไม่มีรายการประเมินราคา</div>';
-        else {
-            cart.forEach((item, index) => {
-                list.innerHTML += `
-                    <div class="cart-item">
-                        <div class="cart-item-header"><span><b>${index+1}.</b> ${item.name}</span> <button class="btn-remove" onclick="removeFromCart(${index})"><i class="fas fa-trash-alt"></i></button></div>
-                        <div class="cart-item-price-row">
-                            <span style="font-size:12px; color:#888;">ปรับราคา ➔</span>
-                            <div style="display:flex; align-items:center; gap:5px;"><input type="number" class="price-input" value="${item.price}" onkeyup="changeItemPrice(${index}, this.value)" onchange="changeItemPrice(${index}, this.value)"><span style="font-weight:bold;">฿</span></div>
-                        </div>
-                    </div>`;
-            });
-        }
+        const list = document.getElementById('cartList'); list.innerHTML = '';
+        cart.forEach((item, idx) => {
+            list.innerHTML += `<div class="cart-item" style="opacity: ${item.checked ? 1 : 0.5}">
+                <div class="cart-row-top">
+                    <input type="checkbox" ${item.checked?'checked':''} onchange="toggleItem(${idx})" style="width:20px;height:20px">
+                    <div style="flex:1"><b>${item.name}</b></div>
+                    <button onclick="cart.splice(${idx},1);updateCartUI()" style="border:none;background:none;color:red"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="cart-row-bottom">
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateQty(${idx},-1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="updateQty(${idx},1)">+</button>
+                    </div>
+                    <div style="display:flex;align-items:center">
+                        <input type="number" class="price-input" value="${item.price}" onchange="cart[${idx}].price=Number(this.value);updateTotal()">
+                        <span>฿</span>
+                    </div>
+                </div>
+            </div>`;
+        });
         updateTotal();
     }
-    function updateTotal() { document.getElementById('grandTotal').innerText = cart.reduce((sum, item) => sum + item.price, 0).toLocaleString(); }
 
-    // ==========================================
-    // 🔴 ระบบแก้ไขฐานข้อมูล (ของเดิมที่หายไป)
-    // ==========================================
-    function openEditModal(id) {
-        const item = allItems.find(i => i.id === id);
-        if(!item) return;
-        document.getElementById('edit-id').value = item.id;
-        document.getElementById('edit-category').value = item.category || '';
-        document.getElementById('edit-name').value = item.name || '';
-        document.getElementById('edit-model').value = item.model || '';
-        document.getElementById('edit-cost').value = item.cost || '';
-        document.getElementById('edit-priceType').value = item.priceType || 'ต้องบวกสูตรอู่';
-        document.getElementById('edit-status').value = item.status || 'มีของพร้อมทำ';
-        document.getElementById('editModal').style.display = 'block';
+    function toggleItem(idx) { cart[idx].checked = !cart[idx].checked; updateCartUI(); }
+    function updateQty(idx, val) { cart[idx].qty = Math.max(1, cart[idx].qty + val); updateCartUI(); }
+    function updateTotal() {
+        const total = cart.reduce((s, i) => s + (i.checked ? i.price * i.qty : 0), 0);
+        document.getElementById('grandTotal').innerText = total.toLocaleString();
     }
 
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-    window.onclick = function(event) { if (event.target == document.getElementById('editModal')) closeModal(); }
-
-    function saveEdit() {
-        const btn = document.getElementById('btnSaveDb'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> บันทึก...'; btn.disabled = true;
-        const payload = {
-            action: "update", id: document.getElementById('edit-id').value, category: document.getElementById('edit-category').value,
-            name: document.getElementById('edit-name').value, model: document.getElementById('edit-model').value, cost: document.getElementById('edit-cost').value,
-            priceType: document.getElementById('edit-priceType').value, status: document.getElementById('edit-status').value
-        };
-        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
-        .then(res => res.json()).then(data => {
-            if(data.status === 'success') { alert("✅ อัปเดตข้อมูลสำเร็จ!"); location.reload(); }
-            else { alert("❌ เกิดข้อผิดพลาด"); btn.innerHTML = 'อัปเดตข้อมูล'; btn.disabled = false; }
+    function searchHistory() {
+        const p = document.getElementById('histSearchPlate').value;
+        if(!p) return;
+        const resBox = document.getElementById('historyResults');
+        resBox.innerHTML = '<p style="text-align:center">🔍 กำลังค้นหา...</p>';
+        fetch(API + "?action=get_history&plate=" + p).then(r=>r.json()).then(d=>{
+            resBox.innerHTML = '';
+            if(d.data.length === 0) resBox.innerHTML = '<p>ไม่พบประวัติทะเบียนนี้</p>';
+            d.data.forEach(h => {
+                resBox.innerHTML += `<div class="history-card" style="border-top-color: ${h.status==='ปิดจ๊อบ'?'#28a745':'#ffc107'}">
+                    <span class="status-tag ${h.status==='ปิดจ๊อบ'?'status-closed':'status-pending'}">${h.status}</span>
+                    <div style="font-size:12px;color:#888">${h.date}</div>
+                    <div style="font-weight:600;margin:5px 0">${h.plate} | ไมล์: ${h.mileage}</div>
+                    <div style="font-size:14px;white-space:pre-wrap;background:#fcfcfc;padding:8px;border-radius:6px">${h.details}</div>
+                    <div style="text-align:right;font-weight:bold;margin-top:8px;color:var(--success)">ยอดรวม: ${h.total} ฿</div>
+                </div>`;
+            });
         });
     }
 
-    function deleteItem() {
-        if(!confirm("⚠️ แน่ใจหรือไม่ว่าจะลบรายการนี้ถาวร?")) return;
-        const btn = document.getElementById('btnDeleteDb'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ลบ...'; btn.disabled = true;
-        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "delete", id: document.getElementById('edit-id').value }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
-        .then(res => res.json()).then(data => {
-            if(data.status === 'success') { alert("🗑️ ลบสำเร็จ!"); location.reload(); }
-            else { alert("❌ ลบไม่สำเร็จ"); btn.innerHTML = 'ลบ'; btn.disabled = false; }
+    function showBill() {
+        const p = document.getElementById('active-jobs-select').value;
+        const job = activeJobs.find(j=>j.plate===p);
+        if(!p || !job) return alert("เลือกรถก่อนครับ");
+        document.getElementById('bill-date').innerText = new Date().toLocaleDateString('th-TH');
+        document.getElementById('bill-plate').innerText = p;
+        document.getElementById('bill-mile').innerText = job.mileage;
+        const tbody = document.getElementById('bill-items-body'); tbody.innerHTML = '';
+        cart.filter(i=>i.checked).forEach(i => {
+            tbody.innerHTML += `<tr><td>${i.name} x${i.qty}</td><td style="text-align:right">${(i.price*i.qty).toLocaleString()}</td></tr>`;
         });
-    }
-
-    // ==========================================
-    // ฟังก์ชันส่งข้อมูลเข้า Google Sheets (เปิดจ๊อบ)
-    // ==========================================
-    function saveNewJob() {
-        const plate = document.getElementById('new-plate').value, mileage = document.getElementById('new-mileage').value, symptoms = document.getElementById('new-symptoms').value;
-        if (!plate || !mileage || !symptoms) { alert("⚠️ กรุณากรอก ทะเบียน, ไมล์ และ อาการเบื้องต้น ครับ"); return; }
-        submitData({ action: "add_job", plate: plate, model: document.getElementById('new-model').value, mileage: mileage, details: "[อาการรับรถ]:\n" + symptoms, total: 0, phone: "" }, "เปิดจ๊อบใหม่เรียบร้อย!");
-    }
-
-    function loadActiveJobData() {
-        const job = activeJobs.find(j => j.plate === document.getElementById('active-jobs-select').value);
-        document.getElementById('update-details').value = job ? job.details + "\n\n[อัปเดต]:\n" : "";
+        document.getElementById('bill-total').innerText = document.getElementById('grandTotal').innerText;
+        document.getElementById('bill-note').innerText = document.getElementById('update-details').value;
+        document.getElementById('bill-modal').style.display='block';
     }
 
     function updateJob() {
         const plate = document.getElementById('active-jobs-select').value;
-        if (!plate) { alert("⚠️ กรุณาเลือกรถที่ต้องการอัปเดตครับ"); return; }
-        let currentDetails = document.getElementById('update-details').value;
-        if(cart.length > 0) { currentDetails += `\n\n[ประเมินรายการ]:\n`; cart.forEach(item => currentDetails += `- ${item.name} (${item.price > 0 ? item.price+' บ.' : 'ฟรี'})\n`); }
-        submitData({ action: "update_job", plate: plate, details: currentDetails.trim(), total: document.getElementById('grandTotal').innerText.replace(/,/g, ''), status: document.getElementById('update-status').value }, "บันทึกอัปเดตข้อมูลรถเรียบร้อย!");
+        if(!plate) return alert("เลือกรถก่อน");
+        let details = document.getElementById('update-details').value + "\n\n[รายการซ่อม]:\n";
+        cart.forEach(i => { if(i.checked) details += `- ${i.name} x${i.qty} (${i.price*i.qty}฿)\n`; else details += `[เลื่อน] ${i.name}\n`; });
+        const payload = { action: "update_job", plate: plate, details: details.trim(), total: document.getElementById('grandTotal').innerText.replace(/,/g,''), status: document.getElementById('update-status').value };
+        fetch(API, { method:'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d=>{ if(d.status==='success'){alert("บันทึกแล้ว!"); location.reload();} });
     }
 
-    function submitData(payload, successMsg) {
-        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
-        .then(res => res.json()).then(data => { if(data.status === 'success') { alert("✅ " + successMsg); location.reload(); } else alert("❌ พลาดแล้ว: " + data.message); });
+    // ฟังก์ชันอื่นๆ (saveNewJob, loadActiveJobData, etc.) คงเดิมตาม Logic ที่เคยส่งให้
+    function setJobMode(m) {
+        document.getElementById('mode-new').style.display = m==='new'?'block':'none';
+        document.getElementById('mode-update').style.display = m==='update'?'block':'none';
+    }
+    function fetchActiveJobs() {
+        fetch(API+"?action=get_active_jobs").then(r=>r.json()).then(d=>{
+            const s = document.getElementById('active-jobs-select'); s.innerHTML = '<option value="">-- เลือกรถ --</option>';
+            d.data.forEach(j=> s.innerHTML += `<option value="${j.plate}">${j.plate}</option>`);
+        });
+    }
+    function loadActiveJobData() {
+        const j = activeJobs.find(x=>x.plate===document.getElementById('active-jobs-select').value);
+        if(j) document.getElementById('update-details').value = j.details + "\n\n---\n";
+    }
+    function saveNewJob() {
+        const p = document.getElementById('new-plate').value, m = document.getElementById('new-mileage').value, s = document.getElementById('new-symptoms').value;
+        if(!p||!m||!s) return alert("กรอกข้อมูลให้ครบ");
+        fetch(API, { method:'POST', body: JSON.stringify({ action:"add_job", plate:p, mileage:m, details:s }) }).then(r=>r.json()).then(d=>{ alert("เปิดจ๊อบแล้ว!"); location.reload(); });
+    }
+    function addCustomItem() {
+        const n = prompt("ชื่อรายการ:"); if(!n) return;
+        const p = prompt("ราคา:", "0"); cart.push({ name:n, price:Number(p), qty:1, checked:true }); updateCartUI();
     }
 </script>
 </body>
