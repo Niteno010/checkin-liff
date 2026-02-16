@@ -163,7 +163,7 @@
 </nav>
 
 <script>
-    // ✅ อัปเดต API ตัวใหม่ล่าสุดที่คุณอาร์มส่งมา
+    // 🔗 ฝังลิงก์ API ล่าสุดของคุณอาร์มเรียบร้อยแล้ว
     const API = "https://script.google.com/macros/s/AKfycbwZzdNhekvDukIMdbdtPeO5i6nS0-Z0qhRUjqgH_IBcpr4rTxw52h8QaClNQ7cN53Oslw/exec";
     let allItems = [], activeJobs = [], cart = [];
 
@@ -175,12 +175,32 @@
         } 
     });
 
+    // =====================================
+    // 🛠️ แก้บัค: สลับแท็บแล้วทะเบียน/ตะกร้าหาย
+    // =====================================
     function switchTab(t, el) {
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
         document.getElementById('tab-'+t).classList.add('active');
         el.classList.add('active');
         if(t==='job') fetchActiveJobs();
+    }
+
+    function fetchActiveJobs() {
+        // แอบจำทะเบียนที่เลือกไว้ก่อนรีเฟรช
+        const currentSelected = document.getElementById('active-jobs-select').value;
+        
+        fetch(API+"?action=get_active_jobs").then(r=>r.json()).then(d=>{
+            activeJobs = d.data;
+            const s = document.getElementById('active-jobs-select'); 
+            s.innerHTML = '<option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>';
+            activeJobs.forEach(j=> s.innerHTML += `<option value="${j.plate}">${j.plate} (ไมล์ ${j.mileage})</option>`);
+            
+            // คืนค่าทะเบียนที่เลือกไว้ (ไม่ให้เด้งหลุด)
+            if(currentSelected) {
+                s.value = currentSelected;
+            }
+        });
     }
 
     function setJobMode(m) {
@@ -194,6 +214,9 @@
         document.getElementById('btn-m-upd').style.color = m==='update'?'var(--primary)':'#666';
     }
 
+    // =====================================
+    // ระบบค้นหาอะไหล่
+    // =====================================
     function filterItems() {
         const text = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allItems.filter(item => 
@@ -224,7 +247,10 @@
     function addToCart(name, price) {
         cart.push({ name: name, price: price, qty: 1, checked: true });
         updateCartUI();
-        alert(`เพิ่ม "${name}" ลงตะกร้าแล้ว!`);
+        // ไม่เด้ง Alert กวนใจแล้ว ให้ดูจาก Badge แดงเอา
+        const badge = document.getElementById('cartBadge');
+        badge.style.transform = "scale(1.5)";
+        setTimeout(() => badge.style.transform = "scale(1)", 200);
     }
 
     function addCustomItem() {
@@ -274,39 +300,22 @@
     }
 
     // =====================================
-    // จัดการรถ (ส่งทั้งรุ่นรถ และ เบอร์โทร)
+    // จัดการรถและประวัติซ่อม
     // =====================================
     function saveNewJob() {
         const p = document.getElementById('new-plate').value;
         const m = document.getElementById('new-mileage').value;
         const s = document.getElementById('new-symptoms').value;
-        const mod = document.getElementById('new-model').value; // รุ่นรถ
-        const phone = document.getElementById('new-phone').value; // เบอร์โทร
+        const mod = document.getElementById('new-model').value;
+        const phone = document.getElementById('new-phone').value;
         
         if(!p||!m||!s) return alert("กรอก ทะเบียน ไมล์ อาการ ให้ครบครับ");
         
         document.querySelector('#mode-new .btn-primary').innerHTML = "กำลังบันทึก...";
         fetch(API, { 
             method:'POST', 
-            body: JSON.stringify({ 
-                action:"add_job", 
-                plate:p, 
-                model:mod, 
-                mileage:m, 
-                details:"[อาการรับรถ]:\n"+s,
-                phone: phone // ✅ ส่งเบอร์โทรไปด้วย
-            }) 
-        })
-        .then(r=>r.json()).then(d=>{ alert("เปิดจ๊อบใหม่แล้ว!"); location.reload(); });
-    }
-
-    function fetchActiveJobs() {
-        fetch(API+"?action=get_active_jobs").then(r=>r.json()).then(d=>{
-            activeJobs = d.data;
-            const s = document.getElementById('active-jobs-select'); 
-            s.innerHTML = '<option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>';
-            activeJobs.forEach(j=> s.innerHTML += `<option value="${j.plate}">${j.plate}</option>`);
-        });
+            body: JSON.stringify({ action:"add_job", plate:p, model:mod, mileage:m, details:"[อาการรับรถ]:\n"+s, phone:phone }) 
+        }).then(r=>r.json()).then(d=>{ alert("เปิดจ๊อบใหม่แล้ว!"); location.reload(); });
     }
 
     function loadActiveJobData() {
@@ -360,6 +369,7 @@
         const job = activeJobs.find(j => String(j.plate) === String(p));
         
         if(!p || !job) return alert("กรุณาเลือกรถเพื่อสร้างบิลครับ");
+        if(cart.filter(i=>i.checked).length === 0) return alert("กรุณาเลือกรายการซ่อมก่อนทำบิลครับ");
         
         document.getElementById('bill-date').innerText = new Date().toLocaleDateString('th-TH');
         document.getElementById('bill-plate').innerText = p;
