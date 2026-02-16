@@ -11,25 +11,21 @@
         body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
-        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 12px; cursor: pointer; position: relative; }
         .nav-item i { display: block; font-size: 20px; margin-bottom: 3px; }
         .nav-item.active { color: var(--accent); }
         .badge { position: absolute; top: 5px; right: 25vw; background: var(--accent); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; }
 
-        /* Tabs */
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        /* UI Elements */
         .search-box { background: var(--card); padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; position: sticky; top: 10px; z-index: 100; }
         input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 16px; box-sizing: border-box; background: #f9f9f9; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
         .item-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
-        /* Cart Styles (Checkbox & Qty) */
         .cart-item { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; transition: 0.3s; }
         .cart-row-top { display: flex; align-items: flex-start; gap: 10px; }
         .cart-row-bottom { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 8px; border-radius: 6px; }
@@ -37,21 +33,19 @@
         .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 5px; }
         .price-input { width: 90px !important; text-align: right; font-weight: bold; color: var(--success); border: none !important; background: transparent !important; }
         
-        /* Total & Buttons */
         .total-banner { background: var(--primary); color: #fff; padding: 15px; border-radius: 12px; text-align: right; font-size: 20px; font-weight: bold; margin: 15px 0; }
         .btn-main { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 16px; font-weight: bold; cursor: pointer; }
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-bill { background: #007bff; color: #fff; margin-bottom: 10px; }
 
-        /* Timeline History */
         .history-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; border-top: 5px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .status-tag { position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight:bold; }
         .status-closed { background: #e8f5e9; color: var(--success); }
         .status-pending { background: #fff3cd; color: #856404; }
 
-        /* Modal E-Slip */
-        .modal { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.7); }
-        .modal-content { background:#fff; margin:5vh auto; padding:20px; width:90%; max-width:450px; border-radius:15px; max-height:85vh; overflow-y:auto; }
+        .modal { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); }
+        .modal-content { background:#fff; margin:10vh auto; padding:20px; width:90%; max-width:400px; border-radius:15px; max-height:85vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        
         #bill-capture-area { background: #fff; padding: 20px; color: #000; border: 1px solid #ddd; border-radius:8px; }
         .bill-header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 10px; margin-bottom: 15px; }
         .bill-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -97,8 +91,8 @@
         <h3 style="font-size:16px; border-bottom:2px solid #eee; padding-bottom:5px; margin-top:0;"><i class="fas fa-wrench"></i> รายการอะไหล่ / ประเมิน</h3>
         <div id="cartList" style="margin-bottom:10px;"></div>
         
-        <button onclick="addCustomItem()" style="width:100%; padding:12px; border:1px dashed #aaa; background:#fff; margin-bottom:15px; border-radius:8px; font-family:'Kanit'; cursor:pointer; color:#555;">
-            + พิมพ์เพิ่มรายการเอง / ค่าแรง
+        <button onclick="openCustomItemModal()" style="width:100%; padding:12px; border:1px dashed #aaa; background:#fff; margin-bottom:15px; border-radius:8px; font-family:'Kanit'; font-weight:bold; cursor:pointer; color:#555;">
+            <i class="fas fa-plus-circle"></i> พิมพ์เพิ่มรายการเอง / ค่าแรง
         </button>
         
         <label style="font-size:14px; font-weight:bold; color:#555;">ประวัติอาการ (พิมพ์แก้ได้เลย)</label>
@@ -128,9 +122,27 @@
     <div id="historyResults"></div>
 </div>
 
+<div id="custom-item-modal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px;"><i class="fas fa-edit"></i> เพิ่มรายการ / ค่าแรง</h3>
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 14px; font-weight: bold; color: #555;">ชื่อรายการ</label>
+            <input type="text" id="custom-name" placeholder="เช่น ค่าแรงเปลี่ยนโช้ค..." style="margin-top: 5px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 14px; font-weight: bold; color: #555;">ราคา (บาท)</label>
+            <input type="number" id="custom-price" placeholder="0" value="0" style="margin-top: 5px;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="document.getElementById('custom-item-modal').style.display='none'" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 8px; font-family: 'Kanit'; font-weight: bold; color: #555;">ยกเลิก</button>
+            <button onclick="confirmCustomItem()" style="flex: 2; padding: 12px; border: none; background: var(--success); color: #fff; border-radius: 8px; font-family: 'Kanit'; font-weight: bold;">+ ยืนยันใส่บิล</button>
+        </div>
+    </div>
+</div>
+
 <div id="bill-modal" class="modal">
     <div class="modal-content">
-        <div id="bill-capture-area" style="background:#fff; padding:20px; border-radius:10px;">
+        <div id="bill-capture-area">
             <div class="bill-header">
                 <h2 style="margin:0;">๙ ออโต้ การาจ</h2>
                 <p style="font-size:12px; margin:5px 0; color:#666;">ใบเสนอราคา / สรุปงานซ่อม</p>
@@ -147,6 +159,7 @@
             <div style="text-align:right; margin-top:15px; font-size:18px; font-weight:bold; color:var(--success);">
                 ยอดสุทธิ: <span id="bill-total"></span>
             </div>
+            <p id="bill-note" style="font-size:12px; color:#666; margin-top:15px; border-top:1px dashed #eee; padding-top:10px; white-space:pre-wrap;"></p>
         </div>
         <p style="text-align:center; font-size:12px; color:#aaa; margin-top:10px;"><i class="fas fa-camera"></i> แคปหน้าจอนี้เพื่อส่งให้ลูกค้าได้เลย</p>
         <button onclick="document.getElementById('bill-modal').style.display='none'" style="width:100%; margin-top:10px; padding:12px; border:none; background:#333; color:#fff; border-radius:8px; font-family:'Kanit'; font-weight:bold;">ปิดหน้าต่าง</button>
@@ -163,7 +176,6 @@
 </nav>
 
 <script>
-    // 🔗 ฝังลิงก์ API ล่าสุดของคุณอาร์มเรียบร้อยแล้ว
     const API = "https://script.google.com/macros/s/AKfycbwZzdNhekvDukIMdbdtPeO5i6nS0-Z0qhRUjqgH_IBcpr4rTxw52h8QaClNQ7cN53Oslw/exec";
     let allItems = [], activeJobs = [], cart = [];
 
@@ -175,9 +187,6 @@
         } 
     });
 
-    // =====================================
-    // 🛠️ แก้บัค: สลับแท็บแล้วทะเบียน/ตะกร้าหาย
-    // =====================================
     function switchTab(t, el) {
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
@@ -187,36 +196,25 @@
     }
 
     function fetchActiveJobs() {
-        // แอบจำทะเบียนที่เลือกไว้ก่อนรีเฟรช
         const currentSelected = document.getElementById('active-jobs-select').value;
-        
         fetch(API+"?action=get_active_jobs").then(r=>r.json()).then(d=>{
             activeJobs = d.data;
             const s = document.getElementById('active-jobs-select'); 
             s.innerHTML = '<option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>';
             activeJobs.forEach(j=> s.innerHTML += `<option value="${j.plate}">${j.plate} (ไมล์ ${j.mileage})</option>`);
-            
-            // คืนค่าทะเบียนที่เลือกไว้ (ไม่ให้เด้งหลุด)
-            if(currentSelected) {
-                s.value = currentSelected;
-            }
+            if(currentSelected) s.value = currentSelected;
         });
     }
 
     function setJobMode(m) {
         document.getElementById('mode-new').style.display = m==='new'?'block':'none';
         document.getElementById('mode-update').style.display = m==='update'?'block':'none';
-        
         document.getElementById('btn-m-new').style.background = m==='new'?'#fff':'#eee';
         document.getElementById('btn-m-new').style.color = m==='new'?'var(--primary)':'#666';
-        
         document.getElementById('btn-m-upd').style.background = m==='update'?'#fff':'#eee';
         document.getElementById('btn-m-upd').style.color = m==='update'?'var(--primary)':'#666';
     }
 
-    // =====================================
-    // ระบบค้นหาอะไหล่
-    // =====================================
     function filterItems() {
         const text = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allItems.filter(item => 
@@ -241,31 +239,34 @@
         });
     }
 
-    // =====================================
-    // ระบบตะกร้า (Checkbox + Qty)
-    // =====================================
     function addToCart(name, price) {
         cart.push({ name: name, price: price, qty: 1, checked: true });
         updateCartUI();
-        // ไม่เด้ง Alert กวนใจแล้ว ให้ดูจาก Badge แดงเอา
         const badge = document.getElementById('cartBadge');
         badge.style.transform = "scale(1.5)";
         setTimeout(() => badge.style.transform = "scale(1)", 200);
     }
 
-    function addCustomItem() {
-        const n = prompt("พิมพ์ชื่อรายการ:"); if(!n) return;
-        const p = prompt("ราคา (ถ้าฟรีใส่ 0):", "0"); 
-        cart.push({ name:n, price:Number(p)||0, qty:1, checked:true }); updateCartUI();
+    function openCustomItemModal() {
+        document.getElementById('custom-name').value = "";
+        document.getElementById('custom-price').value = "0";
+        document.getElementById('custom-item-modal').style.display = 'block';
+    }
+
+    function confirmCustomItem() {
+        const n = document.getElementById('custom-name').value;
+        const p = document.getElementById('custom-price').value;
+        if(!n) return alert("กรุณาพิมพ์ชื่อรายการก่อนครับ");
+        cart.push({ name: n, price: Number(p)||0, qty: 1, checked: true });
+        updateCartUI();
+        document.getElementById('custom-item-modal').style.display = 'none';
     }
 
     function updateCartUI() {
         const list = document.getElementById('cartList'); 
         const badge = document.getElementById('cartBadge');
-        
         if(cart.length > 0) { badge.style.display = 'block'; badge.innerText = cart.length; } 
         else { badge.style.display = 'none'; }
-
         list.innerHTML = '';
         if(cart.length === 0) list.innerHTML = '<div style="text-align:center; padding:15px; background:#eee; border-radius:8px; color:#888;">บิลว่างเปล่า</div>';
         
@@ -299,18 +300,13 @@
         document.getElementById('grandTotal').innerText = total.toLocaleString();
     }
 
-    // =====================================
-    // จัดการรถและประวัติซ่อม
-    // =====================================
     function saveNewJob() {
         const p = document.getElementById('new-plate').value;
         const m = document.getElementById('new-mileage').value;
         const s = document.getElementById('new-symptoms').value;
         const mod = document.getElementById('new-model').value;
         const phone = document.getElementById('new-phone').value;
-        
         if(!p||!m||!s) return alert("กรอก ทะเบียน ไมล์ อาการ ให้ครบครับ");
-        
         document.querySelector('#mode-new .btn-primary').innerHTML = "กำลังบันทึก...";
         fetch(API, { 
             method:'POST', 
@@ -321,7 +317,6 @@
     function loadActiveJobData() {
         const p = document.getElementById('active-jobs-select').value;
         const job = activeJobs.find(x => String(x.plate) === String(p));
-        
         if(job) { 
             document.getElementById('update-details').value = job.details;
             try { cart = JSON.parse(job.cartData || "[]"); } catch(e) { cart = []; }
@@ -335,7 +330,6 @@
     function updateJob() {
         const plate = document.getElementById('active-jobs-select').value;
         if(!plate) return alert("เลือกรถก่อนครับ");
-        
         const status = document.getElementById('update-status').value;
         let details = document.getElementById('update-details').value;
         
@@ -346,28 +340,15 @@
                 else details += `[เลื่อนทำ] ${i.name}\n`; 
             });
         }
-
-        const payload = { 
-            action: "update_job", 
-            plate: plate, 
-            details: details.trim(), 
-            total: document.getElementById('grandTotal').innerText.replace(/,/g,''), 
-            status: status,
-            cartData: JSON.stringify(cart) 
-        };
-        
+        const payload = { action: "update_job", plate: plate, details: details.trim(), total: document.getElementById('grandTotal').innerText.replace(/,/g,''), status: status, cartData: JSON.stringify(cart) };
         document.querySelector('#mode-update .btn-primary').innerHTML = "กำลังบันทึก...";
         fetch(API, { method:'POST', body: JSON.stringify(payload) })
         .then(r=>r.json()).then(d=>{ if(d.status==='success'){alert("✅ บันทึกและดองบิลเรียบร้อย!"); location.reload();} });
     }
 
-    // =====================================
-    // E-Slip & History
-    // =====================================
     function showBill() {
         const p = document.getElementById('active-jobs-select').value;
         const job = activeJobs.find(j => String(j.plate) === String(p));
-        
         if(!p || !job) return alert("กรุณาเลือกรถเพื่อสร้างบิลครับ");
         if(cart.filter(i=>i.checked).length === 0) return alert("กรุณาเลือกรายการซ่อมก่อนทำบิลครับ");
         
