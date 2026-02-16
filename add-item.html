@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-
     <title>เพิ่มรายการอะไหล่ - ๙ ออโต้ การาจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,24 +16,13 @@
         .header { text-align: center; margin-bottom: 25px; }
         .header h2 { color: var(--primary); margin: 0 0 5px 0; font-weight: 600; font-size: 24px; }
         .header p { margin: 0; color: #8e8e93; font-size: 14px; }
-        
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: var(--primary); }
-        input, select { 
-            width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; 
-            font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; background-color: #fafafa;
-            transition: all 0.3s ease;
-        }
+        input, select { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; background-color: #fafafa; transition: all 0.3s ease; }
         input:focus, select:focus { outline: none; border-color: var(--accent); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(255,59,48,0.15); }
-        
-        .btn-submit { 
-            width: 100%; padding: 14px; background-color: var(--accent); color: white; border: none; 
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; 
-            transition: transform 0.1s, background-color 0.3s; 
-        }
+        .btn-submit { width: 100%; padding: 14px; background-color: var(--accent); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.1s, background-color 0.3s; }
         .btn-submit:active { transform: scale(0.98); }
         .btn-submit:disabled { background-color: #ff9d98; cursor: not-allowed; }
-        
         #status-msg { margin-top: 15px; text-align: center; font-weight: 500; display: none; padding: 12px; border-radius: 8px; font-size: 14px; }
         .success { background-color: #e5f8ed; color: #1e7a44; border: 1px solid #c3e6cb; }
         .error { background-color: #ffeaea; color: #c82333; border: 1px solid #f5c6cb; }
@@ -50,7 +37,6 @@
     </div>
     
     <form id="addItemForm">
-        
         <div class="form-group">
             <label>หมวดหมู่ (จิ้มเลือก หรือ พิมพ์ใหม่ได้เลย)</label>
             <input list="category-options" id="category" placeholder="เลือกหมวดหมู่..." required autocomplete="off">
@@ -102,8 +88,8 @@
 </div>
 
 <script>
-    // 🔴🔴🔴 สำคัญมาก: เอา Web App URL จาก Google Apps Script มาวางในเครื่องหมายคำพูดด้านล่างนี้ 🔴🔴🔴
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSJ9-iegRL5qN2uXBiC1Fa1kVQ_mmD9zUbJyg6yrwOGpfPnIy48eMsxhIH5foP7_RI5w/exec"; 
+    // ✅ อัปเดตลิงก์ API ตัวล่าสุดให้แล้วครับ
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0PtS9tbnbCOISMQsS5i31b5MHWLO0qIiterzrAcVy2YchiGg2G93nfXIL8uGZnk5fzQ/exec"; 
 
     document.getElementById('addItemForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -114,8 +100,8 @@
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
         statusMsg.style.display = 'none';
 
-        // รวบรวมข้อมูล
         const formData = {
+            action: "add_item", // ✅ เพิ่ม action ให้ Code.gs รู้ว่ากำลังเพิ่มอะไหล่
             category: document.getElementById('category').value,
             name: document.getElementById('name').value,
             model: document.getElementById('model').value,
@@ -124,7 +110,6 @@
             status: document.getElementById('status').value
         };
 
-        // ยิงข้อมูลไปหา Google Sheets
         fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -135,7 +120,7 @@
             if(data.status === 'success') {
                 statusMsg.className = 'success';
                 statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> บันทึกสำเร็จ! (รหัส: ${data.id})`;
-                document.getElementById('addItemForm').reset(); // ล้างข้อมูลในฟอร์มเตรียมกรอกชิ้นต่อไป
+                document.getElementById('addItemForm').reset();
             } else {
                 statusMsg.className = 'error';
                 statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ผิดพลาด: ' + data.message;
