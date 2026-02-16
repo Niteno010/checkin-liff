@@ -38,13 +38,21 @@
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-bill { background: #007bff; color: #fff; margin-bottom: 10px; }
 
-        .history-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; border-top: 5px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .status-tag { position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight:bold; }
+        /* Timeline History - Accordion Styles */
+        .history-card { background: #fff; border-radius: 12px; margin-bottom: 15px; border-top: 5px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
+        .history-header { padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
+        .history-header:active { background: #f0f0f0; }
+        .history-date { font-size: 18px; font-weight: bold; color: var(--primary); letter-spacing: 0.5px; }
+        .history-title { font-size: 15px; color: #555; margin-top: 5px; font-weight: 500; }
+        .history-body { display: none; padding: 0 15px 15px 15px; border-top: 1px dashed #eee; margin-top: 5px; padding-top: 15px; background: #fafafa; }
+        .history-body.show { display: block; animation: fadeIn 0.3s; }
+        
+        .status-tag { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight:bold; margin-bottom: 10px; }
         .status-closed { background: #e8f5e9; color: var(--success); }
         .status-pending { background: #fff3cd; color: #856404; }
 
         .modal { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); }
-        .modal-content { background:#fff; margin:10vh auto; padding:20px; width:90%; max-width:400px; border-radius:15px; max-height:85vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-content { background:#fff; margin:5vh auto; padding:20px; width:90%; max-width:400px; border-radius:15px; max-height:90vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         
         #bill-capture-area { background: #fff; padding: 20px; color: #000; border: 1px solid #ddd; border-radius:8px; }
         .bill-header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 10px; margin-bottom: 15px; }
@@ -56,6 +64,10 @@
 <body>
 
 <div id="tab-search" class="tab-content container active">
+    <button onclick="openAdminModal()" style="width:100%; padding:12px; background:#1a1a1a; color:#fff; border:none; border-radius:10px; margin-bottom:15px; font-family:'Kanit'; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+        <i class="fas fa-database"></i> จัดการฐานข้อมูลอะไหล่
+    </button>
+
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 ค้นหาอะไหล่/รุ่นรถ..." onkeyup="filterItems()">
     </div>
@@ -88,6 +100,15 @@
             <option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>
         </select>
         
+        <div style="background:#f1f3f5; padding:12px; border-radius:10px; margin-bottom:15px; border:1px solid #e9ecef;">
+            <label style="font-size:13px; font-weight:bold; color:#666;"><i class="fas fa-edit"></i> เติม/แก้ไขข้อมูลรถ</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                <input type="text" id="update-model" placeholder="รุ่นรถ (ถ้าว่างเติมได้)">
+                <input type="text" id="update-phone" placeholder="เบอร์โทร (ถ้าว่างเติมได้)">
+                <input type="number" id="update-mileage" placeholder="เลขไมล์ (แก้ไขได้)" style="grid-column: span 2;">
+            </div>
+        </div>
+
         <h3 style="font-size:16px; border-bottom:2px solid #eee; padding-bottom:5px; margin-top:0;"><i class="fas fa-wrench"></i> รายการอะไหล่ / ประเมิน</h3>
         <div id="cartList" style="margin-bottom:10px;"></div>
         
@@ -120,6 +141,42 @@
         <button onclick="searchHistory()" style="margin-top:10px; width:100%; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-family:'Kanit'; font-weight:bold;"><i class="fas fa-search"></i> ค้นหาประวัติ</button>
     </div>
     <div id="historyResults"></div>
+</div>
+
+<div id="admin-modal" class="modal">
+    <div class="modal-content">
+        <h3 id="admin-title" style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:10px;"><i class="fas fa-box-open"></i> ข้อมูลอะไหล่</h3>
+        <input type="hidden" id="admin-id">
+        <label style="font-size:12px; color:#666;">ชื่อรายการ</label>
+        <input type="text" id="admin-name" placeholder="ชื่ออะไหล่ / ค่าแรง" style="margin-bottom:10px;">
+        <label style="font-size:12px; color:#666;">หมวดหมู่</label>
+        <input type="text" id="admin-category" placeholder="เช่น ช่วงล่าง, เครื่องยนต์" style="margin-bottom:10px;">
+        <label style="font-size:12px; color:#666;">รุ่นรถที่ใช้ได้</label>
+        <input type="text" id="admin-model" placeholder="เช่น Almera, March" style="margin-bottom:10px;">
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <div style="flex:1;">
+                <label style="font-size:12px; color:#666;">ราคาทุน</label>
+                <input type="number" id="admin-cost" placeholder="ทุน">
+            </div>
+            <div style="flex:1;">
+                <label style="font-size:12px; color:#666;">วิธีคิดราคา</label>
+                <select id="admin-priceType">
+                    <option value="Fix">ราคาตายตัว</option>
+                    <option value="+%">บวกเปอร์เซ็นต์</option>
+                </select>
+            </div>
+        </div>
+        <label style="font-size:12px; color:#666;">สถานะ</label>
+        <select id="admin-status" style="margin-bottom:15px;">
+            <option value="ใช้งาน">ใช้งาน (โชว์ในแอป)</option>
+            <option value="ยกเลิก">ยกเลิก (ซ่อน)</option>
+        </select>
+        <div style="display:flex; gap:10px;">
+            <button onclick="document.getElementById('admin-modal').style.display='none'" style="flex:1; padding:12px; border:none; background:#eee; border-radius:8px; font-family:'Kanit'; font-weight:bold;">ยกเลิก</button>
+            <button onclick="saveAdminItem()" style="flex:2; padding:12px; background:var(--success); color:#fff; border:none; border-radius:8px; font-family:'Kanit'; font-weight:bold;">บันทึกฐานข้อมูล</button>
+        </div>
+        <button id="btn-delete-item" onclick="deleteAdminItem()" style="width:100%; padding:10px; background:#dc3545; color:#fff; border:none; border-radius:8px; font-family:'Kanit'; margin-top:10px; display:none;">ลบรายการนี้ทิ้ง</button>
+    </div>
 </div>
 
 <div id="custom-item-modal" class="modal">
@@ -176,7 +233,7 @@
 </nav>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbwZzdNhekvDukIMdbdtPeO5i6nS0-Z0qhRUjqgH_IBcpr4rTxw52h8QaClNQ7cN53Oslw/exec";
+    const API = "https://script.google.com/macros/s/AKfycby0PtS9tbnbCOISMQsS5i31b5MHWLO0qIiterzrAcVy2YchiGg2G93nfXIL8uGZnk5fzQ/exec";
     let allItems = [], activeJobs = [], cart = [];
 
     fetch(API).then(r=>r.json()).then(d=>{ 
@@ -215,6 +272,9 @@
         document.getElementById('btn-m-upd').style.color = m==='update'?'var(--primary)':'#666';
     }
 
+    // ==========================================
+    // ฟังก์ชันอะไหล่ & จัดการฐานข้อมูล (ฟื้นคืนชีพ)
+    // ==========================================
     function filterItems() {
         const text = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allItems.filter(item => 
@@ -227,18 +287,81 @@
     function renderItems(items) {
         const list = document.getElementById('resultsList'); list.innerHTML = '';
         if(items.length === 0) { list.innerHTML = '<div style="text-align:center;color:#888;">ไม่พบรายการ</div>'; return; }
-        items.forEach(i => {
+        
+        // กรองเฉพาะสถานะ "ใช้งาน" มาโชว์
+        const activeItems = items.filter(i => i.status === "ใช้งาน" || !i.status);
+        
+        activeItems.forEach(i => {
+            // ✅ เพิ่มปุ่ม ดินสอ (แก้ไข) เอาไว้ข้างๆ ปุ่มใส่บิล
             list.innerHTML += `<div class="item-card">
                 <div style="display:flex;justify-content:space-between">
                     <b style="font-size:15px; color:var(--primary);">${i.name}</b>
                     <span style="color:var(--success); font-weight:bold;">${i.sellPrice} ฿</span>
                 </div>
                 <div style="font-size:12px;color:#666; margin-top:3px;">รุ่น: ${i.model}</div>
-                <button onclick="addToCart('${i.name}', ${i.sellPrice})" style="width:100%;margin-top:10px;padding:8px;border:none;background:#e8f5e9;color:var(--success);border-radius:8px;font-family:'Kanit';font-weight:bold;">+ ใส่บิล</button>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <button onclick="addToCart('${i.name}', ${i.sellPrice})" style="flex:4; padding:8px; border:none; background:#e8f5e9; color:var(--success); border-radius:8px; font-family:'Kanit'; font-weight:bold;">+ ใส่บิล</button>
+                    <button onclick="openAdminModal('${i.id}')" style="flex:1; padding:8px; border:none; background:#f1f3f5; color:#555; border-radius:8px;"><i class="fas fa-edit"></i></button>
+                </div>
             </div>`;
         });
     }
 
+    function openAdminModal(id = null) {
+        if(id) {
+            const item = allItems.find(i => i.id === id);
+            document.getElementById('admin-title').innerHTML = "<i class='fas fa-edit'></i> แก้ไขอะไหล่";
+            document.getElementById('admin-id').value = item.id;
+            document.getElementById('admin-name').value = item.name;
+            document.getElementById('admin-category').value = item.category || "";
+            document.getElementById('admin-model').value = item.model || "";
+            document.getElementById('admin-cost').value = item.cost || 0;
+            document.getElementById('admin-priceType').value = item.priceType || "Fix";
+            document.getElementById('admin-status').value = item.status || "ใช้งาน";
+            document.getElementById('btn-delete-item').style.display = "block";
+        } else {
+            document.getElementById('admin-title').innerHTML = "<i class='fas fa-plus-circle'></i> เพิ่มอะไหล่ใหม่";
+            document.getElementById('admin-id').value = "";
+            document.getElementById('admin-name').value = "";
+            document.getElementById('admin-category').value = "";
+            document.getElementById('admin-model').value = "";
+            document.getElementById('admin-cost').value = "";
+            document.getElementById('admin-priceType').value = "Fix";
+            document.getElementById('admin-status').value = "ใช้งาน";
+            document.getElementById('btn-delete-item').style.display = "none";
+        }
+        document.getElementById('admin-modal').style.display = "block";
+    }
+
+    function saveAdminItem() {
+        const id = document.getElementById('admin-id').value;
+        const postData = {
+            action: id ? "update" : "add_item",
+            id: id,
+            name: document.getElementById('admin-name').value,
+            category: document.getElementById('admin-category').value,
+            model: document.getElementById('admin-model').value,
+            cost: document.getElementById('admin-cost').value,
+            priceType: document.getElementById('admin-priceType').value,
+            status: document.getElementById('admin-status').value
+        };
+        if(!postData.name) return alert("กรุณาใส่ชื่อรายการครับ");
+        
+        document.querySelector('#admin-modal .btn-success') ? document.querySelector('#admin-modal .btn-success').innerText = "กำลังบันทึก..." : null;
+        fetch(API, { method: 'POST', body: JSON.stringify(postData) })
+        .then(r=>r.json()).then(d=>{ alert("อัปเดตฐานข้อมูลสำเร็จ!"); location.reload(); });
+    }
+
+    function deleteAdminItem() {
+        if(!confirm("แน่ใจหรือไม่ว่าจะลบรายการนี้ทิ้งถาวร?")) return;
+        const id = document.getElementById('admin-id').value;
+        fetch(API, { method: 'POST', body: JSON.stringify({action: "delete", id: id}) })
+        .then(r=>r.json()).then(d=>{ alert("ลบรายการเรียบร้อย!"); location.reload(); });
+    }
+
+    // ==========================================
+    // ตะกร้า
+    // ==========================================
     function addToCart(name, price) {
         cart.push({ name: name, price: price, qty: 1, checked: true });
         updateCartUI();
@@ -300,6 +423,9 @@
         document.getElementById('grandTotal').innerText = total.toLocaleString();
     }
 
+    // ==========================================
+    // จัดการรถ
+    // ==========================================
     function saveNewJob() {
         const p = document.getElementById('new-plate').value;
         const m = document.getElementById('new-mileage').value;
@@ -318,10 +444,18 @@
         const p = document.getElementById('active-jobs-select').value;
         const job = activeJobs.find(x => String(x.plate) === String(p));
         if(job) { 
-            document.getElementById('update-details').value = job.details;
+            // ✅ ดึงข้อมูลเก่ามาใส่ช่องให้เติม/แก้ไข
+            document.getElementById('update-model').value = job.model || "";
+            document.getElementById('update-phone').value = job.phone || "";
+            document.getElementById('update-mileage').value = job.mileage || "";
+            document.getElementById('update-details').value = job.details || "";
+            
             try { cart = JSON.parse(job.cartData || "[]"); } catch(e) { cart = []; }
             updateCartUI();
         } else {
+            document.getElementById('update-model').value = "";
+            document.getElementById('update-phone').value = "";
+            document.getElementById('update-mileage').value = "";
             document.getElementById('update-details').value = "";
             cart = []; updateCartUI();
         }
@@ -340,12 +474,28 @@
                 else details += `[เลื่อนทำ] ${i.name}\n`; 
             });
         }
-        const payload = { action: "update_job", plate: plate, details: details.trim(), total: document.getElementById('grandTotal').innerText.replace(/,/g,''), status: status, cartData: JSON.stringify(cart) };
+        
+        // ✅ ส่งข้อมูล รุ่นรถ, เบอร์โทร, ไมล์ กลับไปเซฟทับด้วย
+        const payload = { 
+            action: "update_job", 
+            plate: plate, 
+            model: document.getElementById('update-model').value,
+            phone: document.getElementById('update-phone').value,
+            mileage: document.getElementById('update-mileage').value,
+            details: details.trim(), 
+            total: document.getElementById('grandTotal').innerText.replace(/,/g,''), 
+            status: status, 
+            cartData: JSON.stringify(cart) 
+        };
+        
         document.querySelector('#mode-update .btn-primary').innerHTML = "กำลังบันทึก...";
         fetch(API, { method:'POST', body: JSON.stringify(payload) })
-        .then(r=>r.json()).then(d=>{ if(d.status==='success'){alert("✅ บันทึกและดองบิลเรียบร้อย!"); location.reload();} });
+        .then(r=>r.json()).then(d=>{ if(d.status==='success'){alert("✅ บันทึกอัปเดตข้อมูลเรียบร้อย!"); location.reload();} });
     }
 
+    // ==========================================
+    // E-Slip & History Accordion
+    // ==========================================
     function showBill() {
         const p = document.getElementById('active-jobs-select').value;
         const job = activeJobs.find(j => String(j.plate) === String(p));
@@ -354,7 +504,7 @@
         
         document.getElementById('bill-date').innerText = new Date().toLocaleDateString('th-TH');
         document.getElementById('bill-plate').innerText = p;
-        document.getElementById('bill-mile').innerText = job.mileage;
+        document.getElementById('bill-mile').innerText = document.getElementById('update-mileage').value || job.mileage;
         
         const tbody = document.getElementById('bill-items-body'); tbody.innerHTML = '';
         cart.filter(i=>i.checked).forEach(i => {
@@ -366,6 +516,18 @@
         document.getElementById('bill-modal').style.display='block';
     }
 
+    // ฟังก์ชันยืด-หด การ์ดประวัติ
+    function toggleHistory(element) {
+        const body = element.nextElementSibling;
+        const icon = element.querySelector('.fa-chevron-down');
+        body.classList.toggle('show');
+        if(body.classList.contains('show')) {
+            icon.style.transform = "rotate(180deg)";
+        } else {
+            icon.style.transform = "rotate(0deg)";
+        }
+    }
+
     function searchHistory() {
         const p = document.getElementById('histSearchPlate').value;
         if(!p) return;
@@ -375,12 +537,22 @@
             resBox.innerHTML = '';
             if(d.data.length === 0) resBox.innerHTML = '<p style="text-align:center;font-weight:bold;color:#dc3545;">ไม่พบประวัติทะเบียนนี้</p>';
             d.data.forEach(h => {
-                resBox.innerHTML += `<div class="history-card" style="border-top-color: ${h.status==='ปิดจ๊อบ'?'#28a745':'#ffc107'}">
-                    <span class="status-tag ${h.status==='ปิดจ๊อบ'?'status-closed':'status-pending'}">${h.status}</span>
-                    <div style="font-size:12px;color:#888">${h.date}</div>
-                    <div style="font-weight:600;margin:5px 0">🚗 ${h.plate} (ไมล์: ${h.mileage})</div>
-                    <div style="font-size:14px;white-space:pre-wrap;background:#fcfcfc;padding:8px;border-radius:6px;border:1px solid #eee;">${h.details}</div>
-                    <div style="text-align:right;font-weight:bold;margin-top:8px;color:var(--success)">ยอดรวม: ${h.total} ฿</div>
+                // ✅ ระบบตลับการ์ด ยืด-หด ได้
+                resBox.innerHTML += `
+                <div class="history-card" style="border-top-color: ${h.status==='ปิดจ๊อบ'?'#28a745':'#ffc107'}">
+                    <div class="history-header" onclick="toggleHistory(this)">
+                        <div>
+                            <div class="history-date">${h.date.split(' ')[0]}</div>
+                            <div class="history-title">🚗 ${h.plate} ${h.model ? '- '+h.model : ''}</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="transition:0.3s; color:#888; font-size:18px;"></i>
+                    </div>
+                    <div class="history-body">
+                        <span class="status-tag ${h.status==='ปิดจ๊อบ'?'status-closed':'status-pending'}">${h.status}</span>
+                        <div style="font-size:13px; color:#666; margin-bottom:5px;">ไมล์: ${h.mileage}</div>
+                        <div style="font-size:14px; white-space:pre-wrap; background:#fff; padding:10px; border-radius:8px; border:1px solid #eee;">${h.details}</div>
+                        <div style="text-align:right; font-weight:bold; margin-top:12px; color:var(--success); font-size:16px;">ยอดรวม: ${h.total} ฿</div>
+                    </div>
                 </div>`;
             });
         });
