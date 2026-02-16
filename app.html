@@ -272,13 +272,22 @@
         const list = document.getElementById('resultsList'); list.innerHTML = '';
         if(items.length === 0) { list.innerHTML = '<div style="text-align:center;color:#888;">ไม่พบรายการ</div>'; return; }
         
-        const activeItems = items.filter(i => i.status === "ใช้งาน" || !i.status || i.status === "มีของพร้อมทำ");
+        // 🛠️ แก้ปัญหาแถว 100 หาย: กรองโดยให้ "โชว์ทุกชิ้น ยกเว้นชิ้นที่พิมพ์สถานะว่า ยกเลิก"
+        const activeItems = items.filter(i => {
+            const st = String(i.status || "").trim();
+            return st !== "ยกเลิก" && st !== "ซ่อน";
+        });
         
         activeItems.forEach(i => {
+            // ✅ ดีไซน์ใหม่: โชว์ "ทุน xxxx / ขาย xxxx ฿" ชัดเจนมุมขวาบน
             list.innerHTML += `<div class="item-card">
-                <div style="display:flex;justify-content:space-between">
-                    <b style="font-size:15px; color:var(--primary);">${i.name}</b>
-                    <span style="color:var(--success); font-weight:bold;">${i.sellPrice} ฿</span>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <b style="font-size:15px; color:var(--primary); flex:1;">${i.name}</b>
+                    <div style="text-align:right; line-height:1.2;">
+                        <span style="font-size:12px; color:#888;">ทุน ${i.cost || 0}</span>
+                        <span style="color:#ccc; margin:0 3px;">/</span>
+                        <span style="color:var(--success); font-weight:bold; font-size:15px;">ขาย ${i.sellPrice} ฿</span>
+                    </div>
                 </div>
                 <div style="font-size:12px;color:#666; margin-top:3px;">รุ่น: ${i.model}</div>
                 <div style="display:flex; gap:8px; margin-top:10px;">
@@ -289,24 +298,20 @@
         });
     }
 
-    // 🔴 ฟังก์ชันเปิดหน้าต่างแก้ไขด่วน
     function openEditItemModal(id) {
         const item = allItems.find(i => i.id === id);
         if(!item) return;
         document.getElementById('edit-id').value = item.id;
         document.getElementById('edit-name').value = item.name;
         document.getElementById('edit-cost').value = item.cost;
-        
-        // เช็คสูตรอู่ ถ้ามีค่าก็ใส่ ถ้าว่างให้ดึงค่าที่มีอยู่เดิม
         document.getElementById('edit-priceType').value = item.priceType === "ราคาเน็ตแล้ว" ? "ราคาเน็ตแล้ว" : "ต้องบวกสูตรอู่";
         
         document.getElementById('edit-item-modal').style.display = 'block';
     }
 
-    // 🔴 ฟังก์ชันบันทึกการแก้ไข
     function saveEditItem() {
         const id = document.getElementById('edit-id').value;
-        const item = allItems.find(i => i.id === id); // ดึงของเดิมมาเพื่อไม่ให้ค่าอื่นหาย
+        const item = allItems.find(i => i.id === id);
         
         const postData = {
             action: "update",
@@ -314,7 +319,6 @@
             name: document.getElementById('edit-name').value,
             cost: document.getElementById('edit-cost').value,
             priceType: document.getElementById('edit-priceType').value,
-            // คงค่าเดิมของ หมวดหมู่ รุ่นรถ สถานะ ไว้ (ส่งไปให้ Code.gs เซฟทับเหมือนเดิม)
             category: item.category,
             model: item.model,
             status: item.status
