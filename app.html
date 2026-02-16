@@ -80,7 +80,10 @@
             <input type="text" id="new-plate" placeholder="ทะเบียนรถ *">
             <input type="number" id="new-mileage" placeholder="เลขไมล์ *">
         </div>
-        <input type="text" id="new-model" placeholder="รุ่นรถ / เบอร์โทร" style="margin-bottom:10px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input type="text" id="new-model" placeholder="รุ่นรถ">
+            <input type="text" id="new-phone" placeholder="เบอร์โทรลูกค้า">
+        </div>
         <textarea id="new-symptoms" placeholder="อาการที่ลูกค้าแจ้ง..." style="margin-bottom:15px;"></textarea>
         <button class="btn-main btn-primary" onclick="saveNewJob()">บันทึกรับรถเข้าอู่</button>
     </div>
@@ -127,7 +130,7 @@
 
 <div id="bill-modal" class="modal">
     <div class="modal-content">
-        <div id="bill-capture-area">
+        <div id="bill-capture-area" style="background:#fff; padding:20px; border-radius:10px;">
             <div class="bill-header">
                 <h2 style="margin:0;">๙ ออโต้ การาจ</h2>
                 <p style="font-size:12px; margin:5px 0; color:#666;">ใบเสนอราคา / สรุปงานซ่อม</p>
@@ -154,13 +157,14 @@
     <div class="nav-item active" onclick="switchTab('search', this)"><i class="fas fa-search"></i>อะไหล่</div>
     <div class="nav-item" onclick="switchTab('job', this)">
         <i class="fas fa-clipboard-list"></i>จัดการจ๊อบ
-        <span class="badge" id="cartBadge">0</span> </div>
+        <span class="badge" id="cartBadge">0</span>
+    </div>
     <div class="nav-item" onclick="switchTab('history', this)"><i class="fas fa-history"></i>ประวัติ</div>
 </nav>
 
 <script>
-    // ใช้ API ตัวล่าสุดของคุณอาร์ม
-    const API = "https://script.google.com/macros/s/AKfycbzac8creM9vxDSr15EeJINO03ND-7HaPgKJKnJEvLbILstu1UvqZL30cLTUUJDxOEuaxw/exec";
+    // ✅ อัปเดต API ตัวใหม่ล่าสุดที่คุณอาร์มส่งมา
+    const API = "https://script.google.com/macros/s/AKfycbwZzdNhekvDukIMdbdtPeO5i6nS0-Z0qhRUjqgH_IBcpr4rTxw52h8QaClNQ7cN53Oslw/exec";
     let allItems = [], activeJobs = [], cart = [];
 
     fetch(API).then(r=>r.json()).then(d=>{ 
@@ -171,9 +175,6 @@
         } 
     });
 
-    // =====================================
-    // สลับแท็บ / โหมด
-    // =====================================
     function switchTab(t, el) {
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
@@ -193,9 +194,6 @@
         document.getElementById('btn-m-upd').style.color = m==='update'?'var(--primary)':'#666';
     }
 
-    // =====================================
-    // ✅ แก้บัค: ค้นหาอะไหล่
-    // =====================================
     function filterItems() {
         const text = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allItems.filter(item => 
@@ -239,7 +237,6 @@
         const list = document.getElementById('cartList'); 
         const badge = document.getElementById('cartBadge');
         
-        // ✅ อัปเดตตัวเลขแจ้งเตือน
         if(cart.length > 0) { badge.style.display = 'block'; badge.innerText = cart.length; } 
         else { badge.style.display = 'none'; }
 
@@ -277,18 +274,29 @@
     }
 
     // =====================================
-    // จัดการรถและประวัติ (ดึงตะกร้าที่ช่อง I)
+    // จัดการรถ (ส่งทั้งรุ่นรถ และ เบอร์โทร)
     // =====================================
     function saveNewJob() {
         const p = document.getElementById('new-plate').value;
         const m = document.getElementById('new-mileage').value;
         const s = document.getElementById('new-symptoms').value;
         const mod = document.getElementById('new-model').value; // รุ่นรถ
+        const phone = document.getElementById('new-phone').value; // เบอร์โทร
         
         if(!p||!m||!s) return alert("กรอก ทะเบียน ไมล์ อาการ ให้ครบครับ");
         
         document.querySelector('#mode-new .btn-primary').innerHTML = "กำลังบันทึก...";
-        fetch(API, { method:'POST', body: JSON.stringify({ action:"add_job", plate:p, model:mod, mileage:m, details:"[อาการรับรถ]:\n"+s }) })
+        fetch(API, { 
+            method:'POST', 
+            body: JSON.stringify({ 
+                action:"add_job", 
+                plate:p, 
+                model:mod, 
+                mileage:m, 
+                details:"[อาการรับรถ]:\n"+s,
+                phone: phone // ✅ ส่งเบอร์โทรไปด้วย
+            }) 
+        })
         .then(r=>r.json()).then(d=>{ alert("เปิดจ๊อบใหม่แล้ว!"); location.reload(); });
     }
 
@@ -301,7 +309,6 @@
         });
     }
 
-    // ✅ ดึงตะกร้าจากฐานข้อมูลกลับมา
     function loadActiveJobData() {
         const p = document.getElementById('active-jobs-select').value;
         const job = activeJobs.find(x => String(x.plate) === String(p));
@@ -323,7 +330,6 @@
         const status = document.getElementById('update-status').value;
         let details = document.getElementById('update-details').value;
         
-        // ถ้ายืนยันเก็บตังค์ (ปิดจ๊อบ) ค่อยพิมพ์สรุปลงประวัติ
         if(status !== 'รอดำเนินการ') {
             details += "\n\n[สรุปบิลประเมิน]:\n";
             cart.forEach(i => { 
@@ -338,7 +344,7 @@
             details: details.trim(), 
             total: document.getElementById('grandTotal').innerText.replace(/,/g,''), 
             status: status,
-            cartData: JSON.stringify(cart) // ✅ ส่งตะกร้ากลับไปเซฟที่ช่อง I ด้วย!
+            cartData: JSON.stringify(cart) 
         };
         
         document.querySelector('#mode-update .btn-primary').innerHTML = "กำลังบันทึก...";
