@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>AI สแกนบิลเข้าประวัติ - ๙ ออโต้ การาจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #f0f2f5; --primary: #1a1a1a; --accent: #2196F3; --success: #28a745; --text: #333; }
+        :root { --bg: #f0f2f5; --primary: #1a1a1a; --accent: #2196F3; --success: #28a745; --text: #333; --warning: #ff9800; }
         body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; margin: 0; }
         .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { text-align: center; margin-bottom: 20px; }
+        .header { text-align: center; margin-bottom: 20px; position: relative; }
         .header h2 { color: var(--primary); margin: 0 0 5px 0; font-size: 22px; }
         .header p { margin: 0; color: #666; font-size: 13px; }
         
+        /* ส่วนตั้งค่า API Key */
+        #api-setup-section { background: #fff3e0; padding: 20px; border-radius: 12px; border: 1px solid #ffe0b2; margin-bottom: 20px; text-align: center; display: none; }
+        #key-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ffb74d; border-radius: 8px; font-family: 'Kanit'; }
+        .btn-save-key { background: var(--warning); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Kanit'; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-reset-key { position: absolute; top: 0; right: 0; background: none; border: none; color: #999; font-size: 12px; text-decoration: underline; cursor: pointer; display: none; }
+
         .upload-area { border: 2px dashed #ccc; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; margin-bottom: 20px; background: #fafafa; transition: 0.3s; }
         .upload-area:hover { border-color: var(--accent); background: #f0f8ff; }
         .upload-area i { font-size: 40px; color: var(--accent); margin-bottom: 10px; }
@@ -24,17 +28,14 @@
         
         #preview-img { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; border: 1px solid #eee; }
         
-        .btn-scan { width: 100%; padding: 15px; background: linear-gradient(135deg, #2196F3, #1976D2); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-family: 'Kanit'; box-shadow: 0 4px 10px rgba(33,150,243,0.3); display: none; }
-        .btn-scan:disabled { background: #90caf9; cursor: not-allowed; box-shadow: none; }
+        .btn-scan { width: 100%; padding: 15px; background: linear-gradient(135deg, #2196F3, #1976D2); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-family: 'Kanit'; display: none; margin-top: 15px; }
         
         .form-section { display: none; background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
         .form-section h3 { margin-top: 0; font-size: 16px; border-bottom: 2px solid #ddd; padding-bottom: 8px; color: var(--success); }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #555; }
         input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 15px; box-sizing: border-box; }
-        input:focus, textarea:focus { outline: none; border-color: var(--success); }
         textarea { height: 120px; resize: vertical; }
-        
         .btn-save { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: 'Kanit'; }
         
         #loading-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
@@ -47,66 +48,113 @@
 <div class="container">
     <div class="header">
         <h2><i class="fas fa-robot"></i> สแกนบิลเก็บประวัติ</h2>
-        <p>ถ่ายรูปบิล หรือแนบรูป เพื่อให้ AI ช่วยพิมพ์ลงฐานข้อมูล</p>
+        <p>ระบบแกะลายมืออัตโนมัติ (AI)</p>
+        <button id="btn-reset-key" class="btn-reset-key" onclick="resetApiKey()">เปลี่ยน API Key</button>
     </div>
 
-    <div class="upload-area" onclick="document.getElementById('file-input').click()">
-        <i class="fas fa-camera"></i>
-        <div style="font-weight:bold; font-size:16px;">กดเพื่อถ่ายรูป หรือ เลือกรูปบิล</div>
-        <div style="font-size:12px; color:#888; margin-top:5px;">รองรับ JPG, PNG (ระบบจะบีบอัดรูปให้อัตโนมัติ)</div>
-        <input type="file" id="file-input" accept="image/*" capture="environment" onchange="previewImage(event)">
+    <div id="api-setup-section">
+        <i class="fas fa-key" style="font-size: 30px; color: var(--warning); margin-bottom: 10px;"></i>
+        <h3 style="margin: 0;">ตั้งค่าระบบ AI ครั้งแรก</h3>
+        <p style="font-size: 12px; color: #666;">กรุณาวางรหัส API Key ของคุณ รหัสจะถูกเก็บไว้อย่างปลอดภัยในเครื่องของคุณเท่านั้น</p>
+        <input type="password" id="key-input" placeholder="วาง API Key ลงที่นี่ (AIzaSy...)">
+        <button class="btn-save-key" onclick="saveApiKey()">บันทึกกุญแจและเริ่มใช้งาน</button>
     </div>
-    
-    <img id="preview-img" alt="Preview">
-    <button class="btn-scan" id="btn-scan" onclick="processWithAI()"><i class="fas fa-magic"></i> สแกนด้วย AI (ดึงข้อมูล)</button>
 
-    <div class="form-section" id="form-section">
-        <h3><i class="fas fa-check-circle"></i> ตรวจสอบข้อมูลก่อนบันทึก</h3>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="form-group"><label>ทะเบียนรถ</label><input type="text" id="ai-plate"></div>
-            <div class="form-group"><label>รุ่นรถ</label><input type="text" id="ai-model"></div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="form-group"><label>เลขไมล์</label><input type="number" id="ai-mileage"></div>
-            <div class="form-group"><label>เบอร์โทร</label><input type="text" id="ai-phone"></div>
+    <div id="main-app-section" style="display: none;">
+        <div class="upload-area" onclick="document.getElementById('file-input').click()">
+            <i class="fas fa-camera"></i>
+            <div style="font-weight:bold; font-size:16px;">กดเพื่อถ่ายรูป หรือ เลือกรูปบิล</div>
+            <div style="font-size:12px; color:#888; margin-top:5px;">ระบบจะบีบอัดรูปให้อัตโนมัติ (ป้องกันแอปค้าง)</div>
+            <input type="file" id="file-input" accept="image/*" capture="environment" onchange="previewAndCompressImage(event)">
         </div>
         
-        <div class="form-group">
-            <label>รายการซ่อม / อาการทั้งหมด (แก้ไขได้)</label>
-            <textarea id="ai-details"></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>ยอดรวมสุทธิ (บาท)</label>
-            <input type="number" id="ai-total">
-        </div>
+        <img id="preview-img" alt="Preview">
+        <button class="btn-scan" id="btn-scan" onclick="processWithAI()"><i class="fas fa-magic"></i> เริ่มสแกนบิลด้วย AI</button>
 
-        <div class="form-group">
-            <label>สถานะบิล</label>
-            <select id="ai-status">
-                <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (ประวัติย้อนหลัง)</option>
-                <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
-            </select>
-        </div>
+        <div class="form-section" id="form-section">
+            <h3><i class="fas fa-check-circle"></i> ตรวจสอบข้อมูลก่อนบันทึก</h3>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group"><label>ทะเบียนรถ</label><input type="text" id="ai-plate"></div>
+                <div class="form-group"><label>รุ่นรถ</label><input type="text" id="ai-model"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group"><label>เลขไมล์</label><input type="number" id="ai-mileage"></div>
+                <div class="form-group"><label>เบอร์โทร</label><input type="text" id="ai-phone"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>รายการซ่อม / อาการทั้งหมด (แก้ไขได้)</label>
+                <textarea id="ai-details"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>ยอดรวมสุทธิ (บาท)</label>
+                <input type="number" id="ai-total">
+            </div>
 
-        <button class="btn-save" id="btn-save" onclick="saveToHistory()"><i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)</button>
+            <div class="form-group">
+                <label>สถานะบิล</label>
+                <select id="ai-status">
+                    <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (ประวัติย้อนหลัง)</option>
+                    <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
+                </select>
+            </div>
+
+            <button class="btn-save" id="btn-save" onclick="saveToHistory()"><i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)</button>
+        </div>
     </div>
 </div>
 
 <div id="loading-overlay">
     <div class="spinner"></div>
-    <div id="loading-text" style="font-weight:bold; color:#555; text-align:center;">AI กำลังแกะลายมือ...<br><span style="font-size:12px; font-weight:normal;">(รอประมาณ 5-10 วินาที)</span></div>
+    <div id="loading-text" style="font-weight:bold; color:#555; text-align:center;">
+        AI กำลังแกะลายมือ...<br><span style="font-size:12px; font-weight:normal;" id="loading-subtext">(รอประมาณ 5-10 วินาที)</span>
+    </div>
 </div>
 
 <script>
-    const GEMINI_API_KEY = "AIzaSyDVNLtzHZ4ZW9Rh7XhuvgTwBbyepWxao0A";
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxIV0JWwjMWEnMoW6nZBaXGPvew6932N9Eh6bZG6ZV9tJRlbGuzzr9HRu5sJgJXu7jwnQ/exec";
-
+    const GAS_URL = "https://script.google.com/macros/s/AKfycby0PtS9tbnbCOISMQsS5i31b5MHWLO0qIiterzrAcVy2YchiGg2G93nfXIL8uGZnk5fzQ/exec";
     let base64Image = "";
+    let apiKey = "";
 
-    // ฟังก์ชันย่อขนาดและบีบอัดรูปก่อนส่ง (กันแอปค้าง)
-    function previewImage(event) {
+    // 1. ระบบจัดการ API Key (ล็อคเก็บในเครื่องมือถือ)
+    window.onload = function() {
+        checkApiKey();
+    };
+
+    function checkApiKey() {
+        apiKey = localStorage.getItem("garage_ai_key");
+        if (!apiKey) {
+            document.getElementById('api-setup-section').style.display = 'block';
+            document.getElementById('main-app-section').style.display = 'none';
+            document.getElementById('btn-reset-key').style.display = 'none';
+        } else {
+            document.getElementById('api-setup-section').style.display = 'none';
+            document.getElementById('main-app-section').style.display = 'block';
+            document.getElementById('btn-reset-key').style.display = 'block';
+        }
+    }
+
+    function saveApiKey() {
+        const keyVal = document.getElementById('key-input').value.trim();
+        if (!keyVal || !keyVal.startsWith("AIza")) {
+            alert("รูปแบบ API Key ไม่ถูกต้องครับ (ต้องขึ้นต้นด้วย AIza...)");
+            return;
+        }
+        localStorage.setItem("garage_ai_key", keyVal);
+        checkApiKey();
+    }
+
+    function resetApiKey() {
+        if(confirm("ต้องการลบกุญแจเดิม และใส่กุญแจใหม่ใช่หรือไม่?")) {
+            localStorage.removeItem("garage_ai_key");
+            checkApiKey();
+        }
+    }
+
+    // 2. ระบบบีบอัดรูปภาพ
+    function previewAndCompressImage(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -117,49 +165,53 @@
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                const MAX_WIDTH = 1000; // ย่อขนาดความกว้างไม่เกิน 1000px
+                const MAX_WIDTH = 800; // ย่อให้เหลือ 800px ก็พอสำหรับ AI อ่านออก และเร็วด้วย
 
                 if (width > MAX_WIDTH) {
                     height = Math.round(height * (MAX_WIDTH / width));
                     width = MAX_WIDTH;
                 }
-
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // บีบอัดให้เป็น JPEG คุณภาพ 80%
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8); 
+                // บีบอัดภาพเป็น JPEG 80%
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 
-                document.getElementById('preview-img').src = dataUrl;
+                document.getElementById('preview-img').src = compressedDataUrl;
                 document.getElementById('preview-img').style.display = 'block';
                 document.getElementById('btn-scan').style.display = 'block';
                 document.getElementById('form-section').style.display = 'none';
                 
-                // ตัดส่วนหัว base64 ออก เตรียมส่งให้ AI
-                base64Image = dataUrl.split(',')[1]; 
+                // ตัดส่วนหัวทิ้ง เอาแค่ Base64 โค้ดเพียวๆ
+                base64Image = compressedDataUrl.split(',')[1]; 
             }
             img.src = e.target.result;
         }
         reader.readAsDataURL(file);
     }
 
+    // 3. ระบบส่งรูปไปให้ AI ประมวลผล
     async function processWithAI() {
         if (!base64Image) return alert("กรุณาเลือกรูปภาพก่อนครับ");
+        if (!apiKey) return alert("ไม่พบ API Key กรุณารีเฟรชหน้าเว็บ");
         
         document.getElementById('loading-overlay').style.display = 'flex';
+        document.getElementById('loading-subtext').innerText = "(อาจใช้เวลา 5-10 วินาที ขึ้นอยู่กับความชัดของภาพ)";
 
         const promptText = `
-        ดึงข้อมูลจากรูปบิลเงินสด/ใบเสร็จซ่อมรถนี้ 
-        ให้อยู่ในรูปแบบ JSON เท่านั้น โดยมี key ดังนี้เป๊ะๆ ห้ามเปลี่ยนชื่อ:
-        - "plate" : ทะเบียนรถ (ถ้าไม่มีให้ใส่ "")
-        - "model" : รุ่นรถ (ถ้าไม่มีให้ใส่ "")
-        - "mileage" : เลขไมล์ (เฉพาะตัวเลข ถ้าไม่มีให้ใส่ "")
-        - "phone" : เบอร์โทร (ถ้าไม่มีให้ใส่ "")
-        - "total" : ยอดรวมสุทธิ (เฉพาะตัวเลข ห้ามมีลูกน้ำ)
-        - "details" : รายการซ่อมทั้งหมดและราคา เรียงเป็นข้อๆ ให้สวยงาม (เช่น - เปลี่ยนโช้ค 1500 บาท)
-        ไม่ต้องมีเครื่องหมาย markdown ใดๆ ให้ส่งเป็น JSON ล้วนๆ เลย
+        อ่านข้อมูลจากรูปบิลซ่อมรถนี้ 
+        ส่งกลับมาเป็น JSON ตามรูปแบบนี้เท่านั้น ห้ามมี Markdown หรือคำอธิบายเพิ่มเติม:
+        {
+          "plate": "ทะเบียนรถ",
+          "model": "รุ่นรถ",
+          "mileage": "เลขไมล์ (เอาเฉพาะตัวเลข)",
+          "phone": "เบอร์โทร",
+          "total": "ยอดรวม (ตัวเลขเท่านั้น)",
+          "details": "- รายการ 1\\n- รายการ 2"
+        }
+        ถ้าข้อมูลไหนไม่มีในบิล ให้เว้นว่างเป็น ""
         `;
 
         const requestBody = {
@@ -173,21 +225,27 @@
         };
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody)
             });
 
             const data = await response.json();
-            if(data.error) throw new Error(data.error.message);
+            
+            // เช็คว่า API Key โดนบล็อกหรือมีปัญหาไหม
+            if(data.error) {
+                if(data.error.code === 400 || data.error.code === 403) {
+                    throw new Error("API Key มีปัญหา หรือถูกบล็อก (รหัส " + data.error.code + ")");
+                }
+                throw new Error(data.error.message);
+            }
 
             const aiText = data.candidates[0].content.parts[0].text;
-            
-            // ป้องกัน AI ส่ง Markdown ติดมา
             let cleanJson = aiText.replace(/```json/gi, "").replace(/```/g, "").trim();
             const result = JSON.parse(cleanJson);
 
+            // หยอดข้อมูลลงฟอร์ม
             document.getElementById('ai-plate').value = result.plate || "";
             document.getElementById('ai-model').value = result.model || "";
             document.getElementById('ai-mileage').value = result.mileage ? result.mileage.toString().replace(/,/g,'') : "";
@@ -201,13 +259,14 @@
             document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
             
         } catch (error) {
-            alert("AI อ่านภาพไม่สำเร็จ กรุณาลองถ่ายรูปใหม่ให้ชัดเจนขึ้นครับ\n(หรืออาจเกิดจากปัญหาการเชื่อมต่อ)");
+            alert("เกิดข้อผิดพลาดในการสแกน: " + error.message + "\n\nหากเป็นปัญหาเรื่อง API Key ให้กดปุ่ม 'เปลี่ยน API Key' ที่มุมขวาบนครับ");
             console.error(error);
         } finally {
             document.getElementById('loading-overlay').style.display = 'none';
         }
     }
 
+    // 4. ระบบบันทึกลง Google Sheets
     function saveToHistory() {
         const plate = document.getElementById('ai-plate').value;
         const total = document.getElementById('ai-total').value;
@@ -238,7 +297,7 @@
                 alert("บันทึกประวัติจากบิลสำเร็จ!");
                 location.reload(); 
             } else {
-                alert("เกิดข้อผิดพลาด: " + d.message);
+                alert("เกิดข้อผิดพลาดจากฐานข้อมูล: " + d.message);
                 btnSave.innerHTML = '<i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)';
                 btnSave.disabled = false;
             }
