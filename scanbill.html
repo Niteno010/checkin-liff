@@ -15,20 +15,21 @@
         .header h2 { color: var(--primary); margin: 0 0 5px 0; font-size: 22px; }
         .header p { margin: 0; color: #666; font-size: 13px; }
         
-        /* ส่วนตั้งค่า API Key */
         #api-setup-section { background: #fff3e0; padding: 20px; border-radius: 12px; border: 1px solid #ffe0b2; margin-bottom: 20px; text-align: center; display: none; }
         #key-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ffb74d; border-radius: 8px; font-family: 'Kanit'; }
         .btn-save-key { background: var(--warning); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Kanit'; font-weight: bold; width: 100%; cursor: pointer; }
         .btn-reset-key { position: absolute; top: 0; right: 0; background: none; border: none; color: #999; font-size: 12px; text-decoration: underline; cursor: pointer; display: none; }
 
         .upload-area { border: 2px dashed #ccc; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; margin-bottom: 20px; background: #fafafa; transition: 0.3s; }
-        .upload-area:hover { border-color: var(--accent); background: #f0f8ff; }
         .upload-area i { font-size: 40px; color: var(--accent); margin-bottom: 10px; }
         #file-input { display: none; }
         
         #preview-img { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; border: 1px solid #eee; }
         
         .btn-scan { width: 100%; padding: 15px; background: linear-gradient(135deg, #2196F3, #1976D2); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-family: 'Kanit'; display: none; margin-top: 15px; }
+        
+        /* 🚨 กล่องแสดง Error บนหน้าจอ (กันแอปค้างเงียบๆ) */
+        #debug-box { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffcdd2; display: none; font-size: 13px; word-wrap: break-word; }
         
         .form-section { display: none; background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
         .form-section h3 { margin-top: 0; font-size: 16px; border-bottom: 2px solid #ddd; padding-bottom: 8px; color: var(--success); }
@@ -55,7 +56,7 @@
     <div id="api-setup-section">
         <i class="fas fa-key" style="font-size: 30px; color: var(--warning); margin-bottom: 10px;"></i>
         <h3 style="margin: 0;">ตั้งค่าระบบ AI ครั้งแรก</h3>
-        <p style="font-size: 12px; color: #666;">กรุณาวางรหัส API Key ของคุณ รหัสจะถูกเก็บไว้อย่างปลอดภัยในเครื่องของคุณเท่านั้น</p>
+        <p style="font-size: 12px; color: #666;">วางรหัส API Key ของคุณ รหัสจะถูกเก็บในเครื่องคุณเท่านั้น</p>
         <input type="password" id="key-input" placeholder="วาง API Key ลงที่นี่ (AIzaSy...)">
         <button class="btn-save-key" onclick="saveApiKey()">บันทึกกุญแจและเริ่มใช้งาน</button>
     </div>
@@ -64,16 +65,17 @@
         <div class="upload-area" onclick="document.getElementById('file-input').click()">
             <i class="fas fa-camera"></i>
             <div style="font-weight:bold; font-size:16px;">กดเพื่อถ่ายรูป หรือ เลือกรูปบิล</div>
-            <div style="font-size:12px; color:#888; margin-top:5px;">ระบบจะบีบอัดรูปให้อัตโนมัติ (ป้องกันแอปค้าง)</div>
             <input type="file" id="file-input" accept="image/*" capture="environment" onchange="previewAndCompressImage(event)">
         </div>
         
         <img id="preview-img" alt="Preview">
+        
+        <div id="debug-box"></div>
+        
         <button class="btn-scan" id="btn-scan" onclick="processWithAI()"><i class="fas fa-magic"></i> เริ่มสแกนบิลด้วย AI</button>
 
         <div class="form-section" id="form-section">
             <h3><i class="fas fa-check-circle"></i> ตรวจสอบข้อมูลก่อนบันทึก</h3>
-            
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div class="form-group"><label>ทะเบียนรถ</label><input type="text" id="ai-plate"></div>
                 <div class="form-group"><label>รุ่นรถ</label><input type="text" id="ai-model"></div>
@@ -82,17 +84,14 @@
                 <div class="form-group"><label>เลขไมล์</label><input type="number" id="ai-mileage"></div>
                 <div class="form-group"><label>เบอร์โทร</label><input type="text" id="ai-phone"></div>
             </div>
-            
             <div class="form-group">
-                <label>รายการซ่อม / อาการทั้งหมด (แก้ไขได้)</label>
+                <label>รายการซ่อม / อาการทั้งหมด</label>
                 <textarea id="ai-details"></textarea>
             </div>
-            
             <div class="form-group">
                 <label>ยอดรวมสุทธิ (บาท)</label>
                 <input type="number" id="ai-total">
             </div>
-
             <div class="form-group">
                 <label>สถานะบิล</label>
                 <select id="ai-status">
@@ -100,7 +99,6 @@
                     <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
                 </select>
             </div>
-
             <button class="btn-save" id="btn-save" onclick="saveToHistory()"><i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)</button>
         </div>
     </div>
@@ -109,7 +107,7 @@
 <div id="loading-overlay">
     <div class="spinner"></div>
     <div id="loading-text" style="font-weight:bold; color:#555; text-align:center;">
-        AI กำลังแกะลายมือ...<br><span style="font-size:12px; font-weight:normal;" id="loading-subtext">(รอประมาณ 5-10 วินาที)</span>
+        AI กำลังประมวลผล...<br><span style="font-size:12px; font-weight:normal;">(รอประมาณ 5-10 วินาที)</span>
     </div>
 </div>
 
@@ -118,10 +116,7 @@
     let base64Image = "";
     let apiKey = "";
 
-    // 1. ระบบจัดการ API Key (ล็อคเก็บในเครื่องมือถือ)
-    window.onload = function() {
-        checkApiKey();
-    };
+    window.onload = function() { checkApiKey(); };
 
     function checkApiKey() {
         apiKey = localStorage.getItem("garage_ai_key");
@@ -139,7 +134,7 @@
     function saveApiKey() {
         const keyVal = document.getElementById('key-input').value.trim();
         if (!keyVal || !keyVal.startsWith("AIza")) {
-            alert("รูปแบบ API Key ไม่ถูกต้องครับ (ต้องขึ้นต้นด้วย AIza...)");
+            alert("API Key ต้องขึ้นต้นด้วย AIza... ครับ");
             return;
         }
         localStorage.setItem("garage_ai_key", keyVal);
@@ -147,14 +142,14 @@
     }
 
     function resetApiKey() {
-        if(confirm("ต้องการลบกุญแจเดิม และใส่กุญแจใหม่ใช่หรือไม่?")) {
+        if(confirm("ต้องการเปลี่ยน API Key ใหม่ใช่หรือไม่?")) {
             localStorage.removeItem("garage_ai_key");
             checkApiKey();
         }
     }
 
-    // 2. ระบบบีบอัดรูปภาพ
     function previewAndCompressImage(event) {
+        document.getElementById('debug-box').style.display = 'none'; // ซ่อน error เดิม
         const file = event.target.files[0];
         if (!file) return;
 
@@ -165,7 +160,7 @@
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                const MAX_WIDTH = 800; // ย่อให้เหลือ 800px ก็พอสำหรับ AI อ่านออก และเร็วด้วย
+                const MAX_WIDTH = 800; 
 
                 if (width > MAX_WIDTH) {
                     height = Math.round(height * (MAX_WIDTH / width));
@@ -176,15 +171,12 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // บีบอัดภาพเป็น JPEG 80%
                 const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                
                 document.getElementById('preview-img').src = compressedDataUrl;
                 document.getElementById('preview-img').style.display = 'block';
                 document.getElementById('btn-scan').style.display = 'block';
                 document.getElementById('form-section').style.display = 'none';
                 
-                // ตัดส่วนหัวทิ้ง เอาแค่ Base64 โค้ดเพียวๆ
                 base64Image = compressedDataUrl.split(',')[1]; 
             }
             img.src = e.target.result;
@@ -192,17 +184,21 @@
         reader.readAsDataURL(file);
     }
 
-    // 3. ระบบส่งรูปไปให้ AI ประมวลผล
     async function processWithAI() {
-        if (!base64Image) return alert("กรุณาเลือกรูปภาพก่อนครับ");
-        if (!apiKey) return alert("ไม่พบ API Key กรุณารีเฟรชหน้าเว็บ");
+        const debugBox = document.getElementById('debug-box');
+        debugBox.style.display = 'none';
+        
+        if (!base64Image) {
+            debugBox.innerHTML = "❌ ยังไม่ได้เลือกรูปภาพครับ";
+            debugBox.style.display = 'block';
+            return;
+        }
         
         document.getElementById('loading-overlay').style.display = 'flex';
-        document.getElementById('loading-subtext').innerText = "(อาจใช้เวลา 5-10 วินาที ขึ้นอยู่กับความชัดของภาพ)";
 
         const promptText = `
         อ่านข้อมูลจากรูปบิลซ่อมรถนี้ 
-        ส่งกลับมาเป็น JSON ตามรูปแบบนี้เท่านั้น ห้ามมี Markdown หรือคำอธิบายเพิ่มเติม:
+        ส่งกลับมาเป็น JSON ตามรูปแบบนี้เท่านั้น ห้ามมีคำอธิบายเพิ่มเติม:
         {
           "plate": "ทะเบียนรถ",
           "model": "รุ่นรถ",
@@ -233,17 +229,24 @@
 
             const data = await response.json();
             
-            // เช็คว่า API Key โดนบล็อกหรือมีปัญหาไหม
+            // เช็ค Error จากเซิร์ฟเวอร์ Google
             if(data.error) {
-                if(data.error.code === 400 || data.error.code === 403) {
-                    throw new Error("API Key มีปัญหา หรือถูกบล็อก (รหัส " + data.error.code + ")");
-                }
-                throw new Error(data.error.message);
+                throw new Error("ข้อผิดพลาดจาก Google (Code " + data.error.code + "): " + data.error.message);
+            }
+
+            if(!data.candidates || data.candidates.length === 0) {
+                throw new Error("AI ประมวลผลสำเร็จแต่ไม่ส่งข้อความกลับมาครับ");
             }
 
             const aiText = data.candidates[0].content.parts[0].text;
             let cleanJson = aiText.replace(/```json/gi, "").replace(/```/g, "").trim();
-            const result = JSON.parse(cleanJson);
+            
+            let result;
+            try {
+                result = JSON.parse(cleanJson);
+            } catch (e) {
+                throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่ใช่ JSON):\n" + aiText);
+            }
 
             // หยอดข้อมูลลงฟอร์ม
             document.getElementById('ai-plate').value = result.plate || "";
@@ -251,7 +254,6 @@
             document.getElementById('ai-mileage').value = result.mileage ? result.mileage.toString().replace(/,/g,'') : "";
             document.getElementById('ai-phone').value = result.phone || "";
             document.getElementById('ai-total').value = result.total || 0;
-            
             let finalDetails = "[ข้อมูลจากสแกนบิล]\n" + (result.details || "ไม่พบรายการ");
             document.getElementById('ai-details').value = finalDetails;
 
@@ -259,18 +261,25 @@
             document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
             
         } catch (error) {
-            alert("เกิดข้อผิดพลาดในการสแกน: " + error.message + "\n\nหากเป็นปัญหาเรื่อง API Key ให้กดปุ่ม 'เปลี่ยน API Key' ที่มุมขวาบนครับ");
+            // โชว์ Error ขึ้นหน้าจอตัวแดงๆ แทนการเด้ง Alert
+            debugBox.innerHTML = "<b>❌ พบปัญหา:</b><br>" + error.message + "<br><br><i>คำแนะนำ: ลองรีเฟรชหน้าเว็บ หรือกดปุ่มเปลี่ยน API Key ด้านบนขวาครับ</i>";
+            debugBox.style.display = 'block';
             console.error(error);
         } finally {
             document.getElementById('loading-overlay').style.display = 'none';
         }
     }
 
-    // 4. ระบบบันทึกลง Google Sheets
+    // ส่วนของ Google Sheets ไม่มีการเปลี่ยนแปลง
     function saveToHistory() {
+        // ... (โค้ดบันทึกของเดิม) ...
         const plate = document.getElementById('ai-plate').value;
         const total = document.getElementById('ai-total').value;
-        if(!plate) return alert("กรุณาใส่ทะเบียนรถก่อนบันทึกครับ");
+        if(!plate) {
+            document.getElementById('debug-box').innerHTML = "❌ กรุณาใส่ทะเบียนรถก่อนบันทึกครับ";
+            document.getElementById('debug-box').style.display = 'block';
+            return;
+        }
 
         const payload = {
             action: "add_job",
@@ -297,13 +306,15 @@
                 alert("บันทึกประวัติจากบิลสำเร็จ!");
                 location.reload(); 
             } else {
-                alert("เกิดข้อผิดพลาดจากฐานข้อมูล: " + d.message);
+                document.getElementById('debug-box').innerHTML = "❌ Error บันทึก Sheet: " + d.message;
+                document.getElementById('debug-box').style.display = 'block';
                 btnSave.innerHTML = '<i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)';
                 btnSave.disabled = false;
             }
         })
         .catch(err => {
-            alert("เชื่อมต่อฐานข้อมูลไม่ได้ครับ ลองใหม่อีกครั้ง");
+            document.getElementById('debug-box').innerHTML = "❌ เชื่อมต่อฐานข้อมูลไม่ได้ ลองใหม่อีกครั้งครับ";
+            document.getElementById('debug-box').style.display = 'block';
             btnSave.innerHTML = '<i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)';
             btnSave.disabled = false;
         });
