@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AI สแกนบิลเข้าประวัติ - ๙ ออโต้ การาจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -50,7 +53,7 @@
     <div class="upload-area" onclick="document.getElementById('file-input').click()">
         <i class="fas fa-camera"></i>
         <div style="font-weight:bold; font-size:16px;">กดเพื่อถ่ายรูป หรือ เลือกรูปบิล</div>
-        <div style="font-size:12px; color:#888; margin-top:5px;">รองรับ JPG, PNG (ยิ่งชัด AI ยิ่งแม่น)</div>
+        <div style="font-size:12px; color:#888; margin-top:5px;">รองรับ JPG, PNG (ระบบจะบีบอัดรูปให้อัตโนมัติ)</div>
         <input type="file" id="file-input" accept="image/*" capture="environment" onchange="previewImage(event)">
     </div>
     
@@ -93,30 +96,51 @@
 
 <div id="loading-overlay">
     <div class="spinner"></div>
-    <div id="loading-text" style="font-weight:bold; color:#555;">AI กำลังแกะลายมือ... (รอประมาณ 5-10 วินาที)</div>
+    <div id="loading-text" style="font-weight:bold; color:#555; text-align:center;">AI กำลังแกะลายมือ...<br><span style="font-size:12px; font-weight:normal;">(รอประมาณ 5-10 วินาที)</span></div>
 </div>
 
 <script>
-    // 🔑 ตั้งค่าคีย์ API
     const GEMINI_API_KEY = "AIzaSyDVNLtzHZ4ZW9Rh7XhuvgTwBbyepWxao0A";
-    // 🔗 URL ฐานข้อมูล Code.gs เดิม (ที่แก้ไขใหม่เมื่อกี้)
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbx4Y8cbpLgvwRN_ubzEenD93zkuyjKxWmjjjXAKpCS1s7nLdsysTSZOBR3hk2ERGircQw/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxIV0JWwjMWEnMoW6nZBaXGPvew6932N9Eh6bZG6ZV9tJRlbGuzzr9HRu5sJgJXu7jwnQ/exec";
 
     let base64Image = "";
 
+    // ฟังก์ชันย่อขนาดและบีบอัดรูปก่อนส่ง (กันแอปค้าง)
     function previewImage(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('preview-img').style.display = 'block';
-            document.getElementById('btn-scan').style.display = 'block';
-            document.getElementById('form-section').style.display = 'none'; // ซ่อนฟอร์มไปก่อน
-            
-            // แยกส่วนหัวของ Data URL ออก เพื่อส่งให้ Gemini
-            base64Image = e.target.result.split(',')[1]; 
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                const MAX_WIDTH = 1000; // ย่อขนาดความกว้างไม่เกิน 1000px
+
+                if (width > MAX_WIDTH) {
+                    height = Math.round(height * (MAX_WIDTH / width));
+                    width = MAX_WIDTH;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // บีบอัดให้เป็น JPEG คุณภาพ 80%
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8); 
+                
+                document.getElementById('preview-img').src = dataUrl;
+                document.getElementById('preview-img').style.display = 'block';
+                document.getElementById('btn-scan').style.display = 'block';
+                document.getElementById('form-section').style.display = 'none';
+                
+                // ตัดส่วนหัว base64 ออก เตรียมส่งให้ AI
+                base64Image = dataUrl.split(',')[1]; 
+            }
+            img.src = e.target.result;
         }
         reader.readAsDataURL(file);
     }
@@ -125,7 +149,6 @@
         if (!base64Image) return alert("กรุณาเลือกรูปภาพก่อนครับ");
         
         document.getElementById('loading-overlay').style.display = 'flex';
-        document.getElementById('loading-text').innerText = "AI กำลังแกะลายมือ... (รอประมาณ 5-10 วินาที)";
 
         const promptText = `
         ดึงข้อมูลจากรูปบิลเงินสด/ใบเสร็จซ่อมรถนี้ 
@@ -136,7 +159,7 @@
         - "phone" : เบอร์โทร (ถ้าไม่มีให้ใส่ "")
         - "total" : ยอดรวมสุทธิ (เฉพาะตัวเลข ห้ามมีลูกน้ำ)
         - "details" : รายการซ่อมทั้งหมดและราคา เรียงเป็นข้อๆ ให้สวยงาม (เช่น - เปลี่ยนโช้ค 1500 บาท)
-        ไม่ต้องมีเครื่องหมาย \`\`\`json ครอบ ให้ส่งเป็น JSON ล้วนๆ เลย
+        ไม่ต้องมีเครื่องหมาย markdown ใดๆ ให้ส่งเป็น JSON ล้วนๆ เลย
         `;
 
         const requestBody = {
@@ -159,11 +182,12 @@
             const data = await response.json();
             if(data.error) throw new Error(data.error.message);
 
-            // ดึงข้อความ JSON ที่ AI ตอบกลับมา
             const aiText = data.candidates[0].content.parts[0].text;
-            const result = JSON.parse(aiText.replace(/```json/g, "").replace(/```/g, ""));
+            
+            // ป้องกัน AI ส่ง Markdown ติดมา
+            let cleanJson = aiText.replace(/```json/gi, "").replace(/```/g, "").trim();
+            const result = JSON.parse(cleanJson);
 
-            // เอาข้อมูลที่แกะได้ไปหยอดใส่ช่อง
             document.getElementById('ai-plate').value = result.plate || "";
             document.getElementById('ai-model').value = result.model || "";
             document.getElementById('ai-mileage').value = result.mileage ? result.mileage.toString().replace(/,/g,'') : "";
@@ -173,12 +197,12 @@
             let finalDetails = "[ข้อมูลจากสแกนบิล]\n" + (result.details || "ไม่พบรายการ");
             document.getElementById('ai-details').value = finalDetails;
 
-            // โชว์ฟอร์มให้คุณอาร์มตรวจ
             document.getElementById('form-section').style.display = 'block';
             document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
             
         } catch (error) {
-            alert("AI อ่านภาพไม่สำเร็จ ลองถ่ายให้ชัดขึ้น หรือถ่ายเฉพาะบริเวณตัวหนังสือครับ\nError: " + error.message);
+            alert("AI อ่านภาพไม่สำเร็จ กรุณาลองถ่ายรูปใหม่ให้ชัดเจนขึ้นครับ\n(หรืออาจเกิดจากปัญหาการเชื่อมต่อ)");
+            console.error(error);
         } finally {
             document.getElementById('loading-overlay').style.display = 'none';
         }
@@ -197,7 +221,7 @@
             phone: document.getElementById('ai-phone').value,
             details: document.getElementById('ai-details').value,
             total: total ? Number(total) : 0,
-            status: document.getElementById('ai-status').value // ส่งสถานะไปดัวย (ปิดจ๊อบ/รอดำเนินการ)
+            status: document.getElementById('ai-status').value 
         };
 
         const btnSave = document.getElementById('btn-save');
@@ -212,7 +236,7 @@
         .then(d => {
             if(d.status === 'success') {
                 alert("บันทึกประวัติจากบิลสำเร็จ!");
-                location.reload(); // รีเซ็ตหน้าเว็บเตรียมถ่ายใบต่อไป
+                location.reload(); 
             } else {
                 alert("เกิดข้อผิดพลาด: " + d.message);
                 btnSave.innerHTML = '<i class="fas fa-hdd"></i> บันทึกเข้าประวัติ (History)';
