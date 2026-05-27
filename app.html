@@ -187,9 +187,13 @@
             <input type="text" id="hist-plate" placeholder="ทะเบียนรถ *">
             <input type="number" id="hist-mileage" placeholder="เลขไมล์ *">
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
             <input type="text" id="hist-model" placeholder="รุ่นรถ">
             <input type="text" id="hist-phone" placeholder="เบอร์โทรลูกค้า">
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="font-size:13px;font-weight:bold;color:#555;display:block;margin-bottom:5px;">📅 วันที่เข้ารับบริการ *</label>
+            <input type="date" id="hist-date">
         </div>
  
         <h3 style="font-size:15px;border-bottom:2px solid #eee;padding-bottom:5px;margin-top:0;">
@@ -301,10 +305,15 @@
 // ==========================================
 // CONFIG
 // ==========================================
-const API = "https://script.google.com/macros/s/AKfycbzq-JZUu99F8473mm_i4kPR_5mEJENZLZORNLM70TZyAbYdRzOZa3zORC4Na6xxVO-44A/exec";
+const API = "https://script.google.com/macros/s/AKfycbxyQjGOjroKIaC7mJMAsUno3u5xa_B3fzm6R8OvMKTXwt1AESkbo6HHuf5n2Cw8eKaS/exec";
  
 let allItems = [], activeJobs = [], cart = [], histCart = [];
-let customItemTarget = 'job'; // 'job' หรือ 'hist'
+let customItemTarget = 'job';
+ 
+// ตั้งวันที่วันนี้เป็นค่าเริ่มต้น
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('hist-date').value = new Date().toISOString().split('T')[0];
+});
  
 // ==========================================
 // INIT — โหลดอะไหล่
@@ -632,34 +641,53 @@ function updateHistCartUI() {
  
 // --- บันทึกประวัติลงไฟล์ Drive ---
 function saveHistoryToFile() {
-    const plate   = document.getElementById('hist-plate').value.trim();
-    const mileage = document.getElementById('hist-mileage').value;
+    const plate       = document.getElementById('hist-plate').value.trim();
+    const mileage     = document.getElementById('hist-mileage').value;
+    const serviceDate = document.getElementById('hist-date').value;
+ 
     if (!plate || !mileage) return alert('กรุณากรอกทะเบียนและไมล์ครับ');
+    if (!serviceDate)       return alert('กรุณาเลือกวันที่เข้ารับบริการครับ');
     if (histCart.length === 0) return alert('กรุณาเพิ่มรายการซ่อมก่อนครับ');
+ 
     const total = histCart.reduce((s, i) => s + i.price * i.qty, 0);
     const btn = document.querySelector('#hist-mode-save .btn-success');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
     btn.disabled  = true;
-    fetch(API, {
-        method: 'POST',
-        body: JSON.stringify({
-            action:   'save_history',
-            plate,
-            model:    document.getElementById('hist-model').value,
-            phone:    document.getElementById('hist-phone').value,
-            mileage,
-            cartData: JSON.stringify(histCart),
-            total
-        })
-    }).then(r => r.json()).then(d => {
+ 
+    function doSave(force) {
+        return fetch(API, {
+            method: 'POST',
+            body: JSON.stringify({
+                action:      'save_history',
+                plate,
+                model:       document.getElementById('hist-model').value,
+                phone:       document.getElementById('hist-phone').value,
+                mileage,
+                serviceDate: serviceDate,
+                cartData:    JSON.stringify(histCart),
+                total,
+                forceInsert: force || false
+            })
+        }).then(r => r.json());
+    }
+ 
+    doSave(false).then(d => {
+        if (d.status === 'duplicate') {
+            btn.innerHTML = '<i class="fas fa-save"></i> บันทึกลงไฟล์ทะเบียน';
+            btn.disabled  = false;
+            if (!confirm('⚠️ ทะเบียนนี้มีบิลวันที่ ' + serviceDate + ' อยู่แล้ว\nต้องการบันทึกซ้ำไหมครับ?\n(เช่น ซ่อมหลายรายการวันเดียวกัน)')) return;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+            btn.disabled  = true;
+            return doSave(true).then(d2 => {
+                if (d2.status === 'success') { alert('✅ บันทึกเรียบร้อยแล้วครับ!'); resetHistForm(); }
+                else alert('เกิดข้อผิดพลาด: ' + d2.message);
+                btn.innerHTML = '<i class="fas fa-save"></i> บันทึกลงไฟล์ทะเบียน';
+                btn.disabled  = false;
+            });
+        }
         if (d.status === 'success') {
             alert('✅ บันทึกลงไฟล์ทะเบียนเรียบร้อยแล้วครับ!');
-            histCart = [];
-            updateHistCartUI();
-            document.getElementById('hist-plate').value   = '';
-            document.getElementById('hist-mileage').value = '';
-            document.getElementById('hist-model').value   = '';
-            document.getElementById('hist-phone').value   = '';
+            resetHistForm();
         } else {
             alert('เกิดข้อผิดพลาด: ' + d.message);
         }
@@ -670,6 +698,16 @@ function saveHistoryToFile() {
         btn.innerHTML = '<i class="fas fa-save"></i> บันทึกลงไฟล์ทะเบียน';
         btn.disabled  = false;
     });
+}
+ 
+function resetHistForm() {
+    histCart = [];
+    updateHistCartUI();
+    document.getElementById('hist-plate').value   = '';
+    document.getElementById('hist-mileage').value = '';
+    document.getElementById('hist-model').value   = '';
+    document.getElementById('hist-phone').value   = '';
+    document.getElementById('hist-date').value    = new Date().toISOString().split('T')[0];
 }
  
 // --- ค้นหาประวัติทุกปี ---
