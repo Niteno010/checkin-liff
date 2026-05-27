@@ -19,24 +19,24 @@
         * { box-sizing: border-box; }
         body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
- 
+
         /* NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 12px; cursor: pointer; position: relative; transition: color 0.2s; }
         .nav-item i { display: block; font-size: 20px; margin-bottom: 3px; }
         .nav-item.active { color: var(--accent); }
         .badge { position: absolute; top: 5px; right: 25vw; background: var(--accent); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; transition: transform 0.2s; }
- 
+
         /* TABS */
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
- 
+
         /* INPUTS */
         .search-box { background: var(--card); padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; position: sticky; top: 10px; z-index: 100; }
         input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Kanit'; font-size: 16px; background: #f9f9f9; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
- 
+
         /* CARDS */
         .item-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .cart-item { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
@@ -45,21 +45,35 @@
         .qty-controls { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 2px 8px; }
         .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 5px; }
         .price-input { width: 90px !important; text-align: right; font-weight: bold; color: var(--success); border: none !important; background: transparent !important; }
- 
-        /* HISTORY */
-        .history-card { background: #fff; border-radius: 12px; margin-bottom: 15px; border-top: 5px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
-        .history-header { padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
-        .history-header:active { background: #f0f0f0; }
-        .history-date { font-size: 18px; font-weight: bold; color: var(--primary); }
-        .history-title { font-size: 14px; color: #555; margin-top: 4px; }
-        .history-body { display: none; padding: 15px; border-top: 1px dashed #eee; background: #fafafa; }
-        .history-body.show { display: block; animation: fadeIn 0.3s; }
- 
+
+        /* ==================== HISTORY CARDS (APPLE STYLE) ==================== */
+        .history-card { background: #fff; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eef0f2; box-shadow: 0 4px 10px rgba(0,0,0,0.03); overflow: hidden; }
+        .history-header { padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
+        .history-header:active { background: #f8f9fa; }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-plate { font-size: 16px; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .history-tag { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 500; letter-spacing: 0.2px; }
+        .tag-new { background: #e3f2fd; color: #0056b3; }
+        .tag-archive { background: #f1f3f5; color: #495057; }
+        .history-body { display: none; padding: 0 16px 16px 16px; background: #fff; }
+        .history-body.show { display: block; animation: slideDown 0.3s ease-out; border-top: 1px solid #f1f3f5; padding-top: 16px; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* APPLE INNER CARD */
+        .apple-card { background: #fff; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; }
+        .apple-card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fdfdfd; transition: background 0.2s; }
+        .apple-card-header:active { background: #f1f3f5; }
+        .apple-card-title { font-weight: bold; color: var(--primary); font-size: 14px; }
+        .apple-card-meta { font-size: 12px; color: #888; margin-top: 2px; }
+        .apple-card-price { font-weight: bold; color: var(--success); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .apple-card-body { display: none; padding: 12px 15px; border-top: 1px dashed #eee; background: #fafafa; font-size: 13px; color: #444; white-space: pre-wrap; line-height: 1.6; }
+        .apple-card-body.show { display: block; animation: fadeIn 0.2s; }
+
         /* STATUS */
         .status-tag { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; }
         .status-closed { background: #e8f5e9; color: var(--success); }
         .status-pending { background: #fff3cd; color: #856404; }
- 
+
         /* BUTTONS */
         .total-banner { background: var(--primary); color: #fff; padding: 15px; border-radius: 12px; text-align: right; font-size: 20px; font-weight: bold; margin: 15px 0; }
         .btn-main { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
@@ -70,29 +84,21 @@
         .seg-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-family: 'Kanit'; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .seg-btn.inactive { background: transparent; color: #666; }
- 
+
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); }
         .modal-content { background: #fff; margin: 10vh auto; padding: 20px; width: 90%; max-width: 400px; border-radius: 15px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
- 
+
         /* BILL */
         #bill-capture-area { background: #fff; padding: 20px; color: #000; border: 1px solid #ddd; border-radius: 8px; }
         .bill-header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 10px; margin-bottom: 15px; }
         .bill-table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .bill-table th { text-align: left; border-bottom: 1px solid #eee; padding: 5px; }
         .bill-table td { padding: 8px 5px; border-bottom: 1px dotted #eee; }
- 
-        /* TIMELINE (ประวัติใหม่) */
-        .timeline-item { border-left: 3px solid var(--blue); padding: 10px 12px; margin-bottom: 12px; background: #fff; border-radius: 0 10px 10px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        .timeline-date { font-weight: bold; color: var(--primary); font-size: 15px; }
-        .timeline-mile { font-size: 12px; color: #888; }
-        .timeline-details { font-size: 13px; white-space: pre-wrap; color: #444; margin: 6px 0; }
-        .timeline-total { text-align: right; font-weight: bold; color: var(--success); font-size: 15px; }
     </style>
 </head>
 <body>
- 
-<!-- ==================== TAB 1: อะไหล่ ==================== -->
+
 <div id="tab-search" class="tab-content container active">
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 ค้นหาอะไหล่/รุ่นรถ..." onkeyup="filterItems()">
@@ -102,15 +108,13 @@
     </div>
     <div id="resultsList"></div>
 </div>
- 
-<!-- ==================== TAB 2: จัดการจ๊อบ ==================== -->
+
 <div id="tab-job" class="tab-content container">
     <div style="display:flex;gap:10px;margin-bottom:15px;background:#e0e0e0;padding:4px;border-radius:10px;">
         <button class="seg-btn active" id="btn-m-new" onclick="setJobMode('new')">🆕 รถใหม่</button>
         <button class="seg-btn inactive" id="btn-m-upd" onclick="setJobMode('update')">🛠️ ค้างซ่อม</button>
     </div>
- 
-    <!-- โหมด รถใหม่ -->
+
     <div id="mode-new">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
             <input type="text" id="new-plate" placeholder="ทะเบียนรถ *">
@@ -123,14 +127,13 @@
         <textarea id="new-symptoms" placeholder="อาการที่ลูกค้าแจ้ง..." style="margin-bottom:15px;"></textarea>
         <button class="btn-main btn-primary" onclick="saveNewJob()">บันทึกรับรถเข้าอู่</button>
     </div>
- 
-    <!-- โหมด ค้างซ่อม -->
+
     <div id="mode-update" style="display:none;">
         <label style="font-size:14px;font-weight:bold;color:#555;"><i class="fas fa-car-side"></i> เลือกรถที่กำลังทำ</label>
         <select id="active-jobs-select" onchange="loadActiveJobData()" style="margin-bottom:15px;font-weight:bold;">
             <option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>
         </select>
- 
+
         <div style="background:#f1f3f5;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #e9ecef;">
             <label style="font-size:13px;font-weight:bold;color:#666;"><i class="fas fa-edit"></i> เติม/แก้ไขข้อมูลรถ</label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
@@ -139,21 +142,21 @@
                 <input type="number" id="update-mileage" placeholder="เลขไมล์" style="grid-column:span 2;">
             </div>
         </div>
- 
+
         <h3 style="font-size:16px;border-bottom:2px solid #eee;padding-bottom:5px;margin-top:0;">
             <i class="fas fa-wrench"></i> รายการอะไหล่ / ประเมิน
         </h3>
         <div id="cartList" style="margin-bottom:10px;"></div>
- 
+
         <button onclick="openCustomItemModal('job')" style="width:100%;padding:12px;border:1px dashed #aaa;background:#fff;margin-bottom:15px;border-radius:8px;font-family:'Kanit';font-weight:bold;cursor:pointer;color:#555;">
             <i class="fas fa-plus-circle"></i> พิมพ์เพิ่มรายการเอง / ค่าแรง
         </button>
- 
+
         <label style="font-size:14px;font-weight:bold;color:#555;">ประวัติอาการ</label>
         <textarea id="update-details" placeholder="ระบบจะดึงประวัติเดิมมาแสดง..." style="margin-bottom:10px;"></textarea>
- 
+
         <div class="total-banner">ยอดรวมสุทธิ: <span id="grandTotal">0</span> ฿</div>
- 
+
         <div style="background:#e8f4f8;padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid #b8daff;">
             <label style="color:#0056b3;font-weight:bold;"><i class="fas fa-flag-checkered"></i> เลือกสถานะการซ่อม</label>
             <select id="update-status" style="font-weight:bold;color:#333;margin-top:5px;">
@@ -162,27 +165,24 @@
                 <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (เก็บเงินลูกค้า)</option>
             </select>
         </div>
- 
+
         <button class="btn-main btn-blue" onclick="showBill()"><i class="fas fa-file-invoice"></i> สร้างใบเสนอราคา</button>
         <button class="btn-main btn-primary" onclick="updateJob()"><i class="fas fa-save"></i> บันทึกอัปเดตข้อมูล</button>
     </div>
 </div>
- 
-<!-- ==================== TAB 3: ประวัติ ==================== -->
+
 <div id="tab-history" class="tab-content container">
- 
-    <!-- Segment Toggle -->
+
     <div style="display:flex;gap:10px;margin-bottom:15px;background:#e0e0e0;padding:4px;border-radius:10px;">
         <button class="seg-btn active" id="btn-h-save" onclick="setHistMode('save')">📝 เก็บประวัติ</button>
         <button class="seg-btn inactive" id="btn-h-check" onclick="setHistMode('check')">🔍 เช็คประวัติ</button>
     </div>
- 
-    <!-- โหมด เก็บประวัติ -->
+
     <div id="hist-mode-save">
         <div style="background:#fff3cd;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #ffc107;font-size:13px;color:#856404;">
             💡 บันทึกจะสร้าง/เพิ่มข้อมูลลงในไฟล์ของทะเบียนนั้นใน Google Drive โดยตรง
         </div>
- 
+
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
             <input type="text" id="hist-plate" placeholder="ทะเบียนรถ *">
             <input type="number" id="hist-mileage" placeholder="เลขไมล์ *">
@@ -195,40 +195,45 @@
             <label style="font-size:13px;font-weight:bold;color:#555;display:block;margin-bottom:5px;">📅 วันที่เข้ารับบริการ *</label>
             <input type="date" id="hist-date">
         </div>
- 
+
         <h3 style="font-size:15px;border-bottom:2px solid #eee;padding-bottom:5px;margin-top:0;">
             🛠️ รายการซ่อม / ค่าแรง
         </h3>
         <div id="hist-cart-list" style="margin-bottom:10px;">
             <div style="text-align:center;padding:15px;background:#eee;border-radius:8px;color:#888;">ยังไม่มีรายการ</div>
         </div>
- 
+
         <button onclick="openCustomItemModal('hist')" style="width:100%;padding:12px;border:1px dashed #aaa;background:#fff;margin-bottom:15px;border-radius:8px;font-family:'Kanit';font-weight:bold;cursor:pointer;color:#555;">
             <i class="fas fa-plus-circle"></i> เพิ่มรายการ / ค่าแรง
         </button>
- 
+
         <div class="total-banner">ยอดรวม: <span id="hist-total">0</span> ฿</div>
- 
+
         <button class="btn-main btn-success" onclick="saveHistoryToFile()">
             <i class="fas fa-save"></i> บันทึกลงไฟล์ทะเบียน
         </button>
     </div>
- 
-    <!-- โหมด เช็คประวัติ -->
+
     <div id="hist-mode-check" style="display:none;">
         <div class="search-box">
-            <input type="text" id="histSearchPlate" placeholder="🔍 ใส่ทะเบียน..." onkeyup="if(event.key==='Enter') searchPlateHistory()">
-            <button onclick="searchPlateHistory()" style="margin-top:10px;width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-family:'Kanit';font-weight:bold;">
-                <i class="fas fa-search"></i> ค้นหาทุกปี
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <input type="text" id="histSearchPlate" placeholder="🔍 ใส่ทะเบียน..." onkeyup="if(event.key==='Enter') searchPlateHistory()" style="flex:2; margin-bottom:0;">
+                <select id="histSearchYear" style="flex:1; margin-bottom:0; font-weight:bold; color:var(--primary); padding-left:5px;">
+                    <option value="all">ทุกปี</option>
+                    <option value="2569">2569</option>
+                    <option value="2568">2568</option>
+                    <option value="2567">2567</option>
+                    <option value="archive">แฟ้มเก่า</option>
+                </select>
+            </div>
+            <button onclick="searchPlateHistory()" style="width:100%; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-family:'Kanit'; font-weight:bold; cursor:pointer;">
+                <i class="fas fa-search"></i> ค้นหาประวัติ
             </button>
         </div>
         <div id="historyResults"></div>
     </div>
 </div>
- 
-<!-- ==================== MODALS ==================== -->
- 
-<!-- Modal แก้ไขอะไหล่ -->
+
 <div id="edit-item-modal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0;color:var(--primary);border-bottom:2px solid #eee;padding-bottom:10px;"><i class="fas fa-edit"></i> แก้ไขข้อมูลอะไหล่</h3>
@@ -248,23 +253,26 @@
         </div>
     </div>
 </div>
- 
-<!-- Modal เพิ่มรายการ/ค่าแรง -->
+
 <div id="custom-item-modal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0;color:var(--primary);border-bottom:2px solid #eee;padding-bottom:10px;"><i class="fas fa-plus-circle"></i> เพิ่มรายการ / ค่าแรง</h3>
         <label style="font-size:14px;font-weight:bold;color:#555;">ชื่อรายการ</label>
-        <input type="text" id="custom-name" placeholder="เช่น ค่าแรงเปลี่ยนโช้ค..." style="margin-bottom:12px;margin-top:5px;">
-        <label style="font-size:14px;font-weight:bold;color:#555;">ราคา (บาท)</label>
+        <input type="text" id="custom-name" placeholder="เช่น เปลี่ยนน้ำมันเครื่อง..." style="margin-bottom:12px;margin-top:5px;">
+        
+        <label style="font-size:14px;font-weight:bold;color:#555;">จำนวน (ไม่บังคับ)</label>
+        <input type="text" id="custom-qty" placeholder="เช่น 1 ชุด, 4 ลิตร" style="margin-bottom:12px;margin-top:5px;">
+        
+        <label style="font-size:14px;font-weight:bold;color:#555;">ราคาสุทธิ (บาท)</label>
         <input type="number" id="custom-price" placeholder="0" value="0" style="margin-bottom:20px;margin-top:5px;">
+        
         <div style="display:flex;gap:10px;">
             <button onclick="closeModal('custom-item-modal')" style="flex:1;padding:12px;border:none;background:#eee;border-radius:8px;font-family:'Kanit';font-weight:bold;color:#555;">ยกเลิก</button>
             <button onclick="confirmCustomItem()" style="flex:2;padding:12px;border:none;background:var(--success);color:#fff;border-radius:8px;font-family:'Kanit';font-weight:bold;">+ ยืนยัน</button>
         </div>
     </div>
 </div>
- 
-<!-- Modal ใบเสนอราคา -->
+
 <div id="bill-modal" class="modal">
     <div class="modal-content">
         <div id="bill-capture-area">
@@ -290,8 +298,7 @@
         <button onclick="closeModal('bill-modal')" style="width:100%;margin-top:10px;padding:12px;border:none;background:#333;color:#fff;border-radius:8px;font-family:'Kanit';font-weight:bold;">ปิดหน้าต่าง</button>
     </div>
 </div>
- 
-<!-- ==================== NAV ==================== -->
+
 <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('search', this)"><i class="fas fa-search"></i>อะไหล่</div>
     <div class="nav-item" onclick="switchTab('job', this)">
@@ -300,21 +307,21 @@
     </div>
     <div class="nav-item" onclick="switchTab('history', this)"><i class="fas fa-history"></i>ประวัติ</div>
 </nav>
- 
+
 <script>
 // ==========================================
 // CONFIG
 // ==========================================
-const API = "https://script.google.com/macros/s/AKfycbxyQjGOjroKIaC7mJMAsUno3u5xa_B3fzm6R8OvMKTXwt1AESkbo6HHuf5n2Cw8eKaS/exec";
- 
+const API = "https://script.google.com/macros/s/AKfycbwIAIGIio3ubG-E_VKqX8zTVLDGddVLpWtH0p-3kZZBBeEHNXcsPHxrt-OJmZK54brO4A/exec";
+
 let allItems = [], activeJobs = [], cart = [], histCart = [];
 let customItemTarget = 'job';
- 
+
 // ตั้งวันที่วันนี้เป็นค่าเริ่มต้น
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hist-date').value = new Date().toISOString().split('T')[0];
 });
- 
+
 // ==========================================
 // INIT — โหลดอะไหล่
 // ==========================================
@@ -327,7 +334,7 @@ fetch(API).then(r => r.json()).then(d => {
 }).catch(() => {
     document.getElementById('loading').innerHTML = '<span style="color:red;">โหลดข้อมูลไม่ได้ ตรวจสอบการเชื่อมต่อครับ</span>';
 });
- 
+
 // ==========================================
 // TAB NAVIGATION
 // ==========================================
@@ -338,7 +345,7 @@ function switchTab(t, el) {
     el.classList.add('active');
     if (t === 'job') fetchActiveJobs();
 }
- 
+
 // ==========================================
 // TAB 1: ค้นหาอะไหล่
 // ==========================================
@@ -350,7 +357,7 @@ function filterItems() {
     );
     renderItems(filtered);
 }
- 
+
 function renderItems(items) {
     const list = document.getElementById('resultsList');
     list.innerHTML = '';
@@ -380,7 +387,7 @@ function renderItems(items) {
         </div>`;
     });
 }
- 
+
 function openEditItemModal(id) {
     const item = allItems.find(i => i.id === id);
     if (!item) return;
@@ -390,7 +397,7 @@ function openEditItemModal(id) {
     document.getElementById('edit-priceType').value = item.priceType === 'ราคาเน็ตแล้ว' ? 'ราคาเน็ตแล้ว' : 'ต้องบวกสูตรอู่';
     document.getElementById('edit-item-modal').style.display = 'block';
 }
- 
+
 function saveEditItem() {
     const id = document.getElementById('edit-id').value;
     const item = allItems.find(i => i.id === id);
@@ -409,7 +416,7 @@ function saveEditItem() {
         .then(r => r.json()).then(() => { alert('แก้ไขเรียบร้อย!'); location.reload(); })
         .catch(() => { alert('เกิดข้อผิดพลาด'); btn.innerHTML = '<i class="fas fa-save"></i> บันทึก'; btn.disabled = false; });
 }
- 
+
 // ==========================================
 // TAB 2: จัดการจ๊อบ
 // ==========================================
@@ -419,7 +426,7 @@ function setJobMode(m) {
     document.getElementById('btn-m-new').className = 'seg-btn ' + (m === 'new' ? 'active' : 'inactive');
     document.getElementById('btn-m-upd').className = 'seg-btn ' + (m === 'update' ? 'active' : 'inactive');
 }
- 
+
 function fetchActiveJobs() {
     const cur = document.getElementById('active-jobs-select').value;
     fetch(API + '?action=get_active_jobs').then(r => r.json()).then(d => {
@@ -430,7 +437,7 @@ function fetchActiveJobs() {
         if (cur) s.value = cur;
     });
 }
- 
+
 function loadActiveJobData() {
     const p = document.getElementById('active-jobs-select').value;
     const job = activeJobs.find(x => String(x.plate) === String(p));
@@ -449,7 +456,7 @@ function loadActiveJobData() {
         cart = []; updateCartUI();
     }
 }
- 
+
 function saveNewJob() {
     const p = document.getElementById('new-plate').value;
     const m = document.getElementById('new-mileage').value;
@@ -470,7 +477,7 @@ function saveNewJob() {
         })
     }).then(r => r.json()).then(() => { alert('เปิดจ๊อบใหม่แล้ว!'); location.reload(); });
 }
- 
+
 function updateJob() {
     const plate = document.getElementById('active-jobs-select').value;
     if (!plate) return alert('เลือกรถก่อนครับ');
@@ -479,8 +486,12 @@ function updateJob() {
     if (status !== 'รอดำเนินการ') {
         details += '\n\n[สรุปบิลประเมิน]:\n';
         cart.forEach(i => {
-            if (i.checked) details += `- ${i.name} (x${i.qty}) = ${i.price * i.qty} ฿\n`;
-            else details += `[เลื่อนทำ] ${i.name}\n`;
+            if (i.checked) {
+                let qtyText = i.isCustom ? `(${i.customQty || '1'})` : `(x${i.qty})`;
+                details += `- ${i.name} ${qtyText} = ${i.price * i.qty} ฿\n`;
+            } else {
+                details += `[เลื่อนทำ] ${i.name}\n`;
+            }
         });
     }
     const payload = {
@@ -502,7 +513,7 @@ function updateJob() {
             else { alert('เกิดข้อผิดพลาด: ' + d.message); btn.innerHTML = '<i class="fas fa-save"></i> บันทึกอัปเดตข้อมูล'; btn.disabled = false; }
         });
 }
- 
+
 // ==========================================
 // CART (Tab 2)
 // ==========================================
@@ -513,7 +524,7 @@ function addToCart(name, price) {
     badge.style.transform = 'scale(1.5)';
     setTimeout(() => badge.style.transform = 'scale(1)', 200);
 }
- 
+
 function updateCartUI() {
     const list  = document.getElementById('cartList');
     const badge = document.getElementById('cartBadge');
@@ -526,6 +537,18 @@ function updateCartUI() {
     }
     list.innerHTML = '';
     cart.forEach((item, idx) => {
+        let qtyControls = '';
+        if (item.isCustom) {
+            qtyControls = `<span style="color:#666; font-size:13px; background:#eee; padding:4px 10px; border-radius:6px; font-weight:bold;">${item.customQty || '1'}</span>`;
+        } else {
+            qtyControls = `
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty(${idx},-1)">-</button>
+                <span>${item.qty}</span>
+                <button class="qty-btn" onclick="updateQty(${idx},1)">+</button>
+            </div>`;
+        }
+
         list.innerHTML += `<div class="cart-item" style="opacity:${item.checked ? 1 : 0.5}">
             <div class="cart-row-top">
                 <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${idx})" style="width:20px;height:20px;accent-color:var(--success);">
@@ -533,11 +556,7 @@ function updateCartUI() {
                 <button onclick="cart.splice(${idx},1);updateCartUI()" style="border:none;background:none;color:#dc3545;font-size:16px;"><i class="fas fa-trash-alt"></i></button>
             </div>
             <div class="cart-row-bottom">
-                <div class="qty-controls">
-                    <button class="qty-btn" onclick="updateQty(${idx},-1)">-</button>
-                    <span>${item.qty}</span>
-                    <button class="qty-btn" onclick="updateQty(${idx},1)">+</button>
-                </div>
+                ${qtyControls}
                 <div style="display:flex;align-items:center;">
                     <input type="number" class="price-input" value="${item.price}" onchange="cart[${idx}].price=Number(this.value);updateTotal()">
                     <span>฿</span>
@@ -547,38 +566,50 @@ function updateCartUI() {
     });
     updateTotal();
 }
- 
+
 function toggleItem(idx) { cart[idx].checked = !cart[idx].checked; updateCartUI(); }
-function updateQty(idx, val) { cart[idx].qty = Math.max(1, cart[idx].qty + val); updateCartUI(); }
+function updateQty(idx, val) { 
+    if(!cart[idx].isCustom) {
+        cart[idx].qty = Math.max(1, cart[idx].qty + val); 
+        updateCartUI(); 
+    }
+}
 function updateTotal() {
     const total = cart.reduce((s, i) => s + (i.checked ? i.price * i.qty : 0), 0);
     document.getElementById('grandTotal').innerText = total.toLocaleString();
 }
- 
+
 // ==========================================
-// CUSTOM ITEM MODAL (ใช้ร่วมกัน job/hist)
+// CUSTOM ITEM MODAL (เพิ่มรายการแบบระบุจำนวน)
 // ==========================================
 function openCustomItemModal(target) {
     customItemTarget = target;
     document.getElementById('custom-name').value  = '';
+    document.getElementById('custom-qty').value   = '';
     document.getElementById('custom-price').value = '0';
     document.getElementById('custom-item-modal').style.display = 'block';
 }
- 
+
 function confirmCustomItem() {
     const n = document.getElementById('custom-name').value.trim();
+    const qStr = document.getElementById('custom-qty').value.trim() || '1';
     const p = Number(document.getElementById('custom-price').value) || 0;
+    
     if (!n) return alert('กรุณาพิมพ์ชื่อรายการก่อนครับ');
+    
+    // ตั้งค่า isCustom เพื่อล็อคไม่ให้คูณราคาตามปุ่ม +/-
+    const newItem = { name: n, price: p, qty: 1, checked: true, isCustom: true, customQty: qStr };
+
     if (customItemTarget === 'hist') {
-        histCart.push({ name: n, price: p, qty: 1, checked: true });
+        histCart.push(newItem);
         updateHistCartUI();
     } else {
-        cart.push({ name: n, price: p, qty: 1, checked: true });
+        cart.push(newItem);
         updateCartUI();
     }
     closeModal('custom-item-modal');
 }
- 
+
 // ==========================================
 // E-SLIP
 // ==========================================
@@ -593,13 +624,14 @@ function showBill() {
     const tbody = document.getElementById('bill-items-body');
     tbody.innerHTML = '';
     cart.filter(i => i.checked).forEach(i => {
-        tbody.innerHTML += `<tr><td>${i.name} <span style="font-size:12px;color:#888">x${i.qty}</span></td><td style="text-align:right">${(i.price * i.qty).toLocaleString()}</td></tr>`;
+        let qtyText = i.isCustom ? i.customQty : 'x' + i.qty;
+        tbody.innerHTML += `<tr><td>${i.name} <span style="font-size:12px;color:#888">${qtyText}</span></td><td style="text-align:right">${(i.price * i.qty).toLocaleString()}</td></tr>`;
     });
     document.getElementById('bill-total').innerText = document.getElementById('grandTotal').innerText;
     document.getElementById('bill-note').innerText  = document.getElementById('update-details').value;
     document.getElementById('bill-modal').style.display = 'block';
 }
- 
+
 // ==========================================
 // TAB 3: ประวัติ
 // ==========================================
@@ -609,7 +641,7 @@ function setHistMode(m) {
     document.getElementById('btn-h-save').className  = 'seg-btn ' + (m === 'save'  ? 'active' : 'inactive');
     document.getElementById('btn-h-check').className = 'seg-btn ' + (m === 'check' ? 'active' : 'inactive');
 }
- 
+
 // --- HIST CART ---
 function updateHistCartUI() {
     const list = document.getElementById('hist-cart-list');
@@ -620,17 +652,25 @@ function updateHistCartUI() {
     }
     list.innerHTML = '';
     histCart.forEach((item, idx) => {
+        let qtyControls = '';
+        if (item.isCustom) {
+            qtyControls = `<span style="color:#666; font-size:13px; background:#eee; padding:4px 10px; border-radius:6px; font-weight:bold;">${item.customQty || '1'}</span>`;
+        } else {
+            qtyControls = `
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="histCart[${idx}].qty=Math.max(1,histCart[${idx}].qty-1);updateHistCartUI()">-</button>
+                <span>${item.qty}</span>
+                <button class="qty-btn" onclick="histCart[${idx}].qty++;updateHistCartUI()">+</button>
+            </div>`;
+        }
+
         list.innerHTML += `<div class="cart-item">
             <div class="cart-row-top">
                 <div style="flex:1"><b>${item.name}</b></div>
                 <button onclick="histCart.splice(${idx},1);updateHistCartUI()" style="border:none;background:none;color:#dc3545;font-size:16px;"><i class="fas fa-trash-alt"></i></button>
             </div>
             <div class="cart-row-bottom">
-                <div class="qty-controls">
-                    <button class="qty-btn" onclick="histCart[${idx}].qty=Math.max(1,histCart[${idx}].qty-1);updateHistCartUI()">-</button>
-                    <span>${item.qty}</span>
-                    <button class="qty-btn" onclick="histCart[${idx}].qty++;updateHistCartUI()">+</button>
-                </div>
+                ${qtyControls}
                 <span style="color:var(--success);font-weight:bold;">${(item.price * item.qty).toLocaleString()} ฿</span>
             </div>
         </div>`;
@@ -638,22 +678,22 @@ function updateHistCartUI() {
     const total = histCart.reduce((s, i) => s + i.price * i.qty, 0);
     document.getElementById('hist-total').innerText = total.toLocaleString();
 }
- 
+
 // --- บันทึกประวัติลงไฟล์ Drive ---
 function saveHistoryToFile() {
     const plate       = document.getElementById('hist-plate').value.trim();
     const mileage     = document.getElementById('hist-mileage').value;
     const serviceDate = document.getElementById('hist-date').value;
- 
+
     if (!plate || !mileage) return alert('กรุณากรอกทะเบียนและไมล์ครับ');
     if (!serviceDate)       return alert('กรุณาเลือกวันที่เข้ารับบริการครับ');
     if (histCart.length === 0) return alert('กรุณาเพิ่มรายการซ่อมก่อนครับ');
- 
+
     const total = histCart.reduce((s, i) => s + i.price * i.qty, 0);
     const btn = document.querySelector('#hist-mode-save .btn-success');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
     btn.disabled  = true;
- 
+
     function doSave(force) {
         return fetch(API, {
             method: 'POST',
@@ -670,7 +710,7 @@ function saveHistoryToFile() {
             })
         }).then(r => r.json());
     }
- 
+
     doSave(false).then(d => {
         if (d.status === 'duplicate') {
             btn.innerHTML = '<i class="fas fa-save"></i> บันทึกลงไฟล์ทะเบียน';
@@ -699,7 +739,7 @@ function saveHistoryToFile() {
         btn.disabled  = false;
     });
 }
- 
+
 function resetHistForm() {
     histCart = [];
     updateHistCartUI();
@@ -709,96 +749,124 @@ function resetHistForm() {
     document.getElementById('hist-phone').value   = '';
     document.getElementById('hist-date').value    = new Date().toISOString().split('T')[0];
 }
- 
-// --- ค้นหาประวัติทุกปี ---
+
+// --- ค้นหาประวัติทุกปี (อัปเดตใหม่พร้อมตัวกรองปี) ---
 function searchPlateHistory() {
-    const plate  = document.getElementById('histSearchPlate').value.trim();
+    const plate = document.getElementById('histSearchPlate').value.trim();
+    const year  = document.getElementById('histSearchYear').value;
     if (!plate) return;
+    
     const resBox = document.getElementById('historyResults');
-    resBox.innerHTML = '<p style="text-align:center;color:#888;"><i class="fas fa-spinner fa-spin"></i> กำลังค้นหาทุกปี...</p>';
- 
-    fetch(API + '?action=search_plate_history&plate=' + encodeURIComponent(plate))
+    resBox.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;"><i class="fas fa-spinner fa-spin"></i> กำลังค้นหาข้อมูล...</p>';
+
+    // ส่งค่า year ไปกับ url ด้วย
+    fetch(API + '?action=search_plate_history&plate=' + encodeURIComponent(plate) + '&year=' + encodeURIComponent(year))
         .then(r => r.json()).then(d => {
             resBox.innerHTML = '';
             if (!d.data || d.data.length === 0) {
-                resBox.innerHTML = '<p style="text-align:center;font-weight:bold;color:#dc3545;padding:20px;">ไม่พบประวัติทะเบียนนี้</p>';
+                resBox.innerHTML = `
+                <div style="text-align:center; padding:30px 20px; background:#fff; border-radius:12px; margin-top:10px; border:1px dashed #ccc;">
+                    <i class="fas fa-search" style="font-size:24px; color:#ddd; margin-bottom:10px;"></i><br>
+                    <b style="color:#666;">ไม่พบประวัติทะเบียนนี้</b><br>
+                    <span style="font-size:12px; color:#aaa;">ลองตรวจสอบเลขทะเบียน หรือเปลี่ยนปีที่ค้นหาครับ</span>
+                </div>`;
                 return;
             }
+            
             d.data.forEach(f => {
                 const isArchive = f.type === 'archive';
-                const borderColor = isArchive ? '#6c757d' : '#007bff';
+                const tagClass  = isArchive ? 'tag-archive' : 'tag-new';
+                const tagIcon   = isArchive ? 'fas fa-archive' : 'fas fa-folder-open';
+                const cleanName = f.name.replace('.xlsx', '').replace('.xls', '');
+
                 resBox.innerHTML += `
-                <div class="history-card" style="border-top-color:${borderColor}">
+                <div class="history-card">
                     <div class="history-header" onclick="openFileHistory('${f.fileId}','${f.type}',this)">
-                        <div>
-                            <div class="history-date">${isArchive ? '📦 ' : '📅 '} ${f.year}</div>
-                            <div class="history-title">🗂️ ${f.name}</div>
+                        <div class="history-info">
+                            <div class="history-plate"><i class="fas fa-car-side" style="color:#aaa;"></i> ${cleanName}</div>
+                            <div><span class="history-tag ${tagClass}"><i class="${tagIcon}"></i> ${f.year}</span></div>
                         </div>
-                        <i class="fas fa-chevron-down" style="transition:0.3s;color:#888;font-size:18px;"></i>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s ease; color:#bbb; font-size:16px;"></i>
                     </div>
                     <div class="history-body" id="body-${f.fileId}">
-                        <p style="text-align:center;color:#aaa;font-size:13px;">แตะเพื่อดูรายละเอียด</p>
+                        <p style="text-align:center; color:#aaa; font-size:13px; margin:0;">คลิกเพื่อดูรายละเอียด</p>
                     </div>
                 </div>`;
             });
         }).catch(() => {
-            resBox.innerHTML = '<p style="color:red;text-align:center;">เชื่อมต่อไม่ได้ กรุณาลองใหม่ครับ</p>';
+            resBox.innerHTML = '<p style="color:#dc3545;text-align:center;margin-top:20px;"><i class="fas fa-exclamation-triangle"></i> ขัดข้อง เชื่อมต่อไม่ได้ครับ</p>';
         });
 }
- 
+
 function openFileHistory(fileId, type, headerEl) {
     const body = document.getElementById('body-' + fileId);
     const icon = headerEl.querySelector('.fa-chevron-down');
+    
     body.classList.toggle('show');
     icon.style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+    
     if (body.dataset.loaded) return;
     body.dataset.loaded = 'true';
- 
-    // Archive → ปุ่มเปิดใน Drive
+
+    // กรณีแฟ้มเก่า (Archive)
     if (type === 'archive') {
         body.innerHTML = `
-        <div style="text-align:center;padding:15px;">
-            <p style="color:#666;font-size:13px;margin-bottom:12px;">📦 ไฟล์เก่า — เปิดใน Google Drive</p>
+        <div style="text-align:center; padding:10px 0;">
+            <p style="color:#666; font-size:13px; margin-bottom:15px;"><i class="fas fa-info-circle"></i> ไฟล์เก่าถูกจัดเก็บใน Google Drive</p>
             <a href="https://drive.google.com/file/d/${fileId}/view" target="_blank"
-               style="display:inline-block;padding:12px 24px;background:#6c757d;color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;font-family:'Kanit';">
-               <i class="fas fa-external-link-alt"></i> เปิดไฟล์
+               style="display:inline-block; padding:12px 24px; background:#495057; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px; width:100%; box-sizing:border-box;">
+               <i class="fas fa-external-link-alt"></i> เปิดดูใบเสร็จเดิม
             </a>
         </div>`;
         return;
     }
- 
-    // ไฟล์ใหม่ → ดึงข้อมูลมาแสดงในแอป
-    body.innerHTML = '<p style="text-align:center;color:#888;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</p>';
+
+    // กรณีปกติ สร้างกล่องประวัติสไตล์ Apple
+    body.innerHTML = '<p style="text-align:center; color:#888; margin:10px 0;"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดประวัติซ่อม...</p>';
     fetch(API + '?action=read_sheet&fileId=' + fileId)
         .then(r => r.json()).then(d => {
-            if (!d.data) { body.innerHTML = '<p style="color:red;text-align:center;">โหลดข้อมูลไม่ได้</p>'; return; }
+            if (!d.data) { body.innerHTML = '<p style="color:#dc3545; text-align:center;">ดึงข้อมูลไม่สำเร็จ</p>'; return; }
+            
             const { header, rows } = d.data;
             let html = `
-            <div style="background:#f0f4ff;padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;">
-                <b>${header.title}</b><br>
-                📞 ${header.phone || 'ไม่มีเบอร์'}
+            <div style="background:#f8f9fa; padding:10px 12px; border-radius:8px; margin-bottom:15px; font-size:13px; display:flex; align-items:center; gap:8px; border:1px solid #eee;">
+                <i class="fas fa-phone-alt" style="color:#28a745;"></i> 
+                <b>${header.phone || 'ไม่ระบุเบอร์โทรศัพท์'}</b>
             </div>`;
+            
             if (rows.length === 0) {
-                html += '<p style="color:#888;text-align:center;">ยังไม่มีประวัติการซ่อม</p>';
+                html += '<p style="color:#888; text-align:center; font-size:13px; margin:20px 0;">ยังไม่มีประวัติการซ่อมในระบบ</p>';
             } else {
                 rows.forEach(r => {
                     html += `
-                    <div class="timeline-item">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                            <span class="timeline-date">📅 ${r.date}</span>
-                            <span class="timeline-mile">ไมล์ ${Number(r.mileage).toLocaleString()}</span>
+                    <div class="apple-card">
+                        <div class="apple-card-header" onclick="toggleAppleCard(this)">
+                            <div>
+                                <div class="apple-card-title">🗓️ ${r.date}</div>
+                                <div class="apple-card-meta">⏱️ ไมล์: ${Number(r.mileage).toLocaleString()} กม.</div>
+                            </div>
+                            <div class="apple-card-price">
+                                ${Number(r.total).toLocaleString()} ฿ <i class="fas fa-chevron-down" style="color:#ccc; font-size:12px; transition:0.3s;"></i>
+                            </div>
                         </div>
-                        <div class="timeline-details">${r.details}</div>
-                        <div class="timeline-total">รวม ${Number(r.total).toLocaleString()} ฿</div>
+                        <div class="apple-card-body">${r.details}</div>
                     </div>`;
                 });
             }
             body.innerHTML = html;
         }).catch(() => {
-            body.innerHTML = '<p style="color:red;text-align:center;">โหลดข้อมูลไม่ได้ครับ</p>';
+            body.innerHTML = '<p style="color:#dc3545; text-align:center;">ขัดข้อง ไม่สามารถอ่านไฟล์ได้</p>';
         });
 }
- 
+
+// ผู้ช่วยสำหรับเปิด-ปิดกล่อง Apple Card ย่อย
+function toggleAppleCard(el) {
+    const body = el.nextElementSibling;
+    const icon = el.querySelector('.fa-chevron-down');
+    body.classList.toggle('show');
+    icon.style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
 // ==========================================
 // MODAL HELPER
 // ==========================================
