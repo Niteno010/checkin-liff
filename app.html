@@ -25,13 +25,13 @@
         .tab-content { 
             display: none; 
             opacity: 0; 
-            transform: translateY(15px); /* Slide down slightly */
+            transform: translateY(15px);
             transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
         }
         .tab-content.active { 
             display: block; 
             opacity: 1; 
-            transform: translateY(0); /* Normal position */
+            transform: translateY(0);
         }
 
         /* BOTTOM NAV with Animation */
@@ -46,7 +46,7 @@
         h1, h2, h3, h4, .h-title { color: var(--primary); font-weight: 600; margin-top: 0; }
         h1 { font-size: 28px; margin-bottom: 25px; }
         h2 { font-size: 20px; margin-bottom: 15px; }
-        h3 { font-size: 16px; margin-bottom: 10px; color: #86868b; font-weight: 500;} /* Smaller and Gray for Detail Titles */
+        h3 { font-size: 16px; margin-bottom: 10px; color: #86868b; font-weight: 500;}
         .card-title { font-size: 17px; font-weight: 600; }
         .card-mileage { font-size: 13px; color: #86868b; font-weight: 400; }
         .card-total { font-size: 15px; font-weight: 600; color: var(--success); }
@@ -102,12 +102,9 @@
         .history-body.show { display: block; animation: slideDownInner 0.3s var(--ease); }
         @keyframes slideDownInner { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Timeline (ประวัติใหม่) */
-        .timeline-item { border-left: 3px solid var(--blue); padding: 12px 15px; margin-bottom: 15px; background: #fff; border-radius: 0 12px 12px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-
         /* BUTTONS with Apple Easing & Micro-animations */
         .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 17px; font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s var(--ease), opacity 0.2s, background 0.3s; }
-        .btn-main:active { transform: scale(0.97); opacity: 0.9; } /* Small Scale down on press */
+        .btn-main:active { transform: scale(0.97); opacity: 0.9; } 
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-blue { background: var(--blue); color: #fff; }
         .btn-success { background: var(--success); color: #fff; }
@@ -120,7 +117,7 @@
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s var(--ease); }
         .modal.active { display: block; opacity: 1; }
         .modal-content { background: #fff; margin: 10vh auto; padding: 25px; width: 92%; max-width: 420px; border-radius: 16px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.9); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); }
-        .modal.active .modal-content { transform: scale(1); opacity: 1; } /* Pop up and Fade in */
+        .modal.active .modal-content { transform: scale(1); opacity: 1; }
 
         /* BILL and LOADING with Apple Style */
         #bill-capture-area { background: #fff; padding: 25px; color: #000; border: 1px solid #ddd; border-radius: 10px; }
@@ -270,22 +267,6 @@
     </div>
 </div>
 
-<div id="tab-settings" class="tab-content container">
-    <h1><i class="fas fa-cog"></i> การตั้งค่า</h1>
-    <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid #eef0f2; margin-bottom:15px;">
-        <h2>👤 บัญชีผู้ใช้</h2>
-        <p style="color:#86868b;">คุณกำลังเข้าใช้งานในโหมดผู้บริหารสูงสุด</p>
-    </div>
-    <div style="background:#fff; padding:20px; border-radius:14px; border:1px solid #eef0f2; margin-bottom:15px;">
-        <h2>🔧 ข้อมูลอู่</h2>
-        <p style="font-weight:600;margin:0 0 5px 0;">๙ ออโต้ การาจ</p>
-        <p style="color:#86868b;font-size:14px;margin:0;">123 หมู่ 9 ซอยบางแค 10 แขวงบางแค เขตบางแค กรุงเทพมหานคร</p>
-    </div>
-    <button class="btn-main btn-primary" style="background:#666; margin-top:20px;">
-        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-    </button>
-</div>
-
 <div id="edit-history-modal" class="modal">
     <div class="modal-content">
         <h2 style="margin-top:0; color:var(--primary); border-bottom:2px solid #eef0f2; padding-bottom:10px;"><i class="fas fa-edit"></i> แก้ไขประวัติ</h2>
@@ -378,7 +359,6 @@
         <span class="badge" id="cartBadge">0</span>
     </div>
     <div class="nav-item" onclick="switchTab('history', this)"><i class="fas fa-history"></i>ประวัติ</div>
-    <div class="nav-item" onclick="switchTab('settings', this)"><i class="fas fa-cog"></i>การตั้งค่า</div>
 </nav>
 
 <script>
@@ -559,7 +539,6 @@ function updateJob() {
         details += '\n\n[สรุปบิลประเมิน]:\n';
         cart.forEach(i => {
             if (i.checked) {
-                // อัปเดตการแสดงผลจำนวนของรายการเองในประวัติ
                 let qtyText = i.isCustom ? `(${i.customQty || '1'})` : `(x${i.qty})`;
                 details += `- ${i.name} ${qtyText} = ${i.price * i.qty} ฿\n`;
             } else {
@@ -613,7 +592,6 @@ function updateCartUI() {
     list.innerHTML = '';
     cart.forEach((item, idx) => {
         let qtyControls = '';
-        // ซ่อนปุ่ม +/- สำหรับรายการที่พิมพ์เอง
         if (item.isCustom) {
             qtyControls = `<span style="color:#86868b; font-size:14px; background:#f5f5f7; padding:6px 14px; border-radius:8px; font-weight:600;">${item.customQty || '1'}</span>`;
         } else {
@@ -663,12 +641,10 @@ function openCustomItemModal(target) {
 
 function confirmCustomItem() {
     const n = document.getElementById('custom-name').value.trim();
-    // รับค่าจำนวนเป็นข้อความ (เช่น 4 ลิตร) ถ้าว่างให้เป็น "1"
     const qStr = document.getElementById('custom-qty').value.trim() || '1';
     const p = Number(document.getElementById('custom-price').value) || 0;
     if (!n) return alert('กรุณาพิมพ์ชื่อรายการก่อนครับ');
     
-    // ตั้งค่า isCustom เพื่อซ่อนปุ่ม +/-
     const newItem = { name: n, price: p, qty: 1, checked: true, isCustom: true, customQty: qStr };
 
     if (customItemTarget === 'hist') {
@@ -699,7 +675,6 @@ function showBill() {
         tbody.innerHTML += `<tr><td>${i.name} <span style="font-size:12px;color:#86868b">${qtyText}</span></td><td style="text-align:right">${(i.price * i.qty).toLocaleString()}</td></tr>`;
     });
     document.getElementById('bill-total').innerText = document.getElementById('grandTotal').innerText;
-    // ดึงอาการที่แจ้งมาแสดงเป็น Note
     let symptoms = job.details.split('\n\n[ สรุปบิลประเมิน ]')[0]; 
     document.getElementById('bill-note').innerText  = symptoms.replace('[อาการรับรถ]:\n', '⚠️ อาการที่แจ้ง: ');
     openModal('bill-modal');
@@ -840,7 +815,6 @@ function searchPlateHistory() {
                 return;
             }
 
-            // กรองตามปีที่เลือกจาก Dropdown
             let filtered = d.data;
             if (selectedYear !== 'all') {
                 if (selectedYear === 'archive') {
@@ -856,10 +830,10 @@ function searchPlateHistory() {
                 return;
             }
 
-            // แสดงผล Card สไตล์ Apple
+            // แสดงผล Card สไตล์ Apple (แก้ไขบัคตรงนี้แล้วครับ)
             filtered.forEach(f => {
                 const isArchive = f.type === 'archive';
-                const borderColor = isArchive ? '#666' : var('--blue');
+                const borderColor = isArchive ? '#86868b' : '#0071e3';
                 const titleIcon = isArchive ? 'fas fa-archive' : 'fas fa-folder-open';
                 
                 resBox.innerHTML += `
@@ -885,15 +859,12 @@ function openFileHistory(fileId, type, headerEl) {
     const body = document.getElementById('body-' + fileId);
     const icon = headerEl.querySelector('.fa-chevron-down');
     
-    // Toggle Slide Down/Up
     body.classList.toggle('show');
     icon.style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
     
-    // ถ้าเคยโหลดแล้วไม่ต้องโหลดใหม่
     if (body.dataset.loaded) return;
     body.dataset.loaded = 'true';
 
-    // แฟ้มเก่าใน Archive -> ปุ่มเปิด Google Drive
     if (type === 'archive') {
         body.innerHTML = `
         <div style="text-align:center; padding:15px 0;">
@@ -906,11 +877,9 @@ function openFileHistory(fileId, type, headerEl) {
         return;
     }
 
-    // แฟ้มใหม่ -> ดึงข้อมูลมาแสดงเป็น Apple Card
     loadSheetRows(fileId, body);
 }
 
-// ผู้ช่วยสำหรับเปิด-ปิดกล่อง Apple Card ย่อย (รายการซ่อมแต่ละรอบ)
 function toggleAppleCard(el) {
     const body = el.nextElementSibling;
     const icon = el.querySelector('.fa-chevron-down');
@@ -925,7 +894,6 @@ function loadSheetRows(fileId, body) {
             if (!d.data) { body.innerHTML = '<p style="color:var(--accent); text-align:center; padding:15px;">อ่านข้อมูลไม่สำเร็จครับ</p>'; return; }
             const { header, rows } = d.data;
             
-            // หัวบิลสรุปเบอร์โทร
             let html = `
             <div style="background:#f0f4ff; padding:12px; border-radius:10px; margin-bottom:15px; font-size:14px; border:1px solid #b8daff; display:flex; align-items:center; gap:8px;">
                 <i class="fas fa-phone-alt" style="color:var(--success);"></i> 
@@ -935,10 +903,8 @@ function loadSheetRows(fileId, body) {
             if (rows.length === 0) {
                 html += '<p style="color:#86868b; text-align:center; padding:20px; background:#f5f5f7; border-radius:10px; border:1px dashed #ccc;">ยังไม่มีประวัติการซ่อมในแฟ้มนี้</p>';
             } else {
-                // แสดงประวัติซ่อมแต่ละรอบเป็น Card สไตล์ Apple
                 rows.forEach((r, idx) => {
                     const sheetRowIndex = rows.length - idx + 3;
-                    // ทำความสะอาดข้อมูลก่อนส่งเข้า Javascript เพื่อป้องกัน Error
                     const safeDetails = (r.details || '').replace(/\\/g,'\\\\').replace(/`/g,"'").replace(/\n/g,'\\n').replace(/"/g, '&quot;');
                     
                     html += `
@@ -1027,7 +993,6 @@ function saveHistoryRowEdit() {
             alert('✅ แก้ไขเรียบร้อยแล้วครับ!');
             closeModal('edit-history-modal');
             const bodyEl = document.getElementById('body-' + fileId);
-            // รีโหลดข้อมูลใหม่เฉพาะในแฟ้มนี้
             if (bodyEl) { delete bodyEl.dataset.loaded; loadSheetRows(fileId, bodyEl); }
         } else {
             alert('ขัดข้อง: ' + d.message);
@@ -1066,23 +1031,21 @@ function deleteHistoryRow(fileId, rowIndex, date) {
 // ==========================================
 function openModal(id) {
     const modal = document.getElementById(id);
-    modal.style.display = 'block'; // Show element first
-    setTimeout(() => { modal.classList.add('active'); }, 10); // Then add animation class
+    modal.style.display = 'block'; 
+    setTimeout(() => { modal.classList.add('active'); }, 10); 
 }
 
 function closeModal(id) {
     const modal = document.getElementById(id);
-    modal.classList.remove('active'); // Remove animation class
-    setTimeout(() => { modal.style.display = 'none'; }, 300); // Hide after animation finishes
+    modal.classList.remove('active'); 
+    setTimeout(() => { modal.style.display = 'none'; }, 300); 
 }
 
 window.addEventListener('click', e => {
     document.querySelectorAll('.modal').forEach(m => {
-        if (e.target === m) closeModal(m.id); // Close if click outside content
+        if (e.target === m) closeModal(m.id); 
     });
 });
 </script>
 </body>
 </html>
-
-```
