@@ -17,29 +17,18 @@
             --card: #ffffff;
             --ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth Easing */
         }
-        * { box-sizing: border-box; }
+        
+        /* ⚙️ GLOBAL FIXES */
+        * { box-sizing: border-box; outline: none !important; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         .container { padding: 20px; max-width: 600px; margin: 0 auto; }
 
-        /* ==================== SMOOTH TAB NAVIGATION (Fade In/Out) ==================== */
-        .tab-content { 
-            display: none; 
-            opacity: 0; 
-            transform: translateY(10px);
-            transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
-        }
-        .tab-content.active { 
-            display: block; 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-        .tab-content.fade-out {
-            display: block; 
-            opacity: 0; 
-            transform: translateY(-10px); 
-        }
+        /* Smooth Tab Navigation */
+        .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.25s var(--ease), transform 0.25s var(--ease); }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+        .tab-content.fade-out { display: block; opacity: 0; transform: translateY(-10px); }
 
-        /* BOTTOM NAV */
+        /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: flex; box-shadow: 0 -1px 15px rgba(0,0,0,0.03); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #eef0f2; }
         .nav-item { flex: 1; text-align: center; padding: 15px 0; color: #6e6e73; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.3s; }
         .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; transition: transform 0.3s var(--ease); }
@@ -47,7 +36,7 @@
         .nav-item.active i { transform: scale(1.15); }
         .badge { position: absolute; top: 8px; right: 28vw; background: var(--accent); color: #fff; font-size: 11px; padding: 3px 7px; border-radius: 12px; font-weight: bold; }
 
-        /* ==================== TYPOGRAPHY & LAYOUT HIERARCHY ==================== */
+        /* Typography */
         h1, h2, h3, h4, .h-title { color: var(--primary); font-weight: 600; margin-top: 0; }
         h1 { font-size: 28px; margin-bottom: 25px; }
         h2 { font-size: 20px; margin-bottom: 15px; }
@@ -56,7 +45,6 @@
         .card-mileage, .item-meta, .history-title { color: #6e6e73 !important; font-size: 13px; font-weight: 400; }
         .card-total { font-size: 15px; font-weight: 600; color: var(--success); }
         
-        /* Gradient Text สำหรับยอดเงินสำคัญ */
         .gradient-text {
             background: linear-gradient(135deg, #0071e3, #28a745) !important;
             -webkit-background-clip: text !important;
@@ -65,31 +53,42 @@
             display: inline-block;
         }
 
-        /* INPUTS & Search Box */
+        /* Inputs (Apple Style Focus) */
         .search-box { background: var(--card); padding: 15px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px; position: sticky; top: 15px; z-index: 100; transition: box-shadow 0.3s; }
-        .search-box:focus-within { box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
-        input, textarea, select { width: 100%; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 10px; font-family: 'Kanit'; font-size: 16px; background: #fff; color: var(--primary); transition: border-color 0.3s, background 0.3s; }
+        input, textarea, select { width: 100%; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 10px; font-family: 'Kanit'; font-size: 16px; background: #fff; color: var(--primary); transition: all 0.3s var(--ease); }
         input::placeholder, textarea::placeholder { color: #6e6e73; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--blue); background: #fff; }
+        input:focus, textarea:focus, select:focus { border-color: var(--blue) !important; box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important; background: #fff; }
 
-        /* Dropdown Style with Calendar Icon */
         .dropdown-wrapper { position: relative; }
         .dropdown-wrapper select { padding-left: 42px; font-weight: 600; appearance: none; -webkit-appearance: none; }
         .dropdown-wrapper i.fa-calendar-alt { position: absolute; left: 16px; top: 18px; color: #6e6e73; }
         .dropdown-wrapper i.fa-chevron-down { position: absolute; right: 16px; top: 19px; color: #6e6e73; pointer-events: none; font-size: 14px; }
 
-        /* ==================== APPLE STYLE CARDS & ELEMENTS ==================== */
-        
-        /* Item Card (อะไหล่) - เพิ่มการขยายและเงาฟุ้งเมื่อชี้ */
-        .item-card { background: var(--card); padding: 18px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); border: 1px solid transparent;}
-        .item-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .item-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-title { font-size: 17px; font-weight: 600; color: var(--primary); flex: 1; }
-        .item-prices { text-align: right; line-height: 1.3; margin-left: 10px;}
-        .item-prices .cost { font-size: 12px; color: #6e6e73; }
-        .item-prices .sell { color: var(--success); font-weight: 600; font-size: 16px; }
+        /* ⚙️ MICRO-INTERACTIONS & BUTTONS */
+        button, .btn-main, .seg-btn, .small-action-btn, .history-header, .apple-card-header { transition: transform 0.15s var(--ease), opacity 0.2s, background 0.3s, box-shadow 0.3s !important; cursor: pointer; }
+        button:active, .btn-main:active, .seg-btn:active, .small-action-btn:active { transform: scale(0.95) !important; opacity: 0.85; }
 
-        /* Cart Item (จัดการจ๊อบ) */
+        .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        
+        .seg-btn { flex: 1; padding: 14px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 600; font-size: 15px; }
+        .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); transform: scale(1.02); }
+        .seg-btn.inactive { background: transparent; color: #6e6e73; }
+        .small-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Kanit'; font-size: 13px; font-weight: 600; }
+
+        /* 📦 TAB 1: 2 COLUMNS & SCROLL REVEAL */
+        #resultsList { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (max-width: 350px) { #resultsList { grid-template-columns: 1fr; } }
+        
+        .item-card { background: var(--card); padding: 14px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); border: 1px solid transparent; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* 🛠️ TAB 2: CART */
         .cart-item { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.01); transition: opacity 0.3s; }
         .cart-row-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px;}
         .cart-row-top input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--success); margin:0;}
@@ -97,73 +96,23 @@
         .cart-row-bottom { display: flex; justify-content: space-between; align-items: center; }
         .qty-controls { display: flex; align-items: center; gap: 14px; background: #f5f5f7; border-radius: 10px; padding: 8px 12px; }
         .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 6px;}
-
-        /* Grand Total Banner */
         .total-banner { background: #fff; color: var(--primary); padding: 18px; border-radius: 14px; text-align: right; font-size: 22px; font-weight: 600; margin: 20px 0; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
-        /* ==================== APPLE STYLE HISTORY CARDS ==================== */
-        
-        /* กล่องประวัติแฟ้มหลัก - เพิ่มการขยายและเงาฟุ้งเมื่อชี้ */
+        /* 🗂️ TAB 3: HISTORY CARDS (GRID EXPAND) */
         .history-card { background: #fff; border-radius: 18px; margin-bottom: 15px; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);}
-        .history-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .history-header { padding: 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: transparent; }
+        .history-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        .history-header { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: transparent; }
         .history-date { font-size: 19px; font-weight: 600; color: var(--primary); }
 
-        /* Smooth Expand/Collapse for Details (CSS Grid เทคนิคเร่งความลื่น) */
-        .history-body { 
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.4s var(--ease), opacity 0.4s var(--ease), padding 0.4s var(--ease); 
-            opacity: 0; 
-            padding: 0 18px; 
-            background: #fff;
-            border-radius: 0 0 18px 18px;
-        }
-        .history-body.show { 
-            grid-template-rows: 1fr;
-            opacity: 1; 
-            padding: 18px; 
-            border-top: 1px dashed #eee;
-        }
-        .history-inner-wrapper { min-height: 0; overflow: hidden; } /* ตัวหุ้มสำหรับ Grid อนิเมชัน */
+        .history-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease), opacity 0.4s var(--ease), padding 0.4s var(--ease); opacity: 0; padding: 0 18px; background: #fff; border-radius: 0 0 18px 18px; }
+        .history-body.show { grid-template-rows: 1fr; opacity: 1; padding: 18px; border-top: 1px dashed #eee; }
+        .history-inner-wrapper { min-height: 0; overflow: hidden; }
 
-        /* Apple Inner Card (กล่องย่อยประวัติซ่อม) */
         .apple-card { background: #fff; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; }
-        .apple-card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fdfdfd; transition: background 0.2s; }
-        .apple-card-header:active { background: #f1f3f5; }
-        .apple-card-body { 
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.4s var(--ease), padding 0.4s var(--ease), opacity 0.4s var(--ease); 
-            opacity: 0; 
-            padding: 0 15px; 
-            background: #fafafa; font-size: 13px; color: #444; line-height: 1.6;
-        }
-        .apple-card-body.show { 
-            grid-template-rows: 1fr;
-            opacity: 1; 
-            padding: 12px 15px; 
-            border-top: 1px dashed #eee;
-        }
-
-        /* Micro-interactions: ปรับให้ปุ่มทุกประเภทในระบบ ยุบตัวลง 0.96 เท่ากันทั้งหมดอย่างนุ่มนวล */
-        button, .btn-main, .seg-btn, .small-action-btn { 
-            transition: transform 0.15s var(--ease), opacity 0.2s, background 0.3s !important; 
-        }
-        button:active, .btn-main:active, .seg-btn:active, .small-action-btn:active { 
-            transform: scale(0.96) !important; 
-            opacity: 0.9; 
-        }
-
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-blue { background: var(--blue); color: #fff; }
-        .btn-success { background: var(--success); color: #fff; }
-        
-        .seg-btn { flex: 1; padding: 14px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 600; font-size: 15px; cursor: pointer; }
-        .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); transform: scale(1.02); }
-        .seg-btn.inactive { background: transparent; color: #6e6e73; }
-        
-        .small-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Kanit'; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .apple-card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; transition: background 0.2s; }
+        .apple-card-header:active { background: #f1f3f5; transform: scale(0.98); }
+        .apple-card-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease), padding 0.4s var(--ease), opacity 0.4s var(--ease); opacity: 0; padding: 0 15px; background: #fafafa; font-size: 13px; color: #444; line-height: 1.6; }
+        .apple-card-body.show { grid-template-rows: 1fr; opacity: 1; padding: 12px 15px; border-top: 1px dashed #eee; }
 
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s var(--ease); }
@@ -171,7 +120,6 @@
         .modal-content { background: #fff; margin: 10vh auto; padding: 25px; width: 92%; max-width: 420px; border-radius: 16px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.95); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); }
         .modal.active .modal-content { transform: scale(1); opacity: 1; }
 
-        /* BILL and LOADING */
         #bill-capture-area { background: #fff; padding: 25px; color: #000; border: 1px solid #ddd; border-radius: 10px; }
         .loading-text { text-align:center; padding:30px; color:#6e6e73; font-size: 15px;}
         .loading-text i { font-size: 24px; color: var(--blue); margin-bottom: 10px; display: block; }
@@ -214,7 +162,7 @@
     <div id="mode-update" style="display:none;">
         <h2>🛠️ แก้ไขจ๊อบ / ประเมินราคา</h2>
         <h3><i class="fas fa-car-side"></i> เลือกรถที่กำลังทำ</h3>
-        <select id="active-jobs-select" onchange="loadActiveJobData()" style="margin-bottom:20px; font-weight:600; border-color: var(--blue);">
+        <select id="active-jobs-select" onchange="loadActiveJobData()" style="margin-bottom:20px; font-weight:600;">
             <option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>
         </select>
 
@@ -230,7 +178,7 @@
         <h2 style="border-top:1px solid #ddd; padding-top:15px;"><i class="fas fa-wrench"></i> บิลประเมินรายการซ่อม</h2>
         <div id="cartList" style="margin-bottom:15px;"></div>
 
-        <button onclick="openCustomItemModal('job')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73; transition: all 0.3s; transform: scale(1);">
+        <button onclick="openCustomItemModal('job')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73;">
             <i class="fas fa-plus-circle"></i> เพิ่มรายการ / ค่าแรง / ทำสี
         </button>
 
@@ -241,7 +189,7 @@
 
         <div style="background:#fff; padding:18px; border-radius:14px; margin-bottom:20px; border: 2px solid #b8daff; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
             <h3 style="color:#0056b3;font-weight:600;margin-top:0;"><i class="fas fa-flag-checkered"></i> เลือกสถานะ</h3>
-            <select id="update-status" style="font-weight:600; color:#333; margin-top:5px; border-color: var(--blue);">
+            <select id="update-status" style="font-weight:600; color:#333; margin-top:5px;">
                 <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
                 <option value="แค่เสนอราคา">📝 เสนอราคา / ลูกค้าเลื่อน</option>
                 <option value="ปิดจ๊อบ">✅ ปิดจ๊อบ (เก็บเงินลูกค้า)</option>
@@ -283,7 +231,7 @@
             <div style="text-align:center;padding:18px;background:#eee;border-radius:10px;color:#888;">ยังไม่มีรายการ</div>
         </div>
 
-        <button onclick="openCustomItemModal('hist')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73; transition: all 0.3s; transform: scale(1);">
+        <button onclick="openCustomItemModal('hist')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73;">
             <i class="fas fa-plus-circle"></i> เพิ่มรายการเอง / ค่าแรง
         </button>
 
@@ -389,8 +337,8 @@
                     <b>ไมล์:</b> <span id="bill-mile"></span>
                 </div>
             </div>
-            <table class="bill-table">
-                <thead><tr><th>รายการ</th><th style="text-align:right;">ราคา(฿)</th></tr></thead>
+            <table class="bill-table" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <thead><tr><th style="text-align: left; padding-bottom: 8px; border-bottom: 2px solid #eee;">รายการ</th><th style="text-align:right; padding-bottom: 8px; border-bottom: 2px solid #eee;">ราคา(฿)</th></tr></thead>
                 <tbody id="bill-items-body"></tbody>
             </table>
             <div style="text-align:right;margin-top:20px;font-size:20px;font-weight:600;color:var(--success);">
@@ -398,7 +346,7 @@
             </div>
             <p id="bill-note" style="font-size:12px;color:#666;margin-top:15px;border-top:1px dashed #eee;padding-top:10px;white-space:pre-wrap;line-height:1.4;"></p>
         </div>
-        <p style="text-align:center;font-size:12px;color:#666;margin-top:12px;"><i class="fas fa-camera"></i> แคปหน้าจอนี้เพื่อส่งให้ลูกค้าได้เลย</p>
+        <p style="text-align:center;font-size:12px;color:#6e6e73;margin-top:12px;"><i class="fas fa-camera"></i> แคปหน้าจอนี้เพื่อส่งให้ลูกค้าได้เลย</p>
         <button onclick="closeModal('bill-modal')" class="btn-main" style="margin-top:10px; background:#333; color:#fff;">ปิดหน้าต่าง</button>
     </div>
 </div>
@@ -439,6 +387,22 @@ fetch(API).then(r => r.json()).then(d => {
 });
 
 // ==========================================
+// SCROLL REVEAL OBSERVER (Apple Style)
+// ==========================================
+function observeCards() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: "0px 0px 50px 0px" });
+    
+    document.querySelectorAll('.reveal:not(.visible)').forEach(card => observer.observe(card));
+}
+
+// ==========================================
 // TAB NAVIGATION (เพิ่มระบบหน่วงเวลาเฟดเข้า/ออก)
 // ==========================================
 function switchTab(t, el) {
@@ -453,9 +417,8 @@ function switchTab(t, el) {
 
     if (currentTab) {
         currentTab.classList.remove('active');
-        currentTab.classList.add('fade-out'); // สั่งให้หน้าต่างเก่าค่อยๆ เฟดออก
+        currentTab.classList.add('fade-out'); 
 
-        // รอเวลาให้จางหายเสร็จ ค่อยซ่อนและเรียกหน้าใหม่
         setTimeout(() => {
             currentTab.classList.remove('fade-out');
             currentTab.style.display = 'none';
@@ -471,11 +434,12 @@ function showNewTab(newTab, t) {
     setTimeout(() => {
         newTab.classList.add('active');
         if (t === 'job') fetchActiveJobs();
+        if (t === 'search') observeCards(); // เรียกให้ Animation ทำงานตอนสลับกลับมา
     }, 10);
 }
 
 // ==========================================
-// TAB 1: ค้นหาอะไหล่
+// TAB 1: ค้นหาอะไหล่ (แบบ 2 คอลัมน์)
 // ==========================================
 function filterItems() {
     const text = document.getElementById('searchInput').value.toLowerCase();
@@ -493,26 +457,35 @@ function renderItems(items) {
         const st = String(i.status || '').trim();
         return st !== 'ยกเลิก' && st !== 'ซ่อน';
     });
+    
     if (activeItems.length === 0) {
+        // ยกเลิก Grid ชั่วคราวถ้าไม่เจอข้อมูล เพื่อให้ข้อความอยู่ตรงกลาง
+        list.style.display = 'block'; 
         list.innerHTML = '<div style="text-align:center;color:#6e6e73;padding:30px;background:#fff;border-radius:14px;border:1px dashed #ccc;">ไม่พบรายการอะไหล่</div>';
         return;
     }
+    
+    list.style.display = 'grid'; // เปิด Grid
+    
     activeItems.forEach(i => {
-        list.innerHTML += `<div class="item-card">
-            <div class="item-card-header">
-                <b class="item-title">${i.name}</b>
-                <div class="item-prices">
-                    <span class="cost">ทุน ${i.cost || 0}</span><br>
-                    <span class="sell">${i.sellPrice} ฿</span>
+        // ดีไซน์การ์ดแบบกะทัดรัด (Compact 2 Columns)
+        list.innerHTML += `<div class="item-card reveal">
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">
+                <b class="item-title" style="font-size:15px; display:block; margin-bottom:4px; line-height:1.2;">${i.name}</b>
+                <div class="item-meta" style="font-size:11px; margin-bottom:8px;">รุ่น: ${i.model}</div>
+                <div class="item-prices" style="text-align:left; margin-top:auto;">
+                    <div class="cost" style="font-size:11px; color:#6e6e73;">ทุน ${i.cost || 0}</div>
+                    <div class="sell" style="font-size:16px; color:var(--success); font-weight:600;">${i.sellPrice} ฿</div>
                 </div>
             </div>
-            <div class="item-meta">รุ่น: ${i.model}</div>
-            <div style="display:flex;gap:10px;margin-top:15px;">
-                <button onclick="addToCart('${i.name}', ${i.sellPrice})" class="small-action-btn" style="flex:4;padding:12px;border:none;background:#e8f5e9;color:var(--success);border-radius:10px;font-family:'Kanit';font-weight:600;cursor:pointer;">+ ใส่บิลประเมิน</button>
-                <button onclick="openEditItemModal('${i.id}')" class="small-action-btn" style="flex:1;padding:12px;border:none;background:#f5f5f7;color:#555;border-radius:10px;cursor:pointer;"><i class="fas fa-edit"></i></button>
+            <div style="display:grid; grid-template-columns:3fr 1fr; gap:6px; margin-top:12px;">
+                <button onclick="addToCart('${i.name}', ${i.sellPrice})" class="small-action-btn" style="background:#e8f5e9;color:var(--success);font-size:12px;padding:8px;"><i class="fas fa-plus"></i> เลือก</button>
+                <button onclick="openEditItemModal('${i.id}')" class="small-action-btn" style="background:#f5f5f7;color:#6e6e73;padding:8px;"><i class="fas fa-edit"></i></button>
             </div>
         </div>`;
     });
+    
+    setTimeout(observeCards, 50); // เรียกใช้งานแอนิเมชันหลังจัดหน้าจอเสร็จ
 }
 
 function openEditItemModal(id) {
@@ -747,7 +720,7 @@ function showBill() {
     tbody.innerHTML = '';
     cart.filter(i => i.checked).forEach(i => {
         let qtyText = i.isCustom ? i.customQty : 'x' + i.qty;
-        tbody.innerHTML += `<tr><td>${i.name} <span style="font-size:12px;color:#6e6e73">${qtyText}</span></td><td style="text-align:right">${(i.price * i.qty).toLocaleString()}</td></tr>`;
+        tbody.innerHTML += `<tr><td style="padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${i.name} <span style="font-size:12px;color:#6e6e73">${qtyText}</span></td><td style="text-align:right; padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${(i.price * i.qty).toLocaleString()}</td></tr>`;
     });
     document.getElementById('bill-total').innerText = document.getElementById('grandTotal').innerText;
     let symptoms = job.details.split('\n\n[ สรุปบิลประเมิน ]')[0]; 
@@ -905,11 +878,11 @@ function searchPlateHistory() {
 
             filtered.forEach(f => {
                 const isArchive = f.type === 'archive';
-                const borderColor = isArchive ? '#86868b' : '#0071e3';
+                const borderColor = isArchive ? '#6e6e73' : '#0071e3';
                 const titleIcon = isArchive ? 'fas fa-archive' : 'fas fa-folder-open';
                 
                 resBox.innerHTML += `
-                <div class="history-card" style="border-top: 5px solid ${borderColor}">
+                <div class="history-card reveal" style="border-top: 5px solid ${borderColor}">
                     <div class="history-header" onclick="openFileHistory('${f.fileId}','${f.type}',this)">
                         <div class="history-info">
                             <div class="history-date card-title"><i class="${titleIcon}" style="color:${borderColor}; margin-right:5px;"></i> ${f.year}</div>
@@ -918,11 +891,13 @@ function searchPlateHistory() {
                         <i class="fas fa-chevron-down" style="transition: transform 0.4s var(--ease); color:#ccc; font-size:18px;"></i>
                     </div>
                     <div class="history-body" id="body-${f.fileId}">
-                        <div class="history-inner-wrapper"> <div class="loading-text"><i class="fas fa-camera"></i> แตะที่หัวแฟ้มเพื่อดูรายละเอียด</div>
+                        <div class="history-inner-wrapper">
+                            <div class="loading-text"><i class="fas fa-camera"></i> แตะที่หัวแฟ้มเพื่อดูรายละเอียด</div>
                         </div>
                     </div>
                 </div>`;
             });
+            setTimeout(observeCards, 50); // เล่น Animation ตอนโหลดประวัติเสร็จ
         }).catch(() => {
             resBox.innerHTML = '<div class="loading-text" style="color:var(--accent);"><i class="fas fa-exclamation-triangle"></i> ขัดข้อง เชื่อมต่อไม่ได้ครับ</div>';
         });
@@ -969,7 +944,7 @@ function loadSheetRows(fileId, body) {
             if (!d.data) { body.innerHTML = '<div class="history-inner-wrapper"><p style="color:var(--accent); text-align:center; padding:15px;">อ่านข้อมูลไม่สำเร็จครับ</p></div>'; return; }
             const { header, rows } = d.data;
             
-            let html = `<div class="history-inner-wrapper">`; // หุ้มทั้งหมดเพื่อให้ Grid Animation ยืดหดได้สมูท
+            let html = `<div class="history-inner-wrapper">`;
             html += `
             <div style="background:#f0f4ff; padding:12px; border-radius:10px; margin-bottom:15px; font-size:14px; border:1px solid #b8daff; display:flex; align-items:center; gap:8px;">
                 <i class="fas fa-phone-alt" style="color:var(--success);"></i> 
@@ -995,7 +970,8 @@ function loadSheetRows(fileId, body) {
                             </div>
                         </div>
                         <div class="apple-card-body">
-                            <div class="history-inner-wrapper"> <h3 style="margin-top:0;"><i class="fas fa-wrench"></i> รายการซ่อม / ทำสี</h3>
+                            <div class="history-inner-wrapper">
+                                <h3 style="margin-top:0;"><i class="fas fa-wrench"></i> รายการซ่อม / ทำสี</h3>
                                 <div style="margin-bottom:15px;line-height:1.5;">${r.details}</div>
                                 
                                 <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px dashed #eef0f2;padding-top:12px; margin-top:10px;">
@@ -1013,7 +989,7 @@ function loadSheetRows(fileId, body) {
                     </div>`;
                 });
             }
-            html += `</div>`; // ปิดแท็กหุ้ม
+            html += `</div>`;
             body.innerHTML = html;
         }).catch(() => {
             body.innerHTML = '<div class="history-inner-wrapper"><p style="color:var(--accent); text-align:center; padding:15px;">ขัดข้อง ไม่สามารถดึงข้อมูลได้ครับ</p></div>';
