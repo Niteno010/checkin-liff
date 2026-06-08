@@ -11,8 +11,8 @@
             --bg: #f5f5f7; /* Apple Style BG */
             --primary: #1d1d1f; /* Apple Style Text */
             --accent: #ff3b30;
-            --success: #28a745;
-            --blue: #0071e3; /* Apple Blue */
+            --success: #34c759; /* Apple Green */
+            --blue: #007aff; /* Apple Blue */
             --text: #1d1d1f;
             --card: #ffffff;
             --ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth Easing */
@@ -20,8 +20,8 @@
         
         /* ⚙️ GLOBAL FIXES */
         * { box-sizing: border-box; outline: none !important; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; overflow-x: hidden; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
 
         /* Smooth Tab Navigation */
         .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.25s var(--ease), transform 0.25s var(--ease); }
@@ -29,8 +29,8 @@
         .tab-content.fade-out { display: block; opacity: 0; transform: translateY(-10px); }
 
         /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: flex; box-shadow: 0 -1px 15px rgba(0,0,0,0.03); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #eef0f2; }
-        .nav-item { flex: 1; text-align: center; padding: 15px 0; color: #6e6e73; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; box-shadow: 0 -1px 15px rgba(0,0,0,0.03); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #eef0f2; }
+        .nav-item { flex: 1; text-align: center; padding: 15px 0; color: #86868b; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.3s; }
         .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; transition: transform 0.3s var(--ease); }
         .nav-item.active { color: var(--accent); }
         .nav-item.active i { transform: scale(1.15); }
@@ -40,33 +40,45 @@
         h1, h2, h3, h4, .h-title { color: var(--primary); font-weight: 600; margin-top: 0; }
         h1 { font-size: 28px; margin-bottom: 25px; }
         h2 { font-size: 20px; margin-bottom: 15px; }
-        h3 { font-size: 16px; margin-bottom: 10px; color: #6e6e73; font-weight: 500;}
+        h3 { font-size: 16px; margin-bottom: 10px; color: #86868b; font-weight: 500;}
         .card-title { font-size: 17px; font-weight: 600; color: var(--primary); }
-        .card-mileage, .item-meta, .history-title { color: #6e6e73 !important; font-size: 13px; font-weight: 400; }
+        .card-mileage, .item-meta, .history-title { color: #86868b !important; font-size: 13px; font-weight: 400; }
         .card-total { font-size: 15px; font-weight: 600; color: var(--success); }
         
         .gradient-text {
-            background: linear-gradient(135deg, #0071e3, #28a745) !important;
+            background: linear-gradient(135deg, #007aff, #34c759) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             font-weight: 700 !important;
             display: inline-block;
         }
 
+        /* Responsive Form Grid (ตัวจับขนาดหน้าจอ ป้องกันกล่องล้น) */
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; width: 100%; }
+        
+        @media (max-width: 480px) {
+            /* ในมือถือ ให้ช่องกรอกข้อความเรียงซ้อนกันแนวตั้ง จะได้ไม่บีบจนล้นจอ */
+            .input-grid { grid-template-columns: 1fr; }
+        }
+
         /* Inputs (Apple Style Focus) */
-        .search-box { background: var(--card); padding: 15px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px; position: sticky; top: 15px; z-index: 100; transition: box-shadow 0.3s; }
+        .search-box { background: transparent; padding: 0; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; padding-top: 10px; background: var(--bg); }
+        .search-inner { background: var(--card); padding: 12px 15px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: box-shadow 0.3s; margin-bottom: 10px;}
+        .search-inner:focus-within { box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .search-inner input { border: none; padding: 0; margin: 0; font-size: 16px; width: 100%; }
+        
         input, textarea, select { width: 100%; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 10px; font-family: 'Kanit'; font-size: 16px; background: #fff; color: var(--primary); transition: all 0.3s var(--ease); }
-        input::placeholder, textarea::placeholder { color: #6e6e73; }
-        input:focus, textarea:focus, select:focus { border-color: var(--blue) !important; box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important; background: #fff; }
+        input::placeholder, textarea::placeholder { color: #86868b; }
+        input:focus, textarea:focus, select:focus { border-color: var(--blue) !important; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1) !important; background: #fff; }
 
         .dropdown-wrapper { position: relative; }
         .dropdown-wrapper select { padding-left: 42px; font-weight: 600; appearance: none; -webkit-appearance: none; }
-        .dropdown-wrapper i.fa-calendar-alt { position: absolute; left: 16px; top: 18px; color: #6e6e73; }
-        .dropdown-wrapper i.fa-chevron-down { position: absolute; right: 16px; top: 19px; color: #6e6e73; pointer-events: none; font-size: 14px; }
+        .dropdown-wrapper i.fa-calendar-alt { position: absolute; left: 16px; top: 18px; color: #86868b; }
+        .dropdown-wrapper i.fa-chevron-down { position: absolute; right: 16px; top: 19px; color: #86868b; pointer-events: none; font-size: 14px; }
 
         /* ⚙️ MICRO-INTERACTIONS & BUTTONS */
-        button, .btn-main, .seg-btn, .small-action-btn, .history-header, .apple-card-header { transition: transform 0.15s var(--ease), opacity 0.2s, background 0.3s, box-shadow 0.3s !important; cursor: pointer; }
-        button:active, .btn-main:active, .seg-btn:active, .small-action-btn:active { transform: scale(0.95) !important; opacity: 0.85; }
+        button, .btn-main, .seg-btn, .small-action-btn, .history-header, .apple-card-header, .chip { transition: transform 0.15s var(--ease), opacity 0.2s, background 0.3s, box-shadow 0.3s !important; cursor: pointer; }
+        button:active, .btn-main:active, .seg-btn:active, .small-action-btn:active, .chip:active { transform: scale(0.95) !important; opacity: 0.85; }
 
         .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 17px; font-weight: 600; margin-bottom: 12px; }
         .btn-primary { background: var(--accent); color: #fff; }
@@ -75,28 +87,36 @@
         
         .seg-btn { flex: 1; padding: 14px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 600; font-size: 15px; }
         .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); transform: scale(1.02); }
-        .seg-btn.inactive { background: transparent; color: #6e6e73; }
-        .small-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Kanit'; font-size: 13px; font-weight: 600; }
+        .seg-btn.inactive { background: transparent; color: #86868b; }
+        .small-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Kanit'; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-        /* 📦 TAB 1: 2 COLUMNS & SCROLL REVEAL */
-        #resultsList { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        @media (max-width: 350px) { #resultsList { grid-template-columns: 1fr; } }
+        /* 📦 TAB 1: CATEGORY CHIPS & 2 COLUMNS & SCROLL REVEAL */
+        .category-chips { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; margin-bottom: 10px; scrollbar-width: none; -ms-overflow-style: none; }
+        .category-chips::-webkit-scrollbar { display: none; }
+        .chip { padding: 8px 16px; border-radius: 20px; background: #eef0f2; color: #86868b; border: none; white-space: nowrap; font-size: 14px; font-weight: 500; }
+        .chip.active { background: var(--primary); color: #fff; }
         
-        .item-card { background: var(--card); padding: 14px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); border: 1px solid transparent; display: flex; flex-direction: column; justify-content: space-between; }
-        .item-card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        .result-counter { font-size: 13px; color: #86868b; margin-bottom: 10px; font-weight: 500; }
+
+        #resultsList { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
         
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+        .item-card { background: var(--card); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); border: 1px solid #f0f0f0; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;}
+        .item-card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        
+        .item-title { font-size: 15px; font-weight: 600; color: var(--primary); line-height: 1.3; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+        
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
         /* 🛠️ TAB 2: CART */
-        .cart-item { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.01); transition: opacity 0.3s; }
+        .cart-item { background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: opacity 0.3s; }
         .cart-row-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px;}
         .cart-row-top input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--success); margin:0;}
         .cart-title { flex: 1; font-weight: 600; font-size: 15px;}
         .cart-row-bottom { display: flex; justify-content: space-between; align-items: center; }
         .qty-controls { display: flex; align-items: center; gap: 14px; background: #f5f5f7; border-radius: 10px; padding: 8px 12px; }
         .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 6px;}
-        .total-banner { background: #fff; color: var(--primary); padding: 18px; border-radius: 14px; text-align: right; font-size: 22px; font-weight: 600; margin: 20px 0; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .total-banner { background: #fff; color: var(--primary); padding: 18px; border-radius: 16px; text-align: right; font-size: 22px; font-weight: 600; margin: 20px 0; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
         /* 🗂️ TAB 3: HISTORY CARDS (GRID EXPAND) */
         .history-card { background: #fff; border-radius: 18px; margin-bottom: 15px; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);}
@@ -108,20 +128,20 @@
         .history-body.show { grid-template-rows: 1fr; opacity: 1; padding: 18px; border-top: 1px dashed #eee; }
         .history-inner-wrapper { min-height: 0; overflow: hidden; }
 
-        .apple-card { background: #fff; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; }
+        .apple-card { background: #fff; border: 1px solid #e9ecef; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); overflow: hidden; }
         .apple-card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; transition: background 0.2s; }
         .apple-card-header:active { background: #f1f3f5; transform: scale(0.98); }
         .apple-card-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease), padding 0.4s var(--ease), opacity 0.4s var(--ease); opacity: 0; padding: 0 15px; background: #fafafa; font-size: 13px; color: #444; line-height: 1.6; }
         .apple-card-body.show { grid-template-rows: 1fr; opacity: 1; padding: 12px 15px; border-top: 1px dashed #eee; }
 
         /* MODAL */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s var(--ease); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s var(--ease); }
         .modal.active { display: block; opacity: 1; }
-        .modal-content { background: #fff; margin: 10vh auto; padding: 25px; width: 92%; max-width: 420px; border-radius: 16px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.95); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); }
+        .modal-content { background: #fff; margin: 10vh auto; padding: 25px; width: 92%; max-width: 420px; border-radius: 18px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.95); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); }
         .modal.active .modal-content { transform: scale(1); opacity: 1; }
 
-        #bill-capture-area { background: #fff; padding: 25px; color: #000; border: 1px solid #ddd; border-radius: 10px; }
-        .loading-text { text-align:center; padding:30px; color:#6e6e73; font-size: 15px;}
+        #bill-capture-area { background: #fff; padding: 25px; color: #000; border: 1px solid #ddd; border-radius: 14px; }
+        .loading-text { text-align:center; padding:30px; color:#86868b; font-size: 15px;}
         .loading-text i { font-size: 24px; color: var(--blue); margin-bottom: 10px; display: block; }
     </style>
 </head>
@@ -130,7 +150,13 @@
 <div id="tab-search" class="tab-content container active">
     <h1><i class="fas fa-boxes" style="color: var(--blue);"></i> คลังอะไหล่</h1>
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔍 ค้นหาอะไหล่/รุ่นรถ..." onkeyup="filterItems()">
+        <div class="search-inner">
+            <input type="text" id="searchInput" placeholder="🔍 ค้นหาอะไหล่/รุ่นรถ..." onkeyup="filterItems()">
+        </div>
+        <div id="categoryChips" class="category-chips">
+            <button class="chip active">ทั้งหมด</button>
+        </div>
+        <div id="resultCounter" class="result-counter">กำลังโหลดข้อมูล...</div>
     </div>
     <div id="loading" class="loading-text">
         <i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดฐานข้อมูล...
@@ -140,18 +166,18 @@
 
 <div id="tab-job" class="tab-content container">
     <h1><i class="fas fa-tasks" style="color: var(--blue);"></i> จัดการงานซ่อม</h1>
-    <div style="display:flex;gap:10px;margin-bottom:20px;background:#e0e0e0;padding:5px;border-radius:12px;">
+    <div style="display:flex;gap:10px;margin-bottom:20px;background:#eef0f2;padding:6px;border-radius:14px;">
         <button class="seg-btn active" id="btn-m-new" onclick="setJobMode('new')">🆕 รถใหม่</button>
         <button class="seg-btn inactive" id="btn-m-upd" onclick="setJobMode('update')">🛠️ ค้างซ่อม</button>
     </div>
 
     <div id="mode-new">
         <h2>📂 เปิดใบรับรถใหม่</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="input-grid">
             <input type="text" id="new-plate" placeholder="ทะเบียนรถ *">
             <input type="number" id="new-mileage" placeholder="เลขไมล์ *">
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="input-grid">
             <input type="text" id="new-model" placeholder="รุ่นรถ">
             <input type="text" id="new-phone" placeholder="เบอร์โทรลูกค้า">
         </div>
@@ -166,19 +192,19 @@
             <option value="">-- เลือกรถเพื่อดึงข้อมูล --</option>
         </select>
 
-        <div style="background:#fff; padding:18px; border-radius:14px; margin-bottom:20px; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+        <div style="background:#fff; padding:18px; border-radius:16px; margin-bottom:20px; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
             <h3><i class="fas fa-edit"></i> ข้อมูลรถเพิ่มเติม / แก้ไข</h3>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div class="input-grid" style="margin-top:10px;">
                 <input type="text" id="update-model" placeholder="รุ่นรถ">
                 <input type="text" id="update-phone" placeholder="เบอร์โทร">
-                <input type="number" id="update-mileage" placeholder="เลขไมล์" style="grid-column:span 2;">
             </div>
+            <input type="number" id="update-mileage" placeholder="เลขไมล์" style="margin-bottom: 12px;">
         </div>
 
         <h2 style="border-top:1px solid #ddd; padding-top:15px;"><i class="fas fa-wrench"></i> บิลประเมินรายการซ่อม</h2>
         <div id="cartList" style="margin-bottom:15px;"></div>
 
-        <button onclick="openCustomItemModal('job')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73;">
+        <button onclick="openCustomItemModal('job')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:14px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#86868b;">
             <i class="fas fa-plus-circle"></i> เพิ่มรายการ / ค่าแรง / ทำสี
         </button>
 
@@ -187,8 +213,8 @@
 
         <div class="total-banner">ยอดประเมินรวม: <span id="grandTotal" class="gradient-text">0</span> ฿</div>
 
-        <div style="background:#fff; padding:18px; border-radius:14px; margin-bottom:20px; border: 2px solid #b8daff; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-            <h3 style="color:#0056b3;font-weight:600;margin-top:0;"><i class="fas fa-flag-checkered"></i> เลือกสถานะ</h3>
+        <div style="background:#fff; padding:18px; border-radius:16px; margin-bottom:20px; border: 2px solid #b8daff; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+            <h3 style="color:#007aff;font-weight:600;margin-top:0;"><i class="fas fa-flag-checkered"></i> เลือกสถานะ</h3>
             <select id="update-status" style="font-weight:600; color:#333; margin-top:5px;">
                 <option value="รอดำเนินการ">⏳ รอดำเนินการ</option>
                 <option value="แค่เสนอราคา">📝 เสนอราคา / ลูกค้าเลื่อน</option>
@@ -203,21 +229,21 @@
 
 <div id="tab-history" class="tab-content container">
     <h1><i class="fas fa-history" style="color: var(--blue);"></i> ประวัติรถ</h1>
-    <div style="display:flex;gap:10px;margin-bottom:20px;background:#e0e0e0;padding:5px;border-radius:12px;">
+    <div style="display:flex;gap:10px;margin-bottom:20px;background:#eef0f2;padding:6px;border-radius:14px;">
         <button class="seg-btn active" id="btn-h-save" onclick="setHistMode('save')">📝 เก็บประวัติ</button>
         <button class="seg-btn inactive" id="btn-h-check" onclick="setHistMode('check')">🔍 เช็คประวัติ</button>
     </div>
 
     <div id="hist-mode-save">
-        <div style="background:#fff3cd; padding:15px; border-radius:12px; margin-bottom:20px; border: 1px solid #ffc107; font-size:14px; color:#856404; line-height:1.5;">
+        <div style="background:#fff3cd; padding:15px; border-radius:14px; margin-bottom:20px; border: 1px solid #ffc107; font-size:14px; color:#856404; line-height:1.5;">
             💡 บันทึกจะสร้าง/เพิ่มข้อมูลลงในไฟล์ของทะเบียนนั้นใน Google Drive โดยตรง
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="input-grid">
             <input type="text" id="hist-plate" placeholder="ทะเบียนรถ *">
             <input type="number" id="hist-mileage" placeholder="เลขไมล์ *">
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="input-grid">
             <input type="text" id="hist-model" placeholder="รุ่นรถ">
             <input type="text" id="hist-phone" placeholder="เบอร์โทรลูกค้า">
         </div>
@@ -228,10 +254,10 @@
 
         <h2>🛠️ รายการซ่อม / ค่าแรง / ทำสี</h2>
         <div id="hist-cart-list" style="margin-bottom:15px;">
-            <div style="text-align:center;padding:18px;background:#eee;border-radius:10px;color:#888;">ยังไม่มีรายการ</div>
+            <div style="text-align:center;padding:18px;background:#f5f5f7;border-radius:14px;color:#86868b;">ยังไม่มีรายการ</div>
         </div>
 
-        <button onclick="openCustomItemModal('hist')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:10px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#6e6e73;">
+        <button onclick="openCustomItemModal('hist')" style="width:100%; padding:14px; border:1px dashed #aaa; background:#fff; margin-bottom:20px; border-radius:14px; font-family:'Kanit'; font-weight:600; cursor:pointer; color:#86868b;">
             <i class="fas fa-plus-circle"></i> เพิ่มรายการเอง / ค่าแรง
         </button>
 
@@ -244,7 +270,9 @@
 
     <div id="hist-mode-check" style="display:none;">
         <div class="search-box">
-            <input type="text" id="histSearchPlate" placeholder="🔍 ใส่ตัวเลขทะเบียน เช่น 475..." onkeyup="if(event.key==='Enter') searchPlateHistory()" style="margin-bottom:12px;">
+            <div class="search-inner">
+                <input type="text" id="histSearchPlate" placeholder="🔍 ใส่ตัวเลขทะเบียน เช่น 475..." onkeyup="if(event.key==='Enter') searchPlateHistory()">
+            </div>
             
             <div class="dropdown-wrapper" style="margin-bottom:20px;">
                 <i class="fas fa-calendar-alt"></i>
@@ -281,7 +309,7 @@
         <input type="number" id="eh-total" placeholder="ยอดรวม" style="margin-bottom:25px;">
         <div style="display:flex;gap:12px;">
             <button onclick="closeModal('edit-history-modal')" class="btn-main" style="flex:1; background:#eee; color:#333;margin-bottom:0;">ยกเลิก</button>
-            <button id="btn-save-history-edit" onclick="saveHistoryRowEdit()" class="btn-main btn-primary" style="flex:2;margin-bottom:0;"><i class="fas fa-save"></i> บันทึกแก้ไข</button>
+            <button id="btn-save-history-edit" onclick="saveHistoryRowEdit()" class="btn-main btn-primary" style="flex:2;margin-bottom:0;"><i class="fas fa-save"></i> บันทึก</button>
         </div>
     </div>
 </div>
@@ -311,13 +339,10 @@
         <h2 style="margin-top:0; color:var(--primary); border-bottom:2px solid #eef0f2; padding-bottom:10px;"><i class="fas fa-plus-circle"></i> เพิ่มรายการเอง</h2>
         <h3>ชื่อรายการ</h3>
         <input type="text" id="custom-name" placeholder="เช่น ค่าแรงเปลี่ยนโช้ค..." style="margin-bottom:15px;margin-top:5px;">
-        
         <h3>จำนวน (ข้อความ)</h3>
         <input type="text" id="custom-qty" placeholder="เช่น 1 ชุด, 4 ลิตร" style="margin-bottom:15px;margin-top:5px;">
-        
         <h3>ราคาสุทธิ (บาท)</h3>
         <input type="number" id="custom-price" placeholder="ราคา" style="margin-bottom:25px;margin-top:5px;">
-        
         <div style="display:flex;gap:12px;">
             <button onclick="closeModal('custom-item-modal')" class="btn-main" style="flex:1; background:#eee; color:#333;margin-bottom:0;">ยกเลิก</button>
             <button onclick="confirmCustomItem()" class="btn-main btn-success" style="flex:2;margin-bottom:0;">+ ยืนยัน</button>
@@ -330,23 +355,23 @@
         <div id="bill-capture-area">
             <div class="bill-header">
                 <h2 style="margin:0;">๙ ออโต้ การาจ</h2>
-                <p style="font-size:12px;margin:5px 0;color:#666;">ใบเสนอราคา / สรุปงานซ่อม</p>
-                <div style="font-size:13px;text-align:left;margin-top:15px;background:#f9f9f9;padding:10px;border-radius:8px; border: 1px solid #eee;">
+                <p style="font-size:12px;margin:5px 0;color:#86868b;">ใบเสนอราคา / สรุปงานซ่อม</p>
+                <div style="font-size:13px;text-align:left;margin-top:15px;background:#f5f5f7;padding:12px;border-radius:12px; border: 1px solid #eef0f2;">
                     <b>วันที่:</b> <span id="bill-date"></span><br>
                     <b>ทะเบียน:</b> <span id="bill-plate" style="color:var(--accent);font-weight:600;"></span><br>
                     <b>ไมล์:</b> <span id="bill-mile"></span>
                 </div>
             </div>
-            <table class="bill-table" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                <thead><tr><th style="text-align: left; padding-bottom: 8px; border-bottom: 2px solid #eee;">รายการ</th><th style="text-align:right; padding-bottom: 8px; border-bottom: 2px solid #eee;">ราคา(฿)</th></tr></thead>
+            <table class="bill-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
+                <thead><tr><th style="text-align: left; padding-bottom: 8px; border-bottom: 2px solid #eef0f2;">รายการ</th><th style="text-align:right; padding-bottom: 8px; border-bottom: 2px solid #eef0f2;">ราคา(฿)</th></tr></thead>
                 <tbody id="bill-items-body"></tbody>
             </table>
             <div style="text-align:right;margin-top:20px;font-size:20px;font-weight:600;color:var(--success);">
                 ยอดสุทธิ: <span id="bill-total"></span> ฿
             </div>
-            <p id="bill-note" style="font-size:12px;color:#666;margin-top:15px;border-top:1px dashed #eee;padding-top:10px;white-space:pre-wrap;line-height:1.4;"></p>
+            <p id="bill-note" style="font-size:12px;color:#86868b;margin-top:15px;border-top:1px dashed #eef0f2;padding-top:10px;white-space:pre-wrap;line-height:1.4;"></p>
         </div>
-        <p style="text-align:center;font-size:12px;color:#6e6e73;margin-top:12px;"><i class="fas fa-camera"></i> แคปหน้าจอนี้เพื่อส่งให้ลูกค้าได้เลย</p>
+        <p style="text-align:center;font-size:12px;color:#86868b;margin-top:12px;"><i class="fas fa-camera"></i> แคปหน้าจอนี้เพื่อส่งให้ลูกค้าได้เลย</p>
         <button onclick="closeModal('bill-modal')" class="btn-main" style="margin-top:10px; background:#333; color:#fff;">ปิดหน้าต่าง</button>
     </div>
 </div>
@@ -368,6 +393,7 @@ const API = "https://script.google.com/macros/s/AKfycbyUyQNlXMFyc_mv9_pps1GdmJty
 
 let allItems = [], activeJobs = [], cart = [], histCart = [];
 let customItemTarget = 'job';
+let currentCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hist-date').value = new Date().toISOString().split('T')[0];
@@ -380,7 +406,8 @@ fetch(API).then(r => r.json()).then(d => {
     if (d.status === 'success') {
         allItems = d.data;
         document.getElementById('loading').style.display = 'none';
-        renderItems(allItems);
+        renderCategories(); // สร้างปุ่มหมวดหมู่
+        filterItems(); // โหลดรายการทั้งหมด
     }
 }).catch(() => {
     document.getElementById('loading').innerHTML = '<span style="color:red;font-size:13px;"><i class="fas fa-exclamation-triangle"></i> ขัดข้อง เชื่อมต่อไม่ได้ กรุณารีเฟรชครับ</span>';
@@ -403,7 +430,7 @@ function observeCards() {
 }
 
 // ==========================================
-// TAB NAVIGATION (เพิ่มระบบหน่วงเวลาเฟดเข้า/ออก)
+// TAB NAVIGATION (Fade In/Out)
 // ==========================================
 function switchTab(t, el) {
     const currentTab = document.querySelector('.tab-content.active');
@@ -411,14 +438,12 @@ function switchTab(t, el) {
     
     if (currentTab === newTab) return; 
 
-    // สลับสีปุ่มเมนูให้ตอบสนองทันที
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
 
     if (currentTab) {
         currentTab.classList.remove('active');
         currentTab.classList.add('fade-out'); 
-
         setTimeout(() => {
             currentTab.classList.remove('fade-out');
             currentTab.style.display = 'none';
@@ -434,58 +459,81 @@ function showNewTab(newTab, t) {
     setTimeout(() => {
         newTab.classList.add('active');
         if (t === 'job') fetchActiveJobs();
-        if (t === 'search') observeCards(); // เรียกให้ Animation ทำงานตอนสลับกลับมา
+        if (t === 'search') observeCards();
     }, 10);
 }
 
 // ==========================================
-// TAB 1: ค้นหาอะไหล่ (แบบ 2 คอลัมน์)
+// TAB 1: CATEGORY CHIPS & SEARCH (2 COLUMNS)
 // ==========================================
+function renderCategories() {
+    // ดึงหมวดหมู่ที่ไม่ซ้ำกันจากฐานข้อมูล
+    const rawCats = allItems.map(i => String(i.category || '').trim()).filter(c => c !== '');
+    const cats = [...new Set(rawCats)];
+    
+    const chipContainer = document.getElementById('categoryChips');
+    let html = `<button class="chip active" onclick="filterByCategory('all', this)">ทั้งหมด</button>`;
+    cats.forEach(c => {
+        html += `<button class="chip" onclick="filterByCategory('${c}', this)">${c}</button>`;
+    });
+    chipContainer.innerHTML = html;
+}
+
+function filterByCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filterItems();
+}
+
 function filterItems() {
     const text = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = allItems.filter(i =>
-        (i.name || '').toLowerCase().includes(text) ||
-        (i.model || '').toLowerCase().includes(text)
-    );
+    const filtered = allItems.filter(i => {
+        const st = String(i.status || '').trim();
+        if (st === 'ยกเลิก' || st === 'ซ่อน') return false;
+        
+        const matchText = (i.name || '').toLowerCase().includes(text) || (i.model || '').toLowerCase().includes(text);
+        const matchCat = currentCategory === 'all' || (i.category || '').trim() === currentCategory;
+        return matchText && matchCat;
+    });
     renderItems(filtered);
 }
 
-function renderItems(items) {
+function renderItems(activeItems) {
     const list = document.getElementById('resultsList');
+    const counter = document.getElementById('resultCounter');
     list.innerHTML = '';
-    const activeItems = items.filter(i => {
-        const st = String(i.status || '').trim();
-        return st !== 'ยกเลิก' && st !== 'ซ่อน';
-    });
+    
+    counter.innerText = `พบสินค้า ${activeItems.length} รายการ`;
     
     if (activeItems.length === 0) {
-        // ยกเลิก Grid ชั่วคราวถ้าไม่เจอข้อมูล เพื่อให้ข้อความอยู่ตรงกลาง
         list.style.display = 'block'; 
-        list.innerHTML = '<div style="text-align:center;color:#6e6e73;padding:30px;background:#fff;border-radius:14px;border:1px dashed #ccc;">ไม่พบรายการอะไหล่</div>';
+        list.innerHTML = '<div style="text-align:center;color:#86868b;padding:30px;background:#fff;border-radius:16px;border:1px dashed #ccc;">ไม่พบรายการอะไหล่</div>';
         return;
     }
     
-    list.style.display = 'grid'; // เปิด Grid
+    list.style.display = 'grid'; // เปิด 2 คอลัมน์
     
     activeItems.forEach(i => {
-        // ดีไซน์การ์ดแบบกะทัดรัด (Compact 2 Columns)
-        list.innerHTML += `<div class="item-card reveal">
+        // ดีไซน์การ์ดแบบกะทัดรัด ไอคอนเล็ก ลดพื้นที่ข้อความ
+        list.innerHTML += `
+        <div class="item-card reveal">
             <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">
-                <b class="item-title" style="font-size:15px; display:block; margin-bottom:4px; line-height:1.2;">${i.name}</b>
-                <div class="item-meta" style="font-size:11px; margin-bottom:8px;">รุ่น: ${i.model}</div>
-                <div class="item-prices" style="text-align:left; margin-top:auto;">
-                    <div class="cost" style="font-size:11px; color:#6e6e73;">ทุน ${i.cost || 0}</div>
-                    <div class="sell" style="font-size:16px; color:var(--success); font-weight:600;">${i.sellPrice} ฿</div>
+                <div class="item-title">${i.name}</div>
+                <div class="item-meta" style="font-size:11px; margin-bottom:10px; line-height: 1.2;">รุ่น: ${i.model || '-'}</div>
+                <div class="item-prices" style="margin-top:auto;">
+                    <div class="cost" style="font-size:11px; color:#86868b;">ทุน ${i.cost || 0}</div>
+                    <div class="sell" style="font-size:17px; color:var(--success); font-weight:600;">${i.sellPrice} <span style="font-size:13px;">฿</span></div>
                 </div>
             </div>
-            <div style="display:grid; grid-template-columns:3fr 1fr; gap:6px; margin-top:12px;">
-                <button onclick="addToCart('${i.name}', ${i.sellPrice})" class="small-action-btn" style="background:#e8f5e9;color:var(--success);font-size:12px;padding:8px;"><i class="fas fa-plus"></i> เลือก</button>
-                <button onclick="openEditItemModal('${i.id}')" class="small-action-btn" style="background:#f5f5f7;color:#6e6e73;padding:8px;"><i class="fas fa-edit"></i></button>
+            <div style="display:flex; gap:6px; margin-top:12px;">
+                <button onclick="addToCart('${i.name}', ${i.sellPrice})" class="small-action-btn" style="flex: 1; background:#e8f5e9;color:var(--success);"><i class="fas fa-plus"></i> เลือก</button>
+                <button onclick="openEditItemModal('${i.id}')" class="small-action-btn" style="background:#f5f5f7;color:#86868b;padding:8px 12px;"><i class="fas fa-edit"></i></button>
             </div>
         </div>`;
     });
     
-    setTimeout(observeCards, 50); // เรียกใช้งานแอนิเมชันหลังจัดหน้าจอเสร็จ
+    setTimeout(observeCards, 50); 
 }
 
 function openEditItemModal(id) {
@@ -633,7 +681,7 @@ function updateCartUI() {
     badge.style.display = cart.length > 0 ? 'block' : 'none';
     badge.innerText = cart.length;
     if (cart.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:18px;background:#f5f5f7;border-radius:12px;color:#6e6e73;border:1px dashed #ccc;">บิลยังไม่มีรายการประเมิน</div>';
+        list.innerHTML = '<div style="text-align:center;padding:18px;background:#f5f5f7;border-radius:14px;color:#86868b;border:1px dashed #ccc;">บิลยังไม่มีรายการประเมิน</div>';
         document.getElementById('grandTotal').innerText = '0';
         return;
     }
@@ -641,7 +689,7 @@ function updateCartUI() {
     cart.forEach((item, idx) => {
         let qtyControls = '';
         if (item.isCustom) {
-            qtyControls = `<span style="color:#6e6e73; font-size:14px; background:#f5f5f7; padding:6px 14px; border-radius:8px; font-weight:600;">${item.customQty || '1'}</span>`;
+            qtyControls = `<span style="color:#86868b; font-size:14px; background:#f5f5f7; padding:6px 14px; border-radius:8px; font-weight:600;">${item.customQty || '1'}</span>`;
         } else {
             qtyControls = `
             <div class="qty-controls">
@@ -720,7 +768,7 @@ function showBill() {
     tbody.innerHTML = '';
     cart.filter(i => i.checked).forEach(i => {
         let qtyText = i.isCustom ? i.customQty : 'x' + i.qty;
-        tbody.innerHTML += `<tr><td style="padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${i.name} <span style="font-size:12px;color:#6e6e73">${qtyText}</span></td><td style="text-align:right; padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${(i.price * i.qty).toLocaleString()}</td></tr>`;
+        tbody.innerHTML += `<tr><td style="padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${i.name} <span style="font-size:12px;color:#86868b">${qtyText}</span></td><td style="text-align:right; padding: 8px 0; border-bottom: 1px solid #f5f5f7;">${(i.price * i.qty).toLocaleString()}</td></tr>`;
     });
     document.getElementById('bill-total').innerText = document.getElementById('grandTotal').innerText;
     let symptoms = job.details.split('\n\n[ สรุปบิลประเมิน ]')[0]; 
@@ -741,7 +789,7 @@ function setHistMode(m) {
 function updateHistCartUI() {
     const list = document.getElementById('hist-cart-list');
     if (histCart.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:18px;background:#f5f5f7;border-radius:10px;color:#6e6e73;border:1px dashed #ccc;">ยังไม่มีรายการในประวัติ</div>';
+        list.innerHTML = '<div style="text-align:center;padding:18px;background:#f5f5f7;border-radius:14px;color:#86868b;border:1px dashed #ccc;">ยังไม่มีรายการในประวัติ</div>';
         document.getElementById('hist-total').innerText = '0';
         return;
     }
@@ -749,7 +797,7 @@ function updateHistCartUI() {
     histCart.forEach((item, idx) => {
         let qtyControls = '';
         if (item.isCustom) {
-            qtyControls = `<span style="color:#6e6e73; font-size:14px; background:#f5f5f7; padding:6px 14px; border-radius:8px; font-weight:600;">${item.customQty || '1'}</span>`;
+            qtyControls = `<span style="color:#86868b; font-size:14px; background:#f5f5f7; padding:6px 14px; border-radius:8px; font-weight:600;">${item.customQty || '1'}</span>`;
         } else {
             qtyControls = `
             <div class="qty-controls" style="padding: 6px 10px;">
@@ -878,7 +926,7 @@ function searchPlateHistory() {
 
             filtered.forEach(f => {
                 const isArchive = f.type === 'archive';
-                const borderColor = isArchive ? '#6e6e73' : '#0071e3';
+                const borderColor = isArchive ? '#86868b' : '#007aff';
                 const titleIcon = isArchive ? 'fas fa-archive' : 'fas fa-folder-open';
                 
                 resBox.innerHTML += `
@@ -888,7 +936,7 @@ function searchPlateHistory() {
                             <div class="history-date card-title"><i class="${titleIcon}" style="color:${borderColor}; margin-right:5px;"></i> ${f.year}</div>
                             <div class="history-title">🗂️ ${f.name.replace('.xlsx', '').replace('.xls', '')}</div>
                         </div>
-                        <i class="fas fa-chevron-down" style="transition: transform 0.4s var(--ease); color:#ccc; font-size:18px;"></i>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.4s var(--ease); color:#86868b; font-size:18px;"></i>
                     </div>
                     <div class="history-body" id="body-${f.fileId}">
                         <div class="history-inner-wrapper">
@@ -897,7 +945,7 @@ function searchPlateHistory() {
                     </div>
                 </div>`;
             });
-            setTimeout(observeCards, 50); // เล่น Animation ตอนโหลดประวัติเสร็จ
+            setTimeout(observeCards, 50); 
         }).catch(() => {
             resBox.innerHTML = '<div class="loading-text" style="color:var(--accent);"><i class="fas fa-exclamation-triangle"></i> ขัดข้อง เชื่อมต่อไม่ได้ครับ</div>';
         });
@@ -917,7 +965,7 @@ function openFileHistory(fileId, type, headerEl) {
         body.innerHTML = `
         <div class="history-inner-wrapper">
             <div style="text-align:center; padding:15px 0;">
-                <p style="color:#6e6e73; font-size:14px; margin-bottom:15px;line-height:1.4;"><i class="fas fa-info-circle"></i> แฟ้มนี้เป็นข้อมูลเก่าถูกจัดเก็บใน Google Drive</p>
+                <p style="color:#86868b; font-size:14px; margin-bottom:15px;line-height:1.4;"><i class="fas fa-info-circle"></i> แฟ้มนี้เป็นข้อมูลเก่าถูกจัดเก็บใน Google Drive</p>
                 <a href="https://drive.google.com/file/d/${fileId}/view" target="_blank"
                    class="btn-main" style="display:inline-block; text-decoration:none; text-align:center; background:#495057; color:#fff; width:100%; max-width:250px;">
                    <i class="fas fa-external-link-alt"></i> เปิดดูไฟล์ประวัติเดิม
@@ -946,13 +994,13 @@ function loadSheetRows(fileId, body) {
             
             let html = `<div class="history-inner-wrapper">`;
             html += `
-            <div style="background:#f0f4ff; padding:12px; border-radius:10px; margin-bottom:15px; font-size:14px; border:1px solid #b8daff; display:flex; align-items:center; gap:8px;">
+            <div style="background:#f0f4ff; padding:12px; border-radius:12px; margin-bottom:15px; font-size:14px; border:1px solid #b8daff; display:flex; align-items:center; gap:8px;">
                 <i class="fas fa-phone-alt" style="color:var(--success);"></i> 
                 <b style="font-size:15px;">📞 ${header.phone || 'ไม่ระบุเบอร์โทรศัพท์'}</b>
             </div>`;
             
             if (rows.length === 0) {
-                html += '<p style="color:#6e6e73; text-align:center; padding:20px; background:#f5f5f7; border-radius:10px; border:1px dashed #ccc;">ยังไม่มีประวัติการซ่อมในแฟ้มนี้</p>';
+                html += '<p style="color:#86868b; text-align:center; padding:20px; background:#f5f5f7; border-radius:12px; border:1px dashed #ccc;">ยังไม่มีประวัติการซ่อมในแฟ้มนี้</p>';
             } else {
                 rows.forEach((r, idx) => {
                     const sheetRowIndex = rows.length - idx + 3;
@@ -966,7 +1014,7 @@ function loadSheetRows(fileId, body) {
                                 <div class="apple-card-meta card-mileage">⏱️ เลขไมล์: ${Number(r.mileage).toLocaleString()} กม.</div>
                             </div>
                             <div class="apple-card-price card-total">
-                                ${Number(r.total).toLocaleString()} ฿ <i class="fas fa-chevron-down" style="transition:transform 0.4s var(--ease); color:#ccc; font-size:13px; margin-left:5px;"></i>
+                                ${Number(r.total).toLocaleString()} ฿ <i class="fas fa-chevron-down" style="transition:transform 0.4s var(--ease); color:#86868b; font-size:13px; margin-left:5px;"></i>
                             </div>
                         </div>
                         <div class="apple-card-body">
@@ -996,9 +1044,6 @@ function loadSheetRows(fileId, body) {
         });
 }
 
-// ==========================================
-// แก้ไข / ลบ แถวประวัติ 
-// ==========================================
 function openEditHistoryRow(fileId, rowIndex, date, mileage, details, total) {
     document.getElementById('eh-file-id').value   = fileId;
     document.getElementById('eh-row-index').value  = rowIndex;
@@ -1080,9 +1125,6 @@ function deleteHistoryRow(fileId, rowIndex, date) {
     }).catch(() => alert('เชื่อมต่อไม่ได้ กรุณาลองใหม่ครับ'));
 }
 
-// ==========================================
-// MODAL HELPER 
-// ==========================================
 function openModal(id) {
     const modal = document.getElementById(id);
     modal.style.display = 'block'; 
