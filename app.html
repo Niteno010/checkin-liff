@@ -7,169 +7,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #f5f5f7; /* Apple Style BG */
-            --primary: #1d1d1f; /* Apple Style Text */
-            --accent: #ff3b30;
-            --success: #28a745;
-            --blue: #0071e3; /* Apple Blue */
-            --text: #1d1d1f;
-            --card: #ffffff;
-            --ease: cubic-bezier(0.4, 0, 0.2, 1); /* Apple Smooth Easing */
-        }
-        * { box-sizing: border-box; }
-        body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+    /* 1. สีตัวหนังสือแบบมืออาชีพ Apple style */
+    body { color: #1d1d1f; }
+    .card-mileage, .item-meta, .history-title, .nav-item { color: #6e6e73 !important; }
+    
+    /* 2. Grid Animation สำหรับกล่องประวัติ (ลื่นและนุ่มนวลกว่า max-height) */
+    .history-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.5s var(--ease), opacity 0.4s var(--ease);
+        opacity: 0;
+        overflow: hidden;
+    }
+    .history-body.show {
+        grid-template-rows: 1fr;
+        opacity: 1;
+    }
+    .history-body > div { min-height: 0; }
 
-        /* ==================== SMOOTH TAB NAVIGATION (Fade In/Out) ==================== */
-        .tab-content { 
-            display: none; 
-            opacity: 0; 
-            transform: translateY(10px);
-            transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
-        }
-        .tab-content.active { 
-            display: block; 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-        .tab-content.fade-out {
-            display: block; /* คงไว้เพื่อให้เฟดออก */
-            opacity: 0; 
-            transform: translateY(-10px); /* ลอยขึ้นตอนหายไป */
-        }
+    /* 3. ลบรอยแข็งของกล่องประวัติ */
+    .history-card { border-radius: 18px; }
+    
+    /* 4. ใส่ Gradient ให้ยอดเงิน */
+    .gradient-text {
+        background: linear-gradient(90deg, #0071e3, #28a745);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+    }
 
-        /* BOTTOM NAV with Animation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: flex; box-shadow: 0 -1px 15px rgba(0,0,0,0.03); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #eef0f2; }
-        .nav-item { flex: 1; text-align: center; padding: 15px 0; color: #86868b; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.3s; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; transition: transform 0.3s var(--ease); }
-        .nav-item.active { color: var(--accent); }
-        .nav-item.active i { transform: scale(1.15); }
-        .badge { position: absolute; top: 8px; right: 28vw; background: var(--accent); color: #fff; font-size: 11px; padding: 3px 7px; border-radius: 12px; font-weight: bold; }
-
-        /* ==================== TYPOGRAPHY & LAYOUT HIERARCHY ==================== */
-        h1, h2, h3, h4, .h-title { color: var(--primary); font-weight: 600; margin-top: 0; }
-        h1 { font-size: 28px; margin-bottom: 25px; }
-        h2 { font-size: 20px; margin-bottom: 15px; }
-        h3 { font-size: 16px; margin-bottom: 10px; color: #86868b; font-weight: 500;}
-        .card-title { font-size: 17px; font-weight: 600; }
-        .card-mileage { font-size: 13px; color: #86868b; font-weight: 400; }
-        .card-total { font-size: 15px; font-weight: 600; color: var(--success); }
-        
-        /* Gradient Text สำหรับยอดเงินสำคัญ */
-        .gradient-text {
-            background: linear-gradient(135deg, var(--blue), var(--success));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* INPUTS & Search Box */
-        .search-box { background: var(--card); padding: 15px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px; position: sticky; top: 15px; z-index: 100; transition: box-shadow 0.3s; }
-        .search-box:focus-within { box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
-        input, textarea, select { width: 100%; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 10px; font-family: 'Kanit'; font-size: 16px; background: #fff; color: var(--primary); transition: border-color 0.3s, background 0.3s; }
-        input::placeholder, textarea::placeholder { color: #86868b; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--blue); background: #fff; }
-
-        /* Dropdown Style with Calendar Icon */
-        .dropdown-wrapper { position: relative; }
-        .dropdown-wrapper select { padding-left: 42px; font-weight: 600; appearance: none; -webkit-appearance: none; }
-        .dropdown-wrapper i.fa-calendar-alt { position: absolute; left: 16px; top: 18px; color: #86868b; }
-        .dropdown-wrapper i.fa-chevron-down { position: absolute; right: 16px; top: 19px; color: #86868b; pointer-events: none; font-size: 14px; }
-
-        /* ==================== APPLE STYLE CARDS & ELEMENTS ==================== */
-        
-        /* Item Card (อะไหล่) - ขยาย + เงาเมื่อชี้ */
-        .item-card { background: var(--card); padding: 18px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); border: 1px solid transparent;}
-        .item-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .item-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-title { font-size: 17px; font-weight: 600; color: var(--primary); flex: 1; }
-        .item-prices { text-align: right; line-height: 1.3; margin-left: 10px;}
-        .item-prices .cost { font-size: 12px; color: #86868b; }
-        .item-prices .sell { color: var(--success); font-weight: 600; font-size: 16px; }
-        .item-meta { font-size: 13px; color: #86868b; margin-top: 5px; }
-
-        /* Cart Item (จัดการจ๊อบ) */
-        .cart-item { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.01); transition: opacity 0.3s; }
-        .cart-row-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px;}
-        .cart-row-top input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--success); margin:0;}
-        .cart-title { flex: 1; font-weight: 600; font-size: 15px;}
-        .cart-row-bottom { display: flex; justify-content: space-between; align-items: center; }
-        .qty-controls { display: flex; align-items: center; gap: 14px; background: #f5f5f7; border-radius: 10px; padding: 8px 12px; }
-        .qty-btn { background: none; border: none; font-size: 18px; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 6px;}
-
-        /* Grand Total Banner */
-        .total-banner { background: #fff; color: var(--primary); padding: 18px; border-radius: 14px; text-align: right; font-size: 22px; font-weight: 600; margin: 20px 0; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
-
-        /* ==================== APPLE STYLE HISTORY CARDS ==================== */
-        
-        /* กล่องประวัติแฟ้มหลัก - ขยาย + เงาเมื่อชี้ */
-        .history-card { background: #fff; border-radius: 14px; margin-bottom: 15px; border: 1px solid #eef0f2; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);}
-        .history-card:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .history-header { padding: 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: transparent; }
-        .history-date { font-size: 19px; font-weight: 600; color: var(--primary); }
-        .history-title { font-size: 14px; color: #86868b; margin-top: 5px; font-weight: 400;}
-
-        /* Smooth Expand/Collapse for Details (ใช้ max-height แทน block) */
-        .history-body { 
-            max-height: 0; 
-            overflow: hidden; 
-            transition: max-height 0.5s var(--ease), opacity 0.4s var(--ease), padding 0.4s var(--ease); 
-            opacity: 0; 
-            padding: 0 18px; 
-            background: #fff;
-        }
-        .history-body.show { 
-            max-height: 2500px; 
-            opacity: 1; 
-            padding: 18px; 
-            border-top: 1px dashed #eee;
-        }
-
-        /* Apple Inner Card (กล่องย่อยประวัติซ่อม) */
-        .apple-card { background: #fff; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; }
-        .apple-card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fdfdfd; transition: background 0.2s; }
-        .apple-card-header:active { background: #f1f3f5; }
-        .apple-card-body { 
-            max-height: 0; 
-            overflow: hidden; 
-            padding: 0 15px; 
-            transition: max-height 0.4s var(--ease), padding 0.4s var(--ease), opacity 0.4s var(--ease); 
-            opacity: 0; 
-            background: #fafafa; font-size: 13px; color: #444; line-height: 1.6;
-        }
-        .apple-card-body.show { 
-            max-height: 1500px; 
-            opacity: 1; 
-            padding: 12px 15px; 
-            border-top: 1px dashed #eee;
-        }
-
-        /* BUTTONS with Apple Easing & Micro-animations */
-        .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: 'Kanit'; font-size: 17px; font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: transform 0.15s var(--ease), opacity 0.2s, background 0.3s; }
-        .btn-main:active { transform: scale(0.96); opacity: 0.9; } 
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-blue { background: var(--blue); color: #fff; }
-        .btn-success { background: var(--success); color: #fff; }
-        
-        .seg-btn { flex: 1; padding: 14px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.3s var(--ease); }
-        .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); transform: scale(1.02); }
-        .seg-btn.inactive { background: transparent; color: #86868b; }
-        
-        .small-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Kanit'; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform 0.15s var(--ease), background 0.3s; }
-        .small-action-btn:active { transform: scale(0.92); }
-
-        /* MODAL with Smooth Pop Animation */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s var(--ease); }
-        .modal.active { display: block; opacity: 1; }
-        .modal-content { background: #fff; margin: 10vh auto; padding: 25px; width: 92%; max-width: 420px; border-radius: 16px; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.95); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); }
-        .modal.active .modal-content { transform: scale(1); opacity: 1; }
-
-        /* BILL and LOADING with Apple Style */
-        #bill-capture-area { background: #fff; padding: 25px; color: #000; border: 1px solid #ddd; border-radius: 10px; }
-        .loading-text { text-align:center; padding:30px; color:#86868b; font-size: 15px;}
-        .loading-text i { font-size: 24px; color: var(--blue); margin-bottom: 10px; display: block; }
-        
-    </style>
+    /* 5. ปรับจังหวะปุ่มให้เด้งรับนิ้วแบบสปริง */
+    .btn-main {
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
+    }
+</style>
 </head>
 <body>
 
