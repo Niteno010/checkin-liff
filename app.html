@@ -1020,7 +1020,7 @@ function loadSheetRows(fileId, body) {
                         <div class="apple-card-body">
                             <div class="history-inner-wrapper">
                                 <h3 style="margin-top:0;"><i class="fas fa-wrench"></i> รายการซ่อม / ทำสี</h3>
-                                <div style="margin-bottom:15px;line-height:1.5;">${r.details}</div>
+                                <div style="margin-bottom:15px;line-height:1.5; white-space:pre-wrap;">${r.details}</div>
                                 
                                 <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px dashed #eef0f2;padding-top:12px; margin-top:10px;">
                                     <button onclick="openEditHistoryRow('${fileId}',${sheetRowIndex},'${r.date}','${r.mileage}',\`${safeDetails}\`,${r.total || 0})"
